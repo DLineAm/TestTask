@@ -1,0 +1,116 @@
+﻿@page "/employees/{Id:int}"
+@using TestTask.Shared
+@using TestTask.Client.Services
+@inject HttpClient Http
+@inject NavigationManager NavigationManager
+@inject AppData AppData
+@inject StateMachine StateMachine
+<h1 class="info__title">Сотрудники</h1>
+<button @onclick="EmployeeAddButton_OnClick" class="main--btn inverted">Добавить</button>
+
+
+
+@if (employees == null)
+{
+    <span>Загрузка</span>
+}
+else
+{
+<div class="subdiv__wrapper">
+    @foreach (var employee in employees)
+    {
+        <div class="subdiv__item">
+            <span style="font-size: 20px; font-weight: 700">@employee.FullName</span>
+            <div>
+                <img style="width: 20px; cursor: pointer" src="css/edit--green.svg" @onclick="() => EmployeeChangeButton_OnClick(employee)" alt="" />
+                <img style="width: 20px; cursor: pointer" src="css/delete--green.svg" @onclick="() => DeleteButton_OnClick(employee)" alt="" />
+            </div>
+        </div>
+    }
+</div>
+}
+
+@if (modalOpen)
+{
+    <Modal Title="@modalTitle"
+           Text="@modalText"
+           OnClose="Modal_OnClose"></Modal>
+}
+
+@code {
+    [Parameter]
+    public int Id { get; set; }
+
+    private List<Employee> employees;
+    private bool modalOpen;
+    private string modalText;
+    private string modalTitle;
+
+    protected override async void OnParametersSet()
+    {
+        await LoadEmployees();
+    }
+
+    private async Task LoadEmployees()
+    {
+        employees = await Http.GetFromJsonAsync<List<Employee>>($"employees?divisionId={Id}");
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadEmployees();
+    }
+
+    private void EmployeeChangeButton_OnClick(Employee employee)
+    {
+        StateMachine.SetChangeState();
+        AppData.CurrentEmployee = employee;
+        NavigationManager.NavigateTo("employeeInfo");
+    }
+
+    private async Task Modal_OnClose(bool success)
+    {
+        modalOpen = false;
+        if (StateMachine.CurrentState != StateMachine.State.Delete)
+        {
+            return;
+        }
+        var employeeToDelete = AppData.CurrentEmployee;
+        AppData.CurrentEmployee = null;
+
+        if (!success)
+        {
+            return;
+        }
+
+        var response = await Http.DeleteAsync($"employees?id={employeeToDelete.Id}");
+
+        if (!response.IsSuccessStatusCode)
+        {
+            StateMachine.SetIdleState();
+            modalOpen = true;
+            modalTitle = "Ошибка удаления";
+            modalText = "Не удалось удалить сотрудника";
+            return;
+        }
+
+        employees.Remove(employeeToDelete);
+    }
+
+    private void DeleteButton_OnClick(Employee employee)
+    {
+        AppData.CurrentEmployee = employee;
+        modalTitle = "Подтверждение удаления";
+        modalText = "Вы действительно хотите удалить сотрудника?";
+        modalOpen = true;
+        StateMachine.SetDeleteState();
+    }
+
+    private void EmployeeAddButton_OnClick()
+    {
+        StateMachine.SetAddState();
+        AppData.CurrentEmployee = null;
+        NavigationManager.NavigateTo("employeeInfo");
+    }
+
+}

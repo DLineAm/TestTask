@@ -1,0 +1,174 @@
+﻿@using TestTask.Shared
+@using System.Net
+@using TestTask.Client.Services
+@inject HttpClient Http
+@inject AppData AppData
+@inject StateMachine StateMachine
+@inject NavigationManager NavigationManager
+@inject EventAggregator EventAggregator
+<div>
+    <a class="sidebar__title" href="">Подразделения</a>
+</div>
+
+
+
+@if (divisions == null)
+{
+    <span style="color: white">Загрузка</span>
+}
+else
+{
+    <div>
+        <button @onclick="DivisionAddButton_OnClick" class="main--btn">Добавить подразделение</button>
+    </div>
+    <div>
+        <ul>
+            @foreach (var division in divisions.Where(d => d.DivisionId == null))
+            {
+                <li>
+                        <a href="@GetDivisionHrefById(division.Id)" style="cursor: pointer">@division.Title</a>
+                        <img src="css/delete.svg" style="cursor: pointer" @onclick="() => DeleteDivisionButton_OnClick(division)" alt=""/>
+                        <img src="css/edit.svg" style="cursor: pointer" @onclick="() => ChangeDivisionButton_OnClick(division)" alt=""/>
+                        @if (division.SubDivisions != null)
+                        {
+                            @(GetList(division, @<div></div>))
+                        }
+                    </li>
+            }
+        </ul>
+    </div>
+}
+
+@if (modalOpen)
+{
+    <Modal Title="@modalTitle"
+           Text="@modalText"
+           OnClose="Modal_OnClose"></Modal>
+}
+
+@code {
+    private List<Division> divisions;
+    private bool collapseNavMenu = true;
+    private string modalTitle;
+    private string modalText;
+    private bool modalOpen;
+
+    private string NavMenuCssClass => collapseNavMenu ? "collapse" : null;
+
+    protected override async Task OnInitializedAsync()
+    {
+        EventAggregator.DivisionCollectionChanged += async () =>
+        {
+            await GetDivisions();
+            StateHasChanged();
+        };
+        await GetDivisions();
+    }
+
+    private async Task GetDivisions()
+    {
+        divisions = await Http.GetFromJsonAsync<List<Division>>("divisions");
+        AppData.Divisions = divisions;
+    }
+
+    private void ToggleNavMenu()
+    {
+        collapseNavMenu = !collapseNavMenu;
+    }
+
+    private string GetDivisionHrefById(int divisionId)
+    {
+        return "employees/" + divisionId;
+    }
+
+    private RenderFragment GetList(Division division, RenderFragment markup)
+    {
+        foreach (var subDivision in division.SubDivisions)
+        {
+            markup += @<li>
+                          <div class="pd1248 mgbt10">
+                              <a href="@GetDivisionHrefById(subDivision.Id)" style="cursor: pointer">@subDivision.Title</a>
+                              <img src="css/delete.svg" style="cursor: pointer" @onclick="() => DeleteDivisionButton_OnClick(subDivision)" alt=""/>
+                              <img src="css/edit.svg" style="cursor: pointer" @onclick="() => ChangeDivisionButton_OnClick(subDivision)" alt=""/>
+                          </div>
+                      </li>;
+                          
+                          if (subDivision.SubDivisions != null)
+                          {
+                              markup += GetList(subDivision, @<div></div>);
+                          }
+
+        }
+        return @<ul>@markup</ul>;
+    }
+
+    private void List_OnDrop(DragEventArgs args)
+    {
+        
+    }
+
+    private void List_OnDragEnter(DragEventArgs args)
+    {
+        
+    }
+
+    private void List_OnDragLeave(DragEventArgs args)
+    {
+        
+    }
+
+    private void DivisionAddButton_OnClick()
+    {
+        StateMachine.SetAddState();
+        NavigationManager.NavigateTo("divisionInfo");
+    }
+
+    private void DeleteDivisionButton_OnClick(Division division)
+    {
+        AppData.CurrentDivision = division;
+        modalTitle = "Подтверждение удаления";
+        modalText = "Вы действительно хотите удалить подразделение?";
+        modalOpen = true;
+        StateMachine.SetDeleteState();
+    }
+
+    private async Task Modal_OnClose(bool success)
+    {
+        modalOpen = false;
+        if (StateMachine.CurrentState != StateMachine.State.Delete)
+        {
+            return;
+        }
+
+        var divisionToDelete = AppData.CurrentDivision;
+        AppData.CurrentDivision = null;
+
+        if (!success)
+        {
+            return;
+        }
+
+        var response = await Http.DeleteAsync($"divisions?id={divisionToDelete.Id}");
+
+        if (!response.IsSuccessStatusCode)
+        {
+            StateMachine.SetIdleState();
+            modalOpen = true;
+            modalTitle = "Ошибка удаления";
+            modalText = "Не удалось удалить подразделение";
+            return;
+        }
+
+        //divisions.Remove(divisionToDelete);
+        await GetDivisions();
+    }
+
+    private void ChangeDivisionButton_OnClick(Division division)
+    {
+        StateMachine.SetChangeState();
+        AppData.CurrentDivision = division;
+
+        NavigationManager.NavigateTo("divisionInfo");
+    }
+}
+

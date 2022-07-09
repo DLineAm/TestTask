@@ -1,0 +1,121 @@
+﻿@page "/employeeInfo"
+@using TestTask.Shared
+@using TestTask.Client.Services
+@using Newtonsoft.Json
+@using System.Text
+@using System.Diagnostics
+@inject AppData AppData
+@inject HttpClient Http
+@inject NavigationManager NavigationManager
+@inject StateMachine StateMachine
+<h3 class="info__title">Информация о сотруднике</h3>
+
+<div>
+    <label for="lastname">Фамилия</label>
+    <input id="lastname" placeholder="Фамилия" @bind-value="@employee.LastName" />
+</div>
+<div>
+    <label for="firstname">Имя</label>
+    <input id="firstname" placeholder="Имя" @bind-value="@employee.FirstName" />
+</div>
+<div>
+    <label for="middlename">Отчество</label>
+    <input id="middlename" placeholder="Отчество" @bind-value="@employee.MiddleName" />
+</div>
+<div>
+    <label for="birth">Дата рождения</label>
+    <input id="birth" type="date" placeholder="Выберите дату" @bind-value="@employee.DateOfBirth" />
+</div>
+<div>
+    <label for="gender">Пол</label>
+    <select id="gender" @bind="employee.GenderId">
+        @foreach (var gender in genders)
+        {
+            <option value="@gender.Id">@gender.Title</option>
+        }
+    </select>
+</div>
+<div>
+    <input type="checkbox" @bind="@employee.HasDriverLicense"/> Есть водительские права 
+</div>
+<div>
+    <label for="division">Подразделение</label>
+    <select id="division" @bind="employee.DivisionId"
+            class="custom-select-sm">
+        @foreach (var division in divisions)
+        {
+            <option value="@division.Id">@division.Title</option>
+        }
+    </select>
+</div>
+<div hidden="@isErrorHidden">
+    @errorText
+</div>
+
+<button @onclick="async () => await Apply()" class="main--btn inverted">Применить</button>
+
+@code {
+    private Employee employee;
+    private IEnumerable<Division> divisions;
+    private IEnumerable<Gender> genders;
+    private bool isErrorHidden = true;
+    private string errorText;
+    private int divisionId;
+
+    protected override void OnInitialized()
+    {
+        genders = AppData.Genders;
+        var firstGender = genders.First();
+        employee = StateMachine.CurrentState == StateMachine.State.Add 
+            ? new Employee{Gender = firstGender, GenderId = firstGender.Id} 
+            : AppData.CurrentEmployee;
+        divisions = AppData.Divisions;
+        divisionId = employee.DivisionId;
+    }
+
+    private async Task Apply()
+    {
+        if (string.IsNullOrWhiteSpace(employee.FirstName) ||
+            string.IsNullOrWhiteSpace(employee.LastName) ||
+            string.IsNullOrWhiteSpace(employee.MiddleName))
+        {
+            errorText = "Все поля должны быть заполнены!";
+            isErrorHidden = false;
+            return;
+        }
+
+        isErrorHidden = true;
+
+        employee.Division = null;
+        employee.Gender = null;
+
+        var response = StateMachine.CurrentState == StateMachine.State.Change
+        ? await PutEmployeeAsync()
+        : await PostEmployeeAsync();
+
+        if (!response.IsSuccessStatusCode)
+        {
+            Debug.WriteLine(await response.Content.ReadAsStringAsync());
+            return;
+        }
+
+        NavigationManager.NavigateTo($"employees/{divisionId}");
+    }
+
+    private async Task<HttpResponseMessage> PostEmployeeAsync()
+    {
+        var response = await Http.PostAsJsonAsync("employees", employee);
+        return response;
+    }
+
+    private async Task<HttpResponseMessage> PutEmployeeAsync()
+    {
+        var json = JsonConvert.SerializeObject(employee);
+
+        var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+        var response = await Http.PutAsync("employees/change", content);
+        return response;
+    }
+
+}

@@ -1,0 +1,168 @@
+﻿@page "/divisionInfo"
+@using TestTask.Shared
+@using TestTask.Client.Services
+@using System.Diagnostics
+@inject AppData AppData
+@inject StateMachine StateMachine
+@inject HttpClient Http
+@inject EventAggregator EventAggregator
+@inject NavigationManager NavigationManager
+<h3 class="info__title">Информация о подразделении</h3>
+
+<div>
+    <label for="title">Наименование</label>
+    <input id="title" placeholder="Наименование" @bind-value="@division.Title" />
+</div>
+<div>
+    <label for="date">Дата создания</label>
+    <input type="date" id="date" placeholder="Выберите дату" @bind-value="@division.CreateDate" />
+</div>
+<div>
+    <label for="parent">Является подразделением</label>
+    <select id="parent" @bind="division.DivisionId">
+        @foreach (var divisionFromData in divisions)
+        {
+            <option value="@divisionFromData.Id">@divisionFromData.Title</option>
+        }
+    </select>
+</div>
+<div>
+    <label for="desc">Описание</label>
+    <textarea id="desc" @bind="division.Description"></textarea>
+</div>
+<div>
+    <div>
+        <label for="child">Подразделения</label>
+        
+        <select id="child" @bind="subDivisionId">
+            @foreach (var divisionFromData in divisionsToAdd)
+            {
+                <option value="@divisionFromData.Id">@divisionFromData.Title</option>
+            }
+        </select>
+        <button @onclick="AddSubDivision" class="main--btn inverted">Добавить подразделение</button>
+    </div>
+    <div class="subdiv__wrapper">
+        @if (subDivisionsToAdd != null)
+        {
+            @foreach (var subDivision in subDivisionsToAdd)
+            {
+                <div class="subdiv__item">
+                    <div>
+                        <span>@subDivision.Title</span>
+                        <span>@subDivision.CreateDate.ToShortDateString()</span>
+                    </div>
+                    
+                    <button @onclick="() => DeleteSubDivision(subDivision)" class="main--btn inverted">Удалить</button>
+                </div>
+            }
+        }
+    </div>
+</div>
+
+<button @onclick="async () => await ApplyButton_OnClick()" class="main--btn inverted">Принять</button>
+
+@code {
+    private Division division;
+    private int? subDivisionId;
+    private List<Division> divisions;
+    private List<Division> divisionsToAdd;
+    private readonly List<Division> subDivisionsToAdd = new List<Division>();
+
+    protected override void OnInitialized()
+    {
+        division = StateMachine.CurrentState == StateMachine.State.Add
+            ? new Division()
+            : AppData.CurrentDivision;
+
+        var divisionsList = AppData.Divisions.Where(d => d.Id != division.Id).ToList();
+        divisionsList.ForEach(d =>
+        {
+            d.ParentDivision = null;
+            d.Employees = new HashSet<Employee>();
+            d.SubDivisions = new HashSet<Division>();
+        });
+        divisionsToAdd = divisionsList;
+        divisionsList.Insert(0, new Division { Title = "Нет" });
+        divisions = divisionsList;
+
+        if (StateMachine.CurrentState == StateMachine.State.Change && division.SubDivisions != null)
+        {
+            FillSubDivisions();
+        }
+    }
+
+    private void FillSubDivisions()
+    {
+        var subDivisions = division.SubDivisions.ToList();
+
+        foreach (var subDivision in subDivisions)
+        {
+            var subDivisionFromList = divisionsToAdd.FirstOrDefault(d => d.Id == subDivision.Id);
+            divisions.Remove(subDivisionFromList);
+            divisionsToAdd.Remove(subDivisionFromList);
+            subDivisionsToAdd.Add(subDivisionFromList);
+        }
+    }
+
+    private void AddSubDivision()
+    {
+        var divisionToAdd = divisionsToAdd.FirstOrDefault(d => d.Id == subDivisionId);
+
+        if (divisionToAdd == null)
+        {
+            return;
+        }
+
+        divisions.Remove(divisionToAdd);
+        divisionsToAdd.Remove(divisionToAdd);
+        subDivisionsToAdd.Add(divisionToAdd);
+
+        subDivisionId = null;
+    }
+
+    private async Task ApplyButton_OnClick()
+    {
+        if (string.IsNullOrWhiteSpace(division.Title))
+        {
+            return;
+        }
+
+        division.ParentDivision = null;
+        division.Employees = new HashSet<Employee>();
+        division.SubDivisions = subDivisionsToAdd;
+
+        var response = StateMachine.CurrentState == StateMachine.State.Change 
+            ? await PutDivisionAsync() 
+            : await PostDivisionAsync();
+
+        if (!response.IsSuccessStatusCode)
+        {
+            Debug.WriteLine(await response.Content.ReadAsStringAsync());
+            return;
+        }
+
+        EventAggregator.InvokeDivisionCollectionChanged();
+
+        NavigationManager.NavigateTo("");
+    }
+
+    private async Task<HttpResponseMessage> PutDivisionAsync()
+    {
+        var response = await Http.PutAsJsonAsync("divisions", division);
+        return response;
+    }
+
+    private async Task<HttpResponseMessage> PostDivisionAsync()
+    {
+        var response = await Http.PostAsJsonAsync("divisions", division);
+        return response;
+    }
+
+    private void DeleteSubDivision(Division subDivision)
+    {
+        subDivisionsToAdd.Remove(subDivision);
+        divisionsToAdd.Add(subDivision);
+    }
+
+}
