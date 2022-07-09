@@ -1,0 +1,3 @@
+is_global = true
+build_property.RootNamespace = TestTask.Server
+build_property.ProjectDir = G:\TestTask\TestTask\Server\

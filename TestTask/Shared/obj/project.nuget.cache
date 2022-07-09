@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "dgSpecHash": "afbTulbGBVJl4dh1qu9NpGp7iDypUh+p8aF1VAQmgXJHs0+QCkCTQbKcjf4Entt486YLw6O2KQr3PsZlhLy7Jg==",
+  "success": true,
+  "projectFilePath": "G:\\TestTask\\TestTask\\Shared\\TestTask.Shared.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\pocht\\.nuget\\packages\\newtonsoft.json\\13.0.1\\newtonsoft.json.13.0.1.nupkg.sha512"
+  ],
+  "logs": []
+}
