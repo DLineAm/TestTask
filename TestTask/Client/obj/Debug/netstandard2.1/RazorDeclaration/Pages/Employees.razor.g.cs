@@ -96,6 +96,13 @@ using System.Diagnostics;
 #line default
 #line hidden
 #nullable disable
+#nullable restore
+#line 5 "G:\TestTask\TestTask\Client\Pages\Employees.razor"
+using System.Collections;
+
+#line default
+#line hidden
+#nullable disable
     [Microsoft.AspNetCore.Components.RouteAttribute("/employees/{Id:int}")]
     public partial class Employees : Microsoft.AspNetCore.Components.ComponentBase
     {
@@ -105,15 +112,17 @@ using System.Diagnostics;
         }
         #pragma warning restore 1998
 #nullable restore
-#line 42 "G:\TestTask\TestTask\Client\Pages\Employees.razor"
+#line 56 "G:\TestTask\TestTask\Client\Pages\Employees.razor"
        
     [Parameter]
     public int Id { get; set; }
 
-    private List<Employee> employees;
-    private bool modalOpen;
-    private string modalText;
-    private string modalTitle;
+    private List<Employee> _employees;
+    private bool _modalOpen;
+    private string _modalText;
+    private string _modalTitle;
+    private List<Employee> _existEmployees;
+
 
     protected override async void OnParametersSet()
     {
@@ -122,8 +131,19 @@ using System.Diagnostics;
 
     private async Task LoadEmployees()
     {
-        employees = new List<Employee>();
-        employees = await Http.GetFromJsonAsync<List<Employee>>($"employees?divisionId={AppData.CurrentDivision.Id}");
+        _existEmployees = new List<Employee>();
+
+        var division = _appData.CurrentDivision;
+        if (division.SubDivisions != null && division.SubDivisions.Count > 0)
+        {
+
+            foreach (var subDivision in division.SubDivisions)
+            {
+                GetEmployeesInSubDivisions(subDivision);
+            }
+        }
+        _employees = new List<Employee>();
+        _employees = await _http.GetFromJsonAsync<List<Employee>>($"employees?divisionId={_appData.CurrentDivision.Id}");
         StateHasChanged();
     }
 
@@ -134,64 +154,128 @@ using System.Diagnostics;
 
     private void EmployeeChangeButton_OnClick(Employee employee)
     {
-        StateMachine.SetChangeState();
-        AppData.CurrentEmployee = employee;
-        NavigationManager.NavigateTo("employeeInfo");
+        _stateMachine.SetChangeState();
+        _appData.CurrentDivisionFromEmployee = _appData.Divisions.FirstOrDefault(d => d.Id == employee.DivisionId);
+        _appData.CurrentEmployee = employee;
+        _navigationManager.NavigateTo("employeeInfo");
     }
 
     private async Task Modal_OnClose(bool success)
     {
-        modalOpen = false;
-        if (StateMachine.CurrentState != StateMachine.State.Delete)
+        _modalOpen = false;
+        if (_stateMachine.CurrentState != StateMachine.State.Delete)
         {
             return;
         }
-        var employeeToDelete = AppData.CurrentEmployee;
-        AppData.CurrentEmployee = null;
+        var employeeToDelete = _appData.CurrentEmployee;
+        _appData.CurrentEmployee = null;
 
         if (!success)
         {
             return;
         }
 
-        var response = await Http.DeleteAsync($"employees?id={employeeToDelete.Id}");
+        var response = await _http.DeleteAsync($"employees?id={employeeToDelete.Id}");
 
         if (!response.IsSuccessStatusCode)
         {
-            StateMachine.SetIdleState();
-            modalOpen = true;
-            modalTitle = "Ошибка удаления";
-            modalText = "Не удалось удалить сотрудника";
+            _stateMachine.SetIdleState();
+            _modalOpen = true;
+            _modalTitle = "Ошибка удаления";
+            _modalText = "Не удалось удалить сотрудника";
             return;
         }
 
-        employees.Remove(employeeToDelete);
+        _employees.Remove(employeeToDelete);
     }
 
     private void DeleteButton_OnClick(Employee employee)
     {
-        AppData.CurrentEmployee = employee;
-        modalTitle = "Подтверждение удаления";
-        modalText = "Вы действительно хотите удалить сотрудника?";
-        modalOpen = true;
-        StateMachine.SetDeleteState();
+        _appData.CurrentEmployee = employee;
+        _modalTitle = "Подтверждение удаления";
+        _modalText = "Вы действительно хотите удалить сотрудника?";
+        _modalOpen = true;
+        _stateMachine.SetDeleteState();
     }
 
     private void EmployeeAddButton_OnClick()
     {
-        StateMachine.SetAddState();
-        AppData.CurrentEmployee = null;
-        NavigationManager.NavigateTo("employeeInfo");
+        _stateMachine.SetAddState();
+        _appData.CurrentEmployee = null;
+        _navigationManager.NavigateTo("employeeInfo");
+    }
+
+    private RenderFragment GetEmployeesInSubDivisions(RenderFragment fragment)
+    {
+        foreach (var employee in _existEmployees)
+        {
+            fragment +=
+    
+
+#line default
+#line hidden
+#nullable disable
+        (__builder2) => {
+            __builder2.OpenElement(0, "div");
+            __builder2.AddAttribute(1, "class", "subdiv__item");
+            __builder2.AddMarkupContent(2, "\r\n        ");
+            __builder2.OpenElement(3, "span");
+            __builder2.AddAttribute(4, "style", "font-size: 20px; font-weight: 700");
+#nullable restore
+#line 154 "G:\TestTask\TestTask\Client\Pages\Employees.razor"
+__builder2.AddContent(5, employee.FullName);
+
+#line default
+#line hidden
+#nullable disable
+            __builder2.AddContent(6, " (");
+#nullable restore
+#line 154 "G:\TestTask\TestTask\Client\Pages\Employees.razor"
+__builder2.AddContent(7, _appData.Divisions.FirstOrDefault(d => d.Id == employee.DivisionId)?.Title);
+
+#line default
+#line hidden
+#nullable disable
+            __builder2.AddContent(8, ")");
+            __builder2.CloseElement();
+            __builder2.AddMarkupContent(9, "\r\n        ");
+            __builder2.AddMarkupContent(10, @"<div>
+            <img style=""width: 20px; cursor: pointer"" src=""css/edit--green.svg"" @onclick=""() => EmployeeChangeButton_OnClick(employee)"" alt>
+            <img style=""width: 20px; cursor: pointer"" src=""css/delete--green.svg"" @onclick=""() => DeleteButton_OnClick(employee)"" alt>
+        </div>
+    ");
+            __builder2.CloseElement();
+        }
+#nullable restore
+#line 159 "G:\TestTask\TestTask\Client\Pages\Employees.razor"
+          ;
+        }
+
+        return fragment;
+    }
+
+    private void GetEmployeesInSubDivisions(Division division)
+    {
+        var employeesFromDivision = division.Employees.Where(e => _existEmployees.All(emp => emp.Id != e.Id)).ToList();
+
+        _existEmployees.AddRange(employeesFromDivision);
+
+        if (division.SubDivisions == null || division.SubDivisions.Count == 0) return;
+
+        foreach (var subDivision in division.SubDivisions.ToList())
+        {
+            GetEmployeesInSubDivisions(subDivision);
+        }
     }
 
 
 #line default
 #line hidden
 #nullable disable
-        [global::Microsoft.AspNetCore.Components.InjectAttribute] private StateMachine StateMachine { get; set; }
-        [global::Microsoft.AspNetCore.Components.InjectAttribute] private AppData AppData { get; set; }
-        [global::Microsoft.AspNetCore.Components.InjectAttribute] private NavigationManager NavigationManager { get; set; }
-        [global::Microsoft.AspNetCore.Components.InjectAttribute] private HttpClient Http { get; set; }
+        [global::Microsoft.AspNetCore.Components.InjectAttribute] private StateMachine _stateMachine { get; set; }
+        [global::Microsoft.AspNetCore.Components.InjectAttribute] private AppData _appData { get; set; }
+        [global::Microsoft.AspNetCore.Components.InjectAttribute] private NavigationManager _navigationManager { get; set; }
+        [global::Microsoft.AspNetCore.Components.InjectAttribute] private HttpClient _http { get; set; }
     }
 }
 #pragma warning restore 1591

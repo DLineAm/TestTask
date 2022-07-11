@@ -17,6 +17,7 @@ namespace TestTask.Client.Services
 
         public Employee CurrentEmployee { get; set; }
         public Division CurrentDivision { get; set; }
+        public Division CurrentDivisionFromEmployee { get; set; }
         public IEnumerable<Division> Divisions { get; set; }
         public IEnumerable<Gender> Genders { get; private set; }
 

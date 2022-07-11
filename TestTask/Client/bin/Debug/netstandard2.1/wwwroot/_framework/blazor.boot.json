@@ -6,7 +6,7 @@
   "linkerEnabled": false,
   "resources": {
     "assembly": {
-      "TestTask.Client.dll": "sha256-4n0CWzU634haZy776FdJ7upEqM2tsBfJPd\/LWcT36Wk=",
+      "TestTask.Client.dll": "sha256-ynMouortc5OZRPgLJxJgpcTNsurAsQdKi8io4VDGLG0=",
       "Newtonsoft.Json.dll": "sha256-cs8pHUurDt0IqbB8YXPh560au3q3J\/1wRL9jBddRVmE=",
       "netstandard.dll": "sha256-\/zcPVM75OAY+joGVM8yIC1gO1SFYWP1CFERgQ8PJkfA=",
       "System.Xml.Linq.dll": "sha256-IPbQMdJxZXdk8HTlaPyXdQ6Zb82iZLphnM74yO4EURQ=",
@@ -62,7 +62,7 @@
       "Microsoft.JSInterop.WebAssembly.dll": "sha256-czNf3btAeBW\/vvID5LAfgcsNZ+GM3ssVuPaMflcg0rs="
     },
     "pdb": {
-      "TestTask.Client.pdb": "sha256-RhC0\/iEnia3gRlgYDA4ndWHkXTjRHExkI8W70NAI5sk=",
+      "TestTask.Client.pdb": "sha256-+KKcbyK\/knYZtvZzLTiyUTEliK4k5p9spfgkzrjQPag=",
       "TestTask.Shared.pdb": "sha256-wRg8sYfF8yTAlvtx4X5JEluMF0oiHVjVar+rr7chqDM="
     },
     "runtime": {

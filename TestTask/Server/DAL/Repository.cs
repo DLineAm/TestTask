@@ -5,6 +5,7 @@ using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using TestTask.Server.DAL.Context;
+using TestTask.Shared;
 
 namespace TestTask.Server.DAL
 {
@@ -21,9 +22,11 @@ namespace TestTask.Server.DAL
 
         private IQueryable<TEntity> GetEntities(bool ignoreAutoInclude)
         {
-            return ignoreAutoInclude
+            var query = ignoreAutoInclude
                 ? _dbSet.IgnoreAutoIncludes()
                 : _dbSet;
+
+            return query;
         }
 
         public IEnumerable<TEntity> Get(

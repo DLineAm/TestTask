@@ -4,93 +4,94 @@
 @using Newtonsoft.Json
 @using System.Text
 @using System.Diagnostics
-@inject AppData AppData
-@inject HttpClient Http
-@inject NavigationManager NavigationManager
-@inject StateMachine StateMachine
+@inject AppData _appData
+@inject HttpClient _http
+@inject NavigationManager _navigationManager
+@inject StateMachine _stateMachine
 <h3 class="info__title">Информация о сотруднике</h3>
 
 <div>
     <label for="lastname">Фамилия</label>
-    <input id="lastname" placeholder="Фамилия" @bind-value="@employee.LastName" />
+    <input id="lastname" placeholder="Фамилия" @bind-value="@_employee.LastName" />
 </div>
 <div>
     <label for="firstname">Имя</label>
-    <input id="firstname" placeholder="Имя" @bind-value="@employee.FirstName" />
+    <input id="firstname" placeholder="Имя" @bind-value="@_employee.FirstName" />
 </div>
 <div>
     <label for="middlename">Отчество</label>
-    <input id="middlename" placeholder="Отчество" @bind-value="@employee.MiddleName" />
+    <input id="middlename" placeholder="Отчество" @bind-value="@_employee.MiddleName" />
 </div>
 <div>
     <label for="birth">Дата рождения</label>
-    <input id="birth" type="date" placeholder="Выберите дату" @bind-value="@employee.DateOfBirth" />
+    <input id="birth" type="date" placeholder="Выберите дату" @bind-value="@_employee.DateOfBirth" />
 </div>
 <div>
     <label for="gender">Пол</label>
-    <select id="gender" @bind="employee.GenderId">
-        @foreach (var gender in genders)
+    <select id="gender" @bind="_employee.GenderId">
+        @foreach (var gender in _genders)
         {
             <option value="@gender.Id">@gender.Title</option>
         }
     </select>
 </div>
 <div>
-    <input type="checkbox" @bind="@employee.HasDriverLicense"/> Есть водительские права 
+    <input type="checkbox" @bind="@_employee.HasDriverLicense"/> Есть водительские права 
 </div>
 <div>
     <label for="division">Подразделение</label>
-    <select id="division" @bind="employee.DivisionId"
+    <select id="division" @bind="_employee.DivisionId"
             class="custom-select-sm">
-        @foreach (var division in divisions)
+        @foreach (var division in _divisions)
         {
             <option value="@division.Id">@division.Title</option>
         }
     </select>
 </div>
-<div hidden="@isErrorHidden">
-    @errorText
+<div hidden="@_isErrorHidden">
+    @_errorText
 </div>
 
 <button @onclick="async () => await Apply()" class="main--btn inverted">Применить</button>
 
 @code {
-    private Employee employee;
-    private IEnumerable<Division> divisions;
-    private IEnumerable<Gender> genders;
-    private bool isErrorHidden = true;
-    private string errorText;
-    private int divisionId;
+    private Employee _employee;
+    private IEnumerable<Division> _divisions;
+    private IEnumerable<Gender> _genders;
+    private bool _isErrorHidden = true;
+    private string _errorText;
+    private int _divisionId;
 
     protected override void OnInitialized()
     {
-        genders = AppData.Genders;
-        var firstGender = genders.First();
-        employee = StateMachine.CurrentState is StateMachine.State.Add 
+        _genders = _appData.Genders;
+        var firstGender = _genders.First();
+        _employee = _stateMachine.CurrentState is StateMachine.State.Add 
             ? new Employee{Gender = firstGender, GenderId = firstGender.Id} 
-            : AppData.CurrentEmployee;
-        divisions = AppData.Divisions;
-        divisionId = employee.DivisionId = StateMachine.CurrentState is StateMachine.State.Add 
-            ? AppData.CurrentDivision.Id : employee.DivisionId;
+            : _appData.CurrentEmployee;
+        _divisions = _appData.Divisions;
+        _divisionId = _appData.CurrentDivision.Id;
+        _employee.DivisionId = _stateMachine.CurrentState is StateMachine.State.Add 
+            ? _appData.CurrentDivision.Id : _appData.CurrentDivisionFromEmployee.Id;
     }
 
     private async Task Apply()
     {
-        if (string.IsNullOrWhiteSpace(employee.FirstName) ||
-            string.IsNullOrWhiteSpace(employee.LastName) ||
-            string.IsNullOrWhiteSpace(employee.MiddleName))
+        if (string.IsNullOrWhiteSpace(_employee.FirstName) ||
+            string.IsNullOrWhiteSpace(_employee.LastName) ||
+            string.IsNullOrWhiteSpace(_employee.MiddleName))
         {
-            errorText = "Все поля должны быть заполнены!";
-            isErrorHidden = false;
+            _errorText = "Все поля должны быть заполнены!";
+            _isErrorHidden = false;
             return;
         }
 
-        isErrorHidden = true;
+        _isErrorHidden = true;
 
-        employee.Division = null;
-        employee.Gender = null;
+        _employee.Division = null;
+        _employee.Gender = null;
 
-        var response = StateMachine.CurrentState is StateMachine.State.Change
+        var response = _stateMachine.CurrentState is StateMachine.State.Change
         ? await PutEmployeeAsync()
         : await PostEmployeeAsync();
 
@@ -100,22 +101,22 @@
             return;
         }
 
-        NavigationManager.NavigateTo($"employees/{divisionId}");
+        _navigationManager.NavigateTo($"employees/{_divisionId}");
     }
 
     private async Task<HttpResponseMessage> PostEmployeeAsync()
     {
-        var response = await Http.PostAsJsonAsync("employees", employee);
+        var response = await _http.PostAsJsonAsync("employees", _employee);
         return response;
     }
 
     private async Task<HttpResponseMessage> PutEmployeeAsync()
     {
-        var json = JsonConvert.SerializeObject(employee);
+        var json = JsonConvert.SerializeObject(_employee);
 
         var content = new StringContent(json, Encoding.UTF8, "application/json");
 
-        var response = await Http.PutAsync("employees/change", content);
+        var response = await _http.PutAsync("employees/change", content);
         return response;
     }
 

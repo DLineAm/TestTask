@@ -106,17 +106,15 @@ using TestTask.Client.Services;
 #nullable restore
 #line 49 "G:\TestTask\TestTask\Client\Shared\NavMenu.razor"
        
-    private List<Division> divisions;
-    private bool collapseNavMenu = true;
-    private string modalTitle;
-    private string modalText;
-    private bool modalOpen;
-
-    private string NavMenuCssClass => collapseNavMenu ? "collapse" : null;
+    private List<Division> _divisions;
+    private bool _collapseNavMenu = true;
+    private string _modalTitle;
+    private string _modalText;
+    private bool _modalOpen;
 
     protected override async Task OnInitializedAsync()
     {
-        EventAggregator.DivisionCollectionChanged += async () =>
+        _eventAggregator.DivisionCollectionChanged += async () =>
         {
             await GetDivisions();
             StateHasChanged();
@@ -126,8 +124,8 @@ using TestTask.Client.Services;
 
     private async Task GetDivisions()
     {
-        divisions = await Http.GetFromJsonAsync<List<Division>>("divisions");
-        AppData.Divisions = divisions;
+        _divisions = await _http.GetFromJsonAsync<List<Division>>("divisions");
+        _appData.Divisions = _divisions;
     }
 
     private string GetDivisionHrefById(int divisionId)
@@ -153,7 +151,7 @@ using TestTask.Client.Services;
             __builder2.OpenElement(5, "a");
             __builder2.AddAttribute(6, "href", 
 #nullable restore
-#line 85 "G:\TestTask\TestTask\Client\Shared\NavMenu.razor"
+#line 83 "G:\TestTask\TestTask\Client\Shared\NavMenu.razor"
                                         GetDivisionHrefById(subDivision.Id)
 
 #line default
@@ -163,7 +161,7 @@ using TestTask.Client.Services;
             __builder2.AddAttribute(7, "style", "cursor: pointer");
             __builder2.AddAttribute(8, "@onclick", "() => SetCurrentDivision(subDivision)");
 #nullable restore
-#line 85 "G:\TestTask\TestTask\Client\Shared\NavMenu.razor"
+#line 83 "G:\TestTask\TestTask\Client\Shared\NavMenu.razor"
 __builder2.AddContent(9, subDivision.Title);
 
 #line default
@@ -179,11 +177,10 @@ __builder2.AddContent(9, subDivision.Title);
             __builder2.CloseElement();
         }
 #nullable restore
-#line 89 "G:\TestTask\TestTask\Client\Shared\NavMenu.razor"
+#line 87 "G:\TestTask\TestTask\Client\Shared\NavMenu.razor"
                            ;
                           
                           if (subDivision.SubDivisions != null)
-                          {
                               markup += GetList(subDivision, 
 
 #line default
@@ -193,10 +190,8 @@ __builder2.AddContent(9, subDivision.Title);
             __builder2.AddMarkupContent(12, "<div></div>");
         }
 #nullable restore
-#line 93 "G:\TestTask\TestTask\Client\Shared\NavMenu.razor"
+#line 90 "G:\TestTask\TestTask\Client\Shared\NavMenu.razor"
                                                                          );
-                          }
-
         }
         return 
 
@@ -206,7 +201,7 @@ __builder2.AddContent(9, subDivision.Title);
         (__builder2) => {
             __builder2.OpenElement(13, "ul");
 #nullable restore
-#line 97 "G:\TestTask\TestTask\Client\Shared\NavMenu.razor"
+#line 92 "G:\TestTask\TestTask\Client\Shared\NavMenu.razor"
 __builder2.AddContent(14, markup);
 
 #line default
@@ -215,49 +210,45 @@ __builder2.AddContent(14, markup);
             __builder2.CloseElement();
         }
 #nullable restore
-#line 97 "G:\TestTask\TestTask\Client\Shared\NavMenu.razor"
+#line 92 "G:\TestTask\TestTask\Client\Shared\NavMenu.razor"
                                 ;
     }
 
     private void DivisionAddButton_OnClick()
     {
-        StateMachine.SetAddState();
-        NavigationManager.NavigateTo("divisionInfo");
+        _stateMachine.SetAddState();
+        _navigationManager.NavigateTo("divisionInfo");
     }
 
     private void DeleteDivisionButton_OnClick(Division division)
     {
-        AppData.CurrentDivision = division;
-        modalTitle = "Подтверждение удаления";
-        modalText = "Вы действительно хотите удалить подразделение?";
-        modalOpen = true;
-        StateMachine.SetDeleteState();
+        _appData.CurrentDivision = division;
+        _modalTitle = "Подтверждение удаления";
+        _modalText = "Вы действительно хотите удалить подразделение?";
+        _modalOpen = true;
+        _stateMachine.SetDeleteState();
     }
 
     private async Task Modal_OnClose(bool success)
     {
-        modalOpen = false;
-        if (StateMachine.CurrentState != StateMachine.State.Delete)
-        {
+        _modalOpen = false;
+        if (_stateMachine.CurrentState != StateMachine.State.Delete)
             return;
-        }
 
-        var divisionToDelete = AppData.CurrentDivision;
-        AppData.CurrentDivision = null;
+        var divisionToDelete = _appData.CurrentDivision;
+        _appData.CurrentDivision = null;
 
         if (!success)
-        {
             return;
-        }
 
-        var response = await Http.DeleteAsync($"divisions?id={divisionToDelete.Id}");
+        var response = await _http.DeleteAsync($"divisions?id={divisionToDelete.Id}");
 
         if (!response.IsSuccessStatusCode)
         {
-            StateMachine.SetIdleState();
-            modalOpen = true;
-            modalTitle = "Ошибка удаления";
-            modalText = "Не удалось удалить подразделение";
+            _stateMachine.SetIdleState();
+            _modalOpen = true;
+            _modalTitle = "Ошибка удаления";
+            _modalText = "Не удалось удалить подразделение";
             return;
         }
 
@@ -266,25 +257,25 @@ __builder2.AddContent(14, markup);
 
     private void ChangeDivisionButton_OnClick(Division division)
     {
-        StateMachine.SetChangeState();
-        AppData.CurrentDivision = division;
+        _stateMachine.SetChangeState();
+        _appData.CurrentDivision = division;
 
-        NavigationManager.NavigateTo("divisionInfo");
+        _navigationManager.NavigateTo("divisionInfo");
     }
 
     private void SetCurrentDivision(Division division)
     {
-        AppData.CurrentDivision = division;
+        _appData.CurrentDivision = division;
     }
 
 #line default
 #line hidden
 #nullable disable
-        [global::Microsoft.AspNetCore.Components.InjectAttribute] private EventAggregator EventAggregator { get; set; }
-        [global::Microsoft.AspNetCore.Components.InjectAttribute] private NavigationManager NavigationManager { get; set; }
-        [global::Microsoft.AspNetCore.Components.InjectAttribute] private StateMachine StateMachine { get; set; }
-        [global::Microsoft.AspNetCore.Components.InjectAttribute] private AppData AppData { get; set; }
-        [global::Microsoft.AspNetCore.Components.InjectAttribute] private HttpClient Http { get; set; }
+        [global::Microsoft.AspNetCore.Components.InjectAttribute] private EventAggregator _eventAggregator { get; set; }
+        [global::Microsoft.AspNetCore.Components.InjectAttribute] private NavigationManager _navigationManager { get; set; }
+        [global::Microsoft.AspNetCore.Components.InjectAttribute] private StateMachine _stateMachine { get; set; }
+        [global::Microsoft.AspNetCore.Components.InjectAttribute] private AppData _appData { get; set; }
+        [global::Microsoft.AspNetCore.Components.InjectAttribute] private HttpClient _http { get; set; }
     }
 }
 #pragma warning restore 1591

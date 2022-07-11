@@ -121,42 +121,43 @@ using System.Diagnostics;
 #nullable restore
 #line 57 "G:\TestTask\TestTask\Client\Pages\EmployeeInfo.razor"
        
-    private Employee employee;
-    private IEnumerable<Division> divisions;
-    private IEnumerable<Gender> genders;
-    private bool isErrorHidden = true;
-    private string errorText;
-    private int divisionId;
+    private Employee _employee;
+    private IEnumerable<Division> _divisions;
+    private IEnumerable<Gender> _genders;
+    private bool _isErrorHidden = true;
+    private string _errorText;
+    private int _divisionId;
 
     protected override void OnInitialized()
     {
-        genders = AppData.Genders;
-        var firstGender = genders.First();
-        employee = StateMachine.CurrentState == StateMachine.State.Add 
+        _genders = _appData.Genders;
+        var firstGender = _genders.First();
+        _employee = _stateMachine.CurrentState is StateMachine.State.Add 
             ? new Employee{Gender = firstGender, GenderId = firstGender.Id} 
-            : AppData.CurrentEmployee;
-        divisions = AppData.Divisions;
-        divisionId = employee.DivisionId = StateMachine.CurrentState == StateMachine.State.Add 
-            ? AppData.CurrentDivision.Id : employee.DivisionId;
+            : _appData.CurrentEmployee;
+        _divisions = _appData.Divisions;
+        _divisionId = _appData.CurrentDivision.Id;
+        _employee.DivisionId = _stateMachine.CurrentState is StateMachine.State.Add 
+            ? _appData.CurrentDivision.Id : _appData.CurrentDivisionFromEmployee.Id;
     }
 
     private async Task Apply()
     {
-        if (string.IsNullOrWhiteSpace(employee.FirstName) ||
-            string.IsNullOrWhiteSpace(employee.LastName) ||
-            string.IsNullOrWhiteSpace(employee.MiddleName))
+        if (string.IsNullOrWhiteSpace(_employee.FirstName) ||
+            string.IsNullOrWhiteSpace(_employee.LastName) ||
+            string.IsNullOrWhiteSpace(_employee.MiddleName))
         {
-            errorText = "Все поля должны быть заполнены!";
-            isErrorHidden = false;
+            _errorText = "Все поля должны быть заполнены!";
+            _isErrorHidden = false;
             return;
         }
 
-        isErrorHidden = true;
+        _isErrorHidden = true;
 
-        employee.Division = null;
-        employee.Gender = null;
+        _employee.Division = null;
+        _employee.Gender = null;
 
-        var response = StateMachine.CurrentState == StateMachine.State.Change
+        var response = _stateMachine.CurrentState is StateMachine.State.Change
         ? await PutEmployeeAsync()
         : await PostEmployeeAsync();
 
@@ -166,22 +167,22 @@ using System.Diagnostics;
             return;
         }
 
-        NavigationManager.NavigateTo($"employees/{divisionId}");
+        _navigationManager.NavigateTo($"employees/{_divisionId}");
     }
 
     private async Task<HttpResponseMessage> PostEmployeeAsync()
     {
-        var response = await Http.PostAsJsonAsync("employees", employee);
+        var response = await _http.PostAsJsonAsync("employees", _employee);
         return response;
     }
 
     private async Task<HttpResponseMessage> PutEmployeeAsync()
     {
-        var json = JsonConvert.SerializeObject(employee);
+        var json = JsonConvert.SerializeObject(_employee);
 
         var content = new StringContent(json, Encoding.UTF8, "application/json");
 
-        var response = await Http.PutAsync("employees/change", content);
+        var response = await _http.PutAsync("employees/change", content);
         return response;
     }
 
@@ -189,10 +190,10 @@ using System.Diagnostics;
 #line default
 #line hidden
 #nullable disable
-        [global::Microsoft.AspNetCore.Components.InjectAttribute] private StateMachine StateMachine { get; set; }
-        [global::Microsoft.AspNetCore.Components.InjectAttribute] private NavigationManager NavigationManager { get; set; }
-        [global::Microsoft.AspNetCore.Components.InjectAttribute] private HttpClient Http { get; set; }
-        [global::Microsoft.AspNetCore.Components.InjectAttribute] private AppData AppData { get; set; }
+        [global::Microsoft.AspNetCore.Components.InjectAttribute] private StateMachine _stateMachine { get; set; }
+        [global::Microsoft.AspNetCore.Components.InjectAttribute] private NavigationManager _navigationManager { get; set; }
+        [global::Microsoft.AspNetCore.Components.InjectAttribute] private HttpClient _http { get; set; }
+        [global::Microsoft.AspNetCore.Components.InjectAttribute] private AppData _appData { get; set; }
     }
 }
 #pragma warning restore 1591

@@ -29,6 +29,7 @@ namespace TestTask.Server
             services.AddControllersWithViews()
                 .AddNewtonsoftJson(options =>
                 {
+                    options.SerializerSettings.MaxDepth = 1;
                     options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
 
                 });

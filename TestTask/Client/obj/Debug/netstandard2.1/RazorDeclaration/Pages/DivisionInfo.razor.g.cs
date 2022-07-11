@@ -107,76 +107,70 @@ using System.Diagnostics;
 #nullable restore
 #line 65 "G:\TestTask\TestTask\Client\Pages\DivisionInfo.razor"
        
-    private Division division;
-    private int? subDivisionId;
-    private List<Division> divisions;
-    private List<Division> divisionsToAdd;
-    private readonly List<Division> subDivisionsToAdd = new List<Division>();
+    private Division _division;
+    private int? _subDivisionId;
+    private List<Division> _divisions;
+    private List<Division> _divisionsToAdd;
+    private readonly List<Division> _subDivisionsToAdd = new List<Division>();
 
     protected override void OnInitialized()
     {
-        division = StateMachine.CurrentState == StateMachine.State.Add
+        _division = _stateMachine.CurrentState is StateMachine.State.Add
             ? new Division()
-            : AppData.CurrentDivision;
+            : _appData.CurrentDivision;
 
-        var divisionsList = AppData.Divisions.Where(d => d.Id != division.Id).ToList();
+        var divisionsList = _appData.Divisions.Where(d => d.Id != _division.Id).ToList();
         divisionsList.ForEach(d =>
         {
             d.ParentDivision = null;
             d.Employees = new HashSet<Employee>();
             d.SubDivisions = new HashSet<Division>();
         });
-        divisionsToAdd = divisionsList;
+        _divisionsToAdd = divisionsList;
         divisionsList.Insert(0, new Division { Title = "Нет" });
-        divisions = divisionsList;
+        _divisions = divisionsList;
 
-        if (StateMachine.CurrentState == StateMachine.State.Change && division.SubDivisions != null)
-        {
+        if (_stateMachine.CurrentState is StateMachine.State.Change && _division.SubDivisions != null)
             FillSubDivisions();
-        }
     }
 
     private void FillSubDivisions()
     {
-        var subDivisions = division.SubDivisions.ToList();
+        var subDivisions = _division.SubDivisions.ToList();
 
         foreach (var subDivision in subDivisions)
         {
-            var subDivisionFromList = divisionsToAdd.FirstOrDefault(d => d.Id == subDivision.Id);
-            divisions.Remove(subDivisionFromList);
-            divisionsToAdd.Remove(subDivisionFromList);
-            subDivisionsToAdd.Add(subDivisionFromList);
+            var subDivisionFromList = _divisionsToAdd.FirstOrDefault(d => d.Id == subDivision.Id);
+            _divisions.Remove(subDivisionFromList);
+            _divisionsToAdd.Remove(subDivisionFromList);
+            _subDivisionsToAdd.Add(subDivisionFromList);
         }
     }
 
     private void AddSubDivision()
     {
-        var divisionToAdd = divisionsToAdd.FirstOrDefault(d => d.Id == subDivisionId);
+        var divisionToAdd = _divisionsToAdd.FirstOrDefault(d => d.Id == _subDivisionId);
 
-        if (divisionToAdd == null)
-        {
+        if (divisionToAdd is null)
             return;
-        }
 
-        divisions.Remove(divisionToAdd);
-        divisionsToAdd.Remove(divisionToAdd);
-        subDivisionsToAdd.Add(divisionToAdd);
+        _divisions.Remove(divisionToAdd);
+        _divisionsToAdd.Remove(divisionToAdd);
+        _subDivisionsToAdd.Add(divisionToAdd);
 
-        subDivisionId = null;
+        _subDivisionId = null;
     }
 
     private async Task ApplyButton_OnClick()
     {
-        if (string.IsNullOrWhiteSpace(division.Title))
-        {
+        if (string.IsNullOrWhiteSpace(_division.Title))
             return;
-        }
 
-        division.ParentDivision = null;
-        division.Employees = new HashSet<Employee>();
-        division.SubDivisions = subDivisionsToAdd;
+        _division.ParentDivision = null;
+        _division.Employees = new HashSet<Employee>();
+        _division.SubDivisions = _subDivisionsToAdd;
 
-        var response = StateMachine.CurrentState == StateMachine.State.Change 
+        var response = _stateMachine.CurrentState is StateMachine.State.Change 
             ? await PutDivisionAsync() 
             : await PostDivisionAsync();
 
@@ -186,38 +180,38 @@ using System.Diagnostics;
             return;
         }
 
-        EventAggregator.InvokeDivisionCollectionChanged();
+        _eventAggregator.InvokeDivisionCollectionChanged();
 
-        NavigationManager.NavigateTo("");
+        _navigationManager.NavigateTo("");
     }
 
     private async Task<HttpResponseMessage> PutDivisionAsync()
     {
-        var response = await Http.PutAsJsonAsync("divisions", division);
+        var response = await _http.PutAsJsonAsync("divisions", _division);
         return response;
     }
 
     private async Task<HttpResponseMessage> PostDivisionAsync()
     {
-        var response = await Http.PostAsJsonAsync("divisions", division);
+        var response = await _http.PostAsJsonAsync("divisions", _division);
         return response;
     }
 
     private void DeleteSubDivision(Division subDivision)
     {
-        subDivisionsToAdd.Remove(subDivision);
-        divisionsToAdd.Add(subDivision);
+        _subDivisionsToAdd.Remove(subDivision);
+        _divisionsToAdd.Add(subDivision);
     }
 
 
 #line default
 #line hidden
 #nullable disable
-        [global::Microsoft.AspNetCore.Components.InjectAttribute] private NavigationManager NavigationManager { get; set; }
-        [global::Microsoft.AspNetCore.Components.InjectAttribute] private EventAggregator EventAggregator { get; set; }
-        [global::Microsoft.AspNetCore.Components.InjectAttribute] private HttpClient Http { get; set; }
-        [global::Microsoft.AspNetCore.Components.InjectAttribute] private StateMachine StateMachine { get; set; }
-        [global::Microsoft.AspNetCore.Components.InjectAttribute] private AppData AppData { get; set; }
+        [global::Microsoft.AspNetCore.Components.InjectAttribute] private NavigationManager _navigationManager { get; set; }
+        [global::Microsoft.AspNetCore.Components.InjectAttribute] private EventAggregator _eventAggregator { get; set; }
+        [global::Microsoft.AspNetCore.Components.InjectAttribute] private HttpClient _http { get; set; }
+        [global::Microsoft.AspNetCore.Components.InjectAttribute] private StateMachine _stateMachine { get; set; }
+        [global::Microsoft.AspNetCore.Components.InjectAttribute] private AppData _appData { get; set; }
     }
 }
 #pragma warning restore 1591
