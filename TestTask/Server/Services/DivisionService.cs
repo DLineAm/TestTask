@@ -7,7 +7,7 @@ namespace TestTask.Server.Services
 {
     public class DivisionService
     {
-        private UnitOfWork _unitOfWork;
+        private readonly UnitOfWork _unitOfWork;
 
         public DivisionService(UnitOfWork unitOfWork)
         {

@@ -6,7 +6,7 @@ namespace TestTask.Server.Services
 {
     public class GenderService
     {
-        private UnitOfWork _unitOfWork;
+        private readonly UnitOfWork _unitOfWork;
 
         public GenderService(UnitOfWork unitOfWork)
         {

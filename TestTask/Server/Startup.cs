@@ -9,6 +9,7 @@ using Newtonsoft.Json;
 
 using TestTask.Server.DAL;
 using TestTask.Server.DAL.Context;
+using TestTask.Server.Services;
 
 namespace TestTask.Server
 {
@@ -29,7 +30,6 @@ namespace TestTask.Server
             services.AddControllersWithViews()
                 .AddNewtonsoftJson(options =>
                 {
-                    options.SerializerSettings.MaxDepth = 1;
                     options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
 
                 });
@@ -37,6 +37,9 @@ namespace TestTask.Server
             services.AddDbContext<DatabaseContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("TestDB")));
             services.AddScoped<UnitOfWork>();
+            services.AddScoped<EmployeeService>();
+            services.AddScoped<DivisionService>();
+            services.AddScoped<GenderService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

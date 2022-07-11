@@ -139,7 +139,7 @@ using System.Collections;
 
             foreach (var subDivision in division.SubDivisions)
             {
-                GetEmployeesInSubDivisions(subDivision);
+                FillEmployeesListFromSubDivisions(subDivision);
             }
         }
         _employees = new List<Employee>();
@@ -205,6 +205,11 @@ using System.Collections;
         _navigationManager.NavigateTo("employeeInfo");
     }
 
+    /// <summary>
+    /// Генерация кода для каждого сотрудника в подразделениях
+    /// </summary>
+    /// <param name="fragment"></param>
+    /// <returns></returns>
     private RenderFragment GetEmployeesInSubDivisions(RenderFragment fragment)
     {
         foreach (var employee in _existEmployees)
@@ -222,7 +227,7 @@ using System.Collections;
             __builder2.OpenElement(3, "span");
             __builder2.AddAttribute(4, "style", "font-size: 20px; font-weight: 700");
 #nullable restore
-#line 154 "G:\TestTask\TestTask\Client\Pages\Employees.razor"
+#line 159 "G:\TestTask\TestTask\Client\Pages\Employees.razor"
 __builder2.AddContent(5, employee.FullName);
 
 #line default
@@ -230,7 +235,7 @@ __builder2.AddContent(5, employee.FullName);
 #nullable disable
             __builder2.AddContent(6, " (");
 #nullable restore
-#line 154 "G:\TestTask\TestTask\Client\Pages\Employees.razor"
+#line 159 "G:\TestTask\TestTask\Client\Pages\Employees.razor"
 __builder2.AddContent(7, _appData.Divisions.FirstOrDefault(d => d.Id == employee.DivisionId)?.Title);
 
 #line default
@@ -247,14 +252,14 @@ __builder2.AddContent(7, _appData.Divisions.FirstOrDefault(d => d.Id == employee
             __builder2.CloseElement();
         }
 #nullable restore
-#line 159 "G:\TestTask\TestTask\Client\Pages\Employees.razor"
+#line 164 "G:\TestTask\TestTask\Client\Pages\Employees.razor"
           ;
         }
 
         return fragment;
     }
 
-    private void GetEmployeesInSubDivisions(Division division)
+    private void FillEmployeesListFromSubDivisions(Division division)
     {
         var employeesFromDivision = division.Employees.Where(e => _existEmployees.All(emp => emp.Id != e.Id)).ToList();
 
@@ -264,7 +269,7 @@ __builder2.AddContent(7, _appData.Divisions.FirstOrDefault(d => d.Id == employee
 
         foreach (var subDivision in division.SubDivisions.ToList())
         {
-            GetEmployeesInSubDivisions(subDivision);
+            FillEmployeesListFromSubDivisions(subDivision);
         }
     }
 

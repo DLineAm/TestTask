@@ -1136,6 +1136,6 @@ G:\TestTask\TestTask\Client\obj\Debug\netstandard2.1\TestTask.Client.dll
 G:\TestTask\TestTask\Client\obj\Debug\netstandard2.1\TestTask.Client.pdb
 G:\TestTask\TestTask\Client\obj\Debug\netstandard2.1\integrity\Sp_G6q3Kn5RLSoBt8297Qns1q2GDh68lSwe9ms1kEdQ=.hash
 G:\TestTask\TestTask\Client\obj\Debug\netstandard2.1\integrity\wRg8sYfF8yTAlvtx4X5JEluMF0oiHVjVar_rr7chqDM=.hash
-G:\TestTask\TestTask\Client\obj\Debug\netstandard2.1\integrity\ynMouortc5OZRPgLJxJgpcTNsurAsQdKi8io4VDGLG0=.hash
-G:\TestTask\TestTask\Client\obj\Debug\netstandard2.1\integrity\_KKcbyK-knYZtvZzLTiyUTEliK4k5p9spfgkzrjQPag=.hash
-G:\TestTask\TestTask\Client\obj\Debug\netstandard2.1\integrity\85g1o_CObA5DD634yiklHh7yybuteM909sXTD6utRZ4=.hash
+G:\TestTask\TestTask\Client\obj\Debug\netstandard2.1\integrity\Zj5CRoPmXVRtuPrA1JqkSsbUPndKaTE27EugwVBLJBg=.hash
+G:\TestTask\TestTask\Client\obj\Debug\netstandard2.1\integrity\AmIAHeJagTvFQhK_UnRGBulWfjEwg-yk6SoCt-o1uBo=.hash
+G:\TestTask\TestTask\Client\obj\Debug\netstandard2.1\integrity\elEdmNXeYNhQV_5uA7DGB12a3Ox1OJ2zH7-fIJV8t6c=.hash
