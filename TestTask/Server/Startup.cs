@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
+
 using Newtonsoft.Json;
 
 using TestTask.Server.DAL;
@@ -31,7 +31,6 @@ namespace TestTask.Server
                 .AddNewtonsoftJson(options =>
                 {
                     options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
-
                 });
             services.AddRazorPages();
             services.AddDbContext<DatabaseContext>(options =>

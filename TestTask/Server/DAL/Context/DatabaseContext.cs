@@ -42,7 +42,6 @@ namespace TestTask.Server.DAL.Context
                     .OnDelete(DeleteBehavior.NoAction);
 
                 entity.Navigation(d => d.Employees).AutoInclude();
-                //entity.Navigation(d => d.SubDivisions).AutoInclude();
             });
 
             modelBuilder.Entity<Gender>(entity =>
