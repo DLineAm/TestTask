@@ -1,11 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using TestTask.Server.DAL;
-using TestTask.Server.DAL.Context;
+
+using System;
+
+using TestTask.Server.Services;
 using TestTask.Shared;
 
 namespace TestTask.Server.Controllers
@@ -14,20 +12,20 @@ namespace TestTask.Server.Controllers
     [Route("[controller]")]
     public class DivisionsController : Controller
     {
-        private readonly UnitOfWork _unitOfWork;
         private readonly ILogger<DivisionsController> _logger;
+        private readonly DivisionService _divisionService;
 
-        public DivisionsController(UnitOfWork unitOfWork, ILogger<DivisionsController> logger)
+        public DivisionsController(ILogger<DivisionsController> logger, DivisionService divisionService)
         {
-            _unitOfWork = unitOfWork;
             _logger = logger;
+            _divisionService = divisionService;
         }
 
         [HttpGet]
         public IActionResult Get()
         {
             _logger.LogInformation($"Processing request in method {nameof(DivisionsController)}.{nameof(Get)}");
-            return Ok(_unitOfWork.DivisionRepository.GetWithChildren());
+            return Ok(_divisionService.GetDivisions());
         }
 
         [HttpPost]
@@ -40,25 +38,7 @@ namespace TestTask.Server.Controllers
 
             try
             {
-                division.Id = 0;
-                var subDivisions = division.SubDivisions.ToList();
-                division.SubDivisions = null;
-                var entity = _unitOfWork.DivisionRepository
-                    .Insert(division).Entity;
-
-                _unitOfWork.Save();
-
-                foreach (var subDivision in subDivisions)
-                {
-                    var dbDivision = _unitOfWork.DivisionRepository
-                        .GetById(subDivision.Id);
-                    if (dbDivision is null)
-                        continue;
-
-                    dbDivision.DivisionId = entity.Id;
-                }
-
-                _unitOfWork.Save();
+                _divisionService.AddDivisionToDatabase(division);
                 return Ok();
             }
             catch (Exception e)
@@ -73,22 +53,12 @@ namespace TestTask.Server.Controllers
         {
             _logger.LogInformation($"Processing request in method {nameof(DivisionsController)}.{nameof(Delete)}");
 
-            var division = _unitOfWork.DivisionRepository
-                .GetWithChildren()
-                .FirstOrDefault(d => d.Id == id);
-
-            if (division is null)
+            if (!_divisionService.TryGetDivision(id, out var division))
                 return NotFound();
 
             try
             {
-                foreach (var subDivision in division.SubDivisions)
-                {
-                    subDivision.DivisionId = null;
-                }
-
-                _unitOfWork.DivisionRepository.Delete(division);
-                _unitOfWork.Save();
+                _divisionService.DeleteDivision(division);
                 return Ok();
             }
             catch (Exception e)
@@ -103,36 +73,12 @@ namespace TestTask.Server.Controllers
         {
             _logger.LogInformation($"Processing request in method {nameof(DivisionsController)}.{nameof(Put)}");
 
-            var dbDivision = _unitOfWork.DivisionRepository
-                .GetWithChildren()
-                .FirstOrDefault(d => d.Id == division.Id);
-
-            if (dbDivision is null)
+            if (!_divisionService.TryGetDivision(division.Id, out var dbDivision))
                 return NotFound();
 
             try
             {
-                dbDivision.Title = division.Title;
-                dbDivision.Description = division.Description;
-                dbDivision.DivisionId = division.DivisionId;
-                dbDivision.CreateDate = division.CreateDate;
-
-                var subDivisions = division.SubDivisions;
-
-                dbDivision.SubDivisions = new HashSet<Division>();
-
-                foreach (var subDivision in subDivisions)
-                {
-                    var dbSubDivision = _unitOfWork.DivisionRepository.GetById(subDivision.Id);
-
-                    if (dbSubDivision is null)
-                        continue;
-
-                    dbDivision.SubDivisions.Add(dbSubDivision);
-                }
-
-                _unitOfWork.DivisionRepository.Update(dbDivision);
-                _unitOfWork.Save();
+                _divisionService.ChangeDivision(division, dbDivision);
                 return Ok();
             }
             catch (Exception e)
@@ -141,5 +87,7 @@ namespace TestTask.Server.Controllers
                 return BadRequest(e.Message);
             }
         }
+
+        
     }
 }

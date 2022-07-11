@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using TestTask.Server.DAL;
+using TestTask.Server.Services;
 
 namespace TestTask.Server.Controllers
 {
@@ -8,20 +9,21 @@ namespace TestTask.Server.Controllers
     [Route("[controller]")]
     public class GendersController : Controller
     {
-        private readonly UnitOfWork _unitOfWork;
         private readonly ILogger<GendersController> _logger;
+        private readonly GenderService _genderService;
 
-        public GendersController(UnitOfWork unitOfWork, ILogger<GendersController> logger)
+
+        public GendersController(ILogger<GendersController> logger, GenderService genderService)
         {
-            _unitOfWork = unitOfWork;
             _logger = logger;
+            _genderService = genderService;
         }
 
         [HttpGet]
         public IActionResult Get()
         {
             _logger.LogInformation($"Processing request in method {nameof(GendersController)}.{nameof(Get)}");
-            return Ok(_unitOfWork.GenderRepository.Get());
+            return Ok(_genderService.GetGenders());
         }
     }
 }

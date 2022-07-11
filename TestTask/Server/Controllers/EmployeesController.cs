@@ -1,8 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 
 using System;
-using Microsoft.Extensions.Logging;
-using TestTask.Server.DAL;
+
+using TestTask.Server.Services;
 using TestTask.Shared;
 
 namespace TestTask.Server.Controllers
@@ -11,13 +12,15 @@ namespace TestTask.Server.Controllers
     [Route("[controller]")]
     public class EmployeesController : Controller
     {
-        private readonly UnitOfWork _unitOfWork;
         private readonly ILogger<EmployeesController> _logger;
+        private readonly EmployeeService _employeeService;
+        private readonly DivisionService _divisionService;
 
-        public EmployeesController(UnitOfWork unitOfWork, ILogger<EmployeesController> logger)
+        public EmployeesController(ILogger<EmployeesController> logger, EmployeeService employeeService, DivisionService divisionService)
         {
-            _unitOfWork = unitOfWork;
             _logger = logger;
+            _employeeService = employeeService;
+            _divisionService = divisionService;
         }
 
         [HttpGet]
@@ -25,11 +28,10 @@ namespace TestTask.Server.Controllers
         {
             _logger.LogInformation($"Processing request in method {nameof(EmployeesController)}.{nameof(Get)}");
 
-            if (_unitOfWork.DivisionRepository.GetById(divisionId) is null)
+            if (!_divisionService.TryGetDivision(divisionId, out _))
                 return NotFound();
 
-            var employees = _unitOfWork.EmployeeRepository
-                .GetWithChildren(e => e.DivisionId == divisionId);
+            var employees = _employeeService.GetEmployeesFromDivision(divisionId);
 
             return Ok(employees);
         }
@@ -39,23 +41,12 @@ namespace TestTask.Server.Controllers
         {
             _logger.LogInformation($"Processing request in method {nameof(EmployeesController)}.{nameof(Put)}");
 
-            var dbEmployee = _unitOfWork.EmployeeRepository
-                .GetById(employee.Id);
-
-            if (dbEmployee is null)
+            if (!_employeeService.TryGetEmployee(employee.Id, out var dbEmployee))
                 return NotFound();
 
             try
             {
-                dbEmployee.FirstName = employee.FirstName;
-                dbEmployee.LastName = employee.LastName;
-                dbEmployee.MiddleName = employee.MiddleName;
-                dbEmployee.GenderId = employee.GenderId;
-                dbEmployee.DateOfBirth = employee.DateOfBirth;
-                dbEmployee.HasDriverLicense = employee.HasDriverLicense;
-                dbEmployee.DivisionId = employee.DivisionId;
-
-                _unitOfWork.Save();
+                _employeeService.ChangeEmployee(employee, dbEmployee);
                 return Ok();
             }
             catch (Exception e)
@@ -70,15 +61,12 @@ namespace TestTask.Server.Controllers
         {
             _logger.LogInformation($"Processing request in method {nameof(EmployeesController)}.{nameof(Delete)}");
 
-            var employee = _unitOfWork.EmployeeRepository.GetById(id);
-
-            if (employee is null)
+            if (!_employeeService.TryGetEmployee(id, out var employee))
                 return NotFound();
 
             try
             {
-                _unitOfWork.EmployeeRepository.Delete(employee);
-                _unitOfWork.Save();
+                _employeeService.DeleteEmployeeFromDatabase(employee);
                 return Ok();
             }
             catch (Exception e)
@@ -96,8 +84,7 @@ namespace TestTask.Server.Controllers
 
             try
             {
-                _unitOfWork.EmployeeRepository.Insert(employee);
-                _unitOfWork.Save();
+                _employeeService.AddEmployeeToDatabase(employee);
                 return Ok();
             }
             catch (Exception e)
