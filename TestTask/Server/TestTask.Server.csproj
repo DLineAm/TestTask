@@ -5,6 +5,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Pages\**" />
+    <Content Remove="Pages\**" />
+    <EmbeddedResource Remove="Pages\**" />
+    <None Remove="Pages\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Compile Remove="Migrations\20220707070705_AddGenderAndNewColumns_Migration.cs" />
     <Compile Remove="Migrations\20220707070705_AddGenderAndNewColumns_Migration.Designer.cs" />
     <Compile Remove="Migrations\20220707071035_AddGenderAndNewColumns_Migration.cs" />

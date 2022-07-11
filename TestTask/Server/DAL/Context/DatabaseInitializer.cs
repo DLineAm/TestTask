@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+
+using Microsoft.EntityFrameworkCore;
+
 using TestTask.Shared;
 
 namespace TestTask.Server.DAL.Context
@@ -9,6 +12,11 @@ namespace TestTask.Server.DAL.Context
     {
         public static void InitializeDatabase(DatabaseContext context)
         {
+            if (!context.Database.EnsureCreated())
+            {
+                context.Database.Migrate();
+            }
+
             context.Database.EnsureCreated();
 
             var divisions = InitializeDivisions(context);
@@ -20,17 +28,15 @@ namespace TestTask.Server.DAL.Context
 
         private static IEnumerable<Division> InitializeDivisions(DatabaseContext context)
         {
-            if (context.Divisions.Any())
-            {
+            if (context.Divisions.Count() > 0)
                 return context.Divisions.ToList();
-            }
 
-            var mainDivision = new Division {Title = "Председатель комитета", CreateDate = new DateTime(1990, 3, 15)};
+            var mainDivision = new Division { Title = "Председатель комитета", CreateDate = new DateTime(1990, 3, 15) };
 
             mainDivision = CreateEntity(mainDivision, context);
 
-            var subDivision = new Division 
-            { 
+            var subDivision = new Division
+            {
                 Title = "Заместитель председателя комитета",
                 DivisionId = mainDivision.Id,
                 CreateDate = new DateTime(1990, 3, 15)
@@ -72,18 +78,22 @@ namespace TestTask.Server.DAL.Context
             return savedEntity.Entity;
         }
 
-        private static (int, int) InitializeGenders(DatabaseContext context)
+        private static (int mGenderId, int fGenderId) InitializeGenders(DatabaseContext context)
         {
-            if (context.Genders.Any())
+            if (context.Genders.Count() > 0)
             {
-                var mId = context.Genders.ToList().ElementAt(0).Id;
-                var fId = context.Genders.ToList().ElementAt(1).Id;
+                var genderList = context.Genders.ToList();
+                if (genderList.Count != 2)
+                    throw new InvalidOperationException("Count of genders is not 2");
 
-                return (mId, fId);
+                var mGenderId = genderList.ElementAt(0).Id;
+                var fGenderId = genderList.ElementAt(1).Id;
+
+                return (mGenderId, fGenderId);
             }
-            var mGender = new Gender {Title = "М"};
+            var mGender = new Gender { Title = "М" };
             mGender = context.Genders.Add(mGender).Entity;
-            var fGender = new Gender {Title = "Ж"};
+            var fGender = new Gender { Title = "Ж" };
             fGender = context.Genders.Add(fGender).Entity;
 
             context.SaveChanges();
@@ -93,10 +103,8 @@ namespace TestTask.Server.DAL.Context
 
         private static void InitializeEmployees(DatabaseContext context, IEnumerable<Division> divisions, int mGenderId, int fGenderId)
         {
-            if (context.Employees.Any())
-            {
+            if (context.Employees.Count() > 0)
                 return;
-            }
 
             var employees = new List<Employee>
             {

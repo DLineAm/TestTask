@@ -8,104 +8,82 @@ using TestTask.Server.DAL.Context;
 
 namespace TestTask.Server.DAL
 {
-    public interface IRepository<TEntity>
+    public sealed class Repository<TEntity> where TEntity : class
     {
-         IEnumerable<TEntity> Get(Expression<Func<TEntity, bool>> filter = null,
-            Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null,
-            string includeProperties = "");
-    }
-    public class Repository<TEntity> : IRepository<TEntity> where TEntity : class
-    {
-        internal DatabaseContext Context;
-        internal DbSet<TEntity> DbSet;
+        private readonly DatabaseContext _context;
+        private readonly DbSet<TEntity> _dbSet;
 
         public Repository(DatabaseContext context)
         {
-            Context = context;
-            DbSet = context.Set<TEntity>();
+            _context = context;
+            _dbSet = context.Set<TEntity>();
         }
 
-        //params Expression<Func<TEntity, TProperty>>[] includeProperties
-
-        public virtual IEnumerable<TEntity> Get(
-            Expression<Func<TEntity, bool>> filter = null,
-            Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null,
-            string includeProperties = "")
+        private IQueryable<TEntity> GetEntities(bool ignoreAutoInclude)
         {
-            IQueryable<TEntity> query = DbSet;
+            return ignoreAutoInclude
+                ? _dbSet.IgnoreAutoIncludes()
+                : _dbSet;
+        }
 
+        public IEnumerable<TEntity> Get(
+            Expression<Func<TEntity, bool>> filter = null,
+            Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null)
+        {
+            IQueryable<TEntity> query = GetEntities(true);
+
+            return FilterAndOrderEntities(filter, orderBy, query);
+        }
+
+        public IEnumerable<TEntity> GetWithChildren(
+            Expression<Func<TEntity, bool>> filter = null,
+            Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null)
+        {
+            IQueryable<TEntity> query = GetEntities(false);
+
+            return FilterAndOrderEntities(filter, orderBy, query);
+        }
+
+        private static IEnumerable<TEntity> FilterAndOrderEntities(Expression<Func<TEntity, bool>> filter, Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy, IQueryable<TEntity> query)
+        {
             if (filter != null)
             {
                 query = query.Where(filter);
             }
 
-            foreach (var prop in includeProperties.Split(
-                         new[]{','}, StringSplitOptions.RemoveEmptyEntries))
+            return orderBy != null
+                ? orderBy(query).ToList()
+                : query.ToList();
+        }
+
+        public TEntity GetById(object id)
+        {
+            return _dbSet.Find(id);
+        }
+
+        public EntityEntry<TEntity> Insert(TEntity entity)
+        {
+            return _dbSet.Add(entity);
+        }
+
+        public void Delete(TEntity entityToDelete)
+        {
+            if (_context.Entry(entityToDelete).State is EntityState.Detached)
             {
-                query = query.Include(prop);
+                _dbSet.Attach(entityToDelete);
             }
 
-            if (orderBy != null)
+            _dbSet.Remove(entityToDelete);
+        }
+
+        public void Update(TEntity entityToUpdate)
+        {
+            if (_context.Entry(entityToUpdate).State is EntityState.Detached)
             {
-                return orderBy(query).ToList();
-            }
-            else
-            {
-                return query.ToList();
-            }
-        }
-
-        private IQueryable<TEntity> Include<TProperty>(Expression<Func<TEntity, TProperty>>[] includeProperties)
-        {
-            IQueryable<TEntity> query = DbSet;
-            return includeProperties
-                .Aggregate(query, (curr, prop) => curr.Include(prop));
-        }
-
-        public virtual TEntity GetById(object id)
-        {
-            return DbSet.Find(id);
-        }
-
-        public virtual TEntity GetByExpression(Expression<Func<TEntity, bool>> expression)
-        {
-            return DbSet.FirstOrDefault(expression);
-        }
-
-        public virtual TEntity GetLastByExpression(Expression<Func<TEntity, bool>> expression)
-        {
-            return DbSet.LastOrDefault(expression);
-        }
-
-        public virtual EntityEntry<TEntity> Insert(TEntity entity)
-        {
-            return DbSet.Add(entity);
-        }
-
-        public virtual void Delete(object id)
-        {
-            TEntity entityToDelete = DbSet.Find(id);
-            Delete(entityToDelete);
-        }
-
-        public virtual void Delete(TEntity entityToDelete)
-        {
-            if (Context.Entry(entityToDelete).State == EntityState.Detached)
-            {
-                DbSet.Attach(entityToDelete);
+                _dbSet.Attach(entityToUpdate);
             }
 
-            DbSet.Remove(entityToDelete);
-        }
-
-        public virtual void Update(TEntity entityToUpdate)
-        {
-            if (Context.Entry(entityToUpdate).State == EntityState.Detached)
-            {
-                DbSet.Attach(entityToUpdate);
-            }
-
-            Context.Entry(entityToUpdate).State = EntityState.Modified;
+            _context.Entry(entityToUpdate).State = EntityState.Modified;
         }
 
     }

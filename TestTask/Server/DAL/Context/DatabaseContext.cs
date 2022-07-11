@@ -40,6 +40,9 @@ namespace TestTask.Server.DAL.Context
                     .WithMany(p => p.SubDivisions)
                     .HasForeignKey(d => d.DivisionId)
                     .OnDelete(DeleteBehavior.NoAction);
+
+                entity.Navigation(d => d.Employees).AutoInclude();
+                //entity.Navigation(d => d.SubDivisions).AutoInclude();
             });
 
             modelBuilder.Entity<Gender>(entity =>
@@ -84,6 +87,10 @@ namespace TestTask.Server.DAL.Context
                     .WithMany(p => p.Employees)
                     .HasForeignKey(d => d.GenderId)
                     .OnDelete(DeleteBehavior.NoAction);
+
+                entity.Navigation(d => d.Division).AutoInclude();
+                entity.Navigation(d => d.Gender).AutoInclude();
+
             });
         }
     }

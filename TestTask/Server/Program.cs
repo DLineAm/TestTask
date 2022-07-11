@@ -3,7 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
 using System;
-
+using Microsoft.EntityFrameworkCore;
 using TestTask.Server.DAL.Context;
 
 namespace TestTask.Server

@@ -66,11 +66,12 @@
     {
         genders = AppData.Genders;
         var firstGender = genders.First();
-        employee = StateMachine.CurrentState == StateMachine.State.Add 
+        employee = StateMachine.CurrentState is StateMachine.State.Add 
             ? new Employee{Gender = firstGender, GenderId = firstGender.Id} 
             : AppData.CurrentEmployee;
         divisions = AppData.Divisions;
-        divisionId = employee.DivisionId;
+        divisionId = employee.DivisionId = StateMachine.CurrentState is StateMachine.State.Add 
+            ? AppData.CurrentDivision.Id : employee.DivisionId;
     }
 
     private async Task Apply()
@@ -89,7 +90,7 @@
         employee.Division = null;
         employee.Gender = null;
 
-        var response = StateMachine.CurrentState == StateMachine.State.Change
+        var response = StateMachine.CurrentState is StateMachine.State.Change
         ? await PutEmployeeAsync()
         : await PostEmployeeAsync();
 

@@ -12,7 +12,7 @@
 
 
 
-@if (divisions == null)
+@if (divisions is null)
 {
     <span style="color: white">Загрузка</span>
 }
@@ -23,10 +23,10 @@ else
     </div>
     <div>
         <ul>
-            @foreach (var division in divisions.Where(d => d.DivisionId == null))
+            @foreach (var division in divisions.Where(d => d.DivisionId is null))
             {
                 <li>
-                        <a href="@GetDivisionHrefById(division.Id)" style="cursor: pointer">@division.Title</a>
+                        <a href="@GetDivisionHrefById(division.Id)" style="cursor: pointer" @onclick="() => SetCurrentDivision(division)">@division.Title</a>
                         <img src="css/delete.svg" style="cursor: pointer" @onclick="() => DeleteDivisionButton_OnClick(division)" alt=""/>
                         <img src="css/edit.svg" style="cursor: pointer" @onclick="() => ChangeDivisionButton_OnClick(division)" alt=""/>
                         @if (division.SubDivisions != null)
@@ -71,11 +71,6 @@ else
         AppData.Divisions = divisions;
     }
 
-    private void ToggleNavMenu()
-    {
-        collapseNavMenu = !collapseNavMenu;
-    }
-
     private string GetDivisionHrefById(int divisionId)
     {
         return "employees/" + divisionId;
@@ -86,35 +81,17 @@ else
         foreach (var subDivision in division.SubDivisions)
         {
             markup += @<li>
-                          <div class="pd1248 mgbt10">
-                              <a href="@GetDivisionHrefById(subDivision.Id)" style="cursor: pointer">@subDivision.Title</a>
+                          <div class="pd1248">
+                              <a href="@GetDivisionHrefById(subDivision.Id)" style="cursor: pointer" @onclick="() => SetCurrentDivision(subDivision)">@subDivision.Title</a>
                               <img src="css/delete.svg" style="cursor: pointer" @onclick="() => DeleteDivisionButton_OnClick(subDivision)" alt=""/>
                               <img src="css/edit.svg" style="cursor: pointer" @onclick="() => ChangeDivisionButton_OnClick(subDivision)" alt=""/>
                           </div>
                       </li>;
                           
                           if (subDivision.SubDivisions != null)
-                          {
                               markup += GetList(subDivision, @<div></div>);
-                          }
-
         }
         return @<ul>@markup</ul>;
-    }
-
-    private void List_OnDrop(DragEventArgs args)
-    {
-        
-    }
-
-    private void List_OnDragEnter(DragEventArgs args)
-    {
-        
-    }
-
-    private void List_OnDragLeave(DragEventArgs args)
-    {
-        
     }
 
     private void DivisionAddButton_OnClick()
@@ -136,17 +113,13 @@ else
     {
         modalOpen = false;
         if (StateMachine.CurrentState != StateMachine.State.Delete)
-        {
             return;
-        }
 
         var divisionToDelete = AppData.CurrentDivision;
         AppData.CurrentDivision = null;
 
         if (!success)
-        {
             return;
-        }
 
         var response = await Http.DeleteAsync($"divisions?id={divisionToDelete.Id}");
 
@@ -159,7 +132,6 @@ else
             return;
         }
 
-        //divisions.Remove(divisionToDelete);
         await GetDivisions();
     }
 
@@ -169,6 +141,11 @@ else
         AppData.CurrentDivision = division;
 
         NavigationManager.NavigateTo("divisionInfo");
+    }
+
+    private void SetCurrentDivision(Division division)
+    {
+        AppData.CurrentDivision = division;
     }
 }
 

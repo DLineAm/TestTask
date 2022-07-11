@@ -1,16 +1,18 @@
 ﻿@page "/employees/{Id:int}"
 @using TestTask.Shared
 @using TestTask.Client.Services
+@using System.Diagnostics
 @inject HttpClient Http
 @inject NavigationManager NavigationManager
 @inject AppData AppData
 @inject StateMachine StateMachine
 <h1 class="info__title">Сотрудники</h1>
+<h1 class="info__title">@AppData.CurrentDivision.Title</h1>
 <button @onclick="EmployeeAddButton_OnClick" class="main--btn inverted">Добавить</button>
 
 
 
-@if (employees == null)
+@if (employees is null)
 {
     <span>Загрузка</span>
 }
@@ -53,7 +55,9 @@ else
 
     private async Task LoadEmployees()
     {
-        employees = await Http.GetFromJsonAsync<List<Employee>>($"employees?divisionId={Id}");
+        employees = new List<Employee>();
+        employees = await Http.GetFromJsonAsync<List<Employee>>($"employees?divisionId={AppData.CurrentDivision.Id}");
+        StateHasChanged();
     }
 
     protected override async Task OnInitializedAsync()

@@ -89,6 +89,13 @@ using TestTask.Client.Services;
 #line default
 #line hidden
 #nullable disable
+#nullable restore
+#line 4 "G:\TestTask\TestTask\Client\Pages\Employees.razor"
+using System.Diagnostics;
+
+#line default
+#line hidden
+#nullable disable
     [Microsoft.AspNetCore.Components.RouteAttribute("/employees/{Id:int}")]
     public partial class Employees : Microsoft.AspNetCore.Components.ComponentBase
     {
@@ -98,7 +105,7 @@ using TestTask.Client.Services;
         }
         #pragma warning restore 1998
 #nullable restore
-#line 40 "G:\TestTask\TestTask\Client\Pages\Employees.razor"
+#line 42 "G:\TestTask\TestTask\Client\Pages\Employees.razor"
        
     [Parameter]
     public int Id { get; set; }
@@ -115,7 +122,9 @@ using TestTask.Client.Services;
 
     private async Task LoadEmployees()
     {
-        employees = await Http.GetFromJsonAsync<List<Employee>>($"employees?divisionId={Id}");
+        employees = new List<Employee>();
+        employees = await Http.GetFromJsonAsync<List<Employee>>($"employees?divisionId={AppData.CurrentDivision.Id}");
+        StateHasChanged();
     }
 
     protected override async Task OnInitializedAsync()

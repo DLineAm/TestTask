@@ -130,11 +130,6 @@ using TestTask.Client.Services;
         AppData.Divisions = divisions;
     }
 
-    private void ToggleNavMenu()
-    {
-        collapseNavMenu = !collapseNavMenu;
-    }
-
     private string GetDivisionHrefById(int divisionId)
     {
         return "employees/" + divisionId;
@@ -153,12 +148,12 @@ using TestTask.Client.Services;
             __builder2.OpenElement(0, "li");
             __builder2.AddMarkupContent(1, "\r\n                          ");
             __builder2.OpenElement(2, "div");
-            __builder2.AddAttribute(3, "class", "pd1248 mgbt10");
+            __builder2.AddAttribute(3, "class", "pd1248");
             __builder2.AddMarkupContent(4, "\r\n                              ");
             __builder2.OpenElement(5, "a");
             __builder2.AddAttribute(6, "href", 
 #nullable restore
-#line 90 "G:\TestTask\TestTask\Client\Shared\NavMenu.razor"
+#line 85 "G:\TestTask\TestTask\Client\Shared\NavMenu.razor"
                                         GetDivisionHrefById(subDivision.Id)
 
 #line default
@@ -166,24 +161,25 @@ using TestTask.Client.Services;
 #nullable disable
             );
             __builder2.AddAttribute(7, "style", "cursor: pointer");
+            __builder2.AddAttribute(8, "@onclick", "() => SetCurrentDivision(subDivision)");
 #nullable restore
-#line 90 "G:\TestTask\TestTask\Client\Shared\NavMenu.razor"
-__builder2.AddContent(8, subDivision.Title);
+#line 85 "G:\TestTask\TestTask\Client\Shared\NavMenu.razor"
+__builder2.AddContent(9, subDivision.Title);
 
 #line default
 #line hidden
 #nullable disable
             __builder2.CloseElement();
-            __builder2.AddMarkupContent(9, @"
+            __builder2.AddMarkupContent(10, @"
                               <img src=""css/delete.svg"" style=""cursor: pointer"" @onclick=""() => DeleteDivisionButton_OnClick(subDivision)"" alt>
                               <img src=""css/edit.svg"" style=""cursor: pointer"" @onclick=""() => ChangeDivisionButton_OnClick(subDivision)"" alt>
                           ");
             __builder2.CloseElement();
-            __builder2.AddMarkupContent(10, "\r\n                      ");
+            __builder2.AddMarkupContent(11, "\r\n                      ");
             __builder2.CloseElement();
         }
 #nullable restore
-#line 94 "G:\TestTask\TestTask\Client\Shared\NavMenu.razor"
+#line 89 "G:\TestTask\TestTask\Client\Shared\NavMenu.razor"
                            ;
                           
                           if (subDivision.SubDivisions != null)
@@ -194,10 +190,10 @@ __builder2.AddContent(8, subDivision.Title);
 #line hidden
 #nullable disable
         (__builder2) => {
-            __builder2.AddMarkupContent(11, "<div></div>");
+            __builder2.AddMarkupContent(12, "<div></div>");
         }
 #nullable restore
-#line 98 "G:\TestTask\TestTask\Client\Shared\NavMenu.razor"
+#line 93 "G:\TestTask\TestTask\Client\Shared\NavMenu.razor"
                                                                          );
                           }
 
@@ -208,10 +204,10 @@ __builder2.AddContent(8, subDivision.Title);
 #line hidden
 #nullable disable
         (__builder2) => {
-            __builder2.OpenElement(12, "ul");
+            __builder2.OpenElement(13, "ul");
 #nullable restore
-#line 102 "G:\TestTask\TestTask\Client\Shared\NavMenu.razor"
-__builder2.AddContent(13, markup);
+#line 97 "G:\TestTask\TestTask\Client\Shared\NavMenu.razor"
+__builder2.AddContent(14, markup);
 
 #line default
 #line hidden
@@ -219,23 +215,8 @@ __builder2.AddContent(13, markup);
             __builder2.CloseElement();
         }
 #nullable restore
-#line 102 "G:\TestTask\TestTask\Client\Shared\NavMenu.razor"
+#line 97 "G:\TestTask\TestTask\Client\Shared\NavMenu.razor"
                                 ;
-    }
-
-    private void List_OnDrop(DragEventArgs args)
-    {
-        
-    }
-
-    private void List_OnDragEnter(DragEventArgs args)
-    {
-        
-    }
-
-    private void List_OnDragLeave(DragEventArgs args)
-    {
-        
     }
 
     private void DivisionAddButton_OnClick()
@@ -280,7 +261,6 @@ __builder2.AddContent(13, markup);
             return;
         }
 
-        //divisions.Remove(divisionToDelete);
         await GetDivisions();
     }
 
@@ -290,6 +270,11 @@ __builder2.AddContent(13, markup);
         AppData.CurrentDivision = division;
 
         NavigationManager.NavigateTo("divisionInfo");
+    }
+
+    private void SetCurrentDivision(Division division)
+    {
+        AppData.CurrentDivision = division;
     }
 
 #line default

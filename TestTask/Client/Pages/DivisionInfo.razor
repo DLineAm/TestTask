@@ -71,7 +71,7 @@
 
     protected override void OnInitialized()
     {
-        division = StateMachine.CurrentState == StateMachine.State.Add
+        division = StateMachine.CurrentState is StateMachine.State.Add
             ? new Division()
             : AppData.CurrentDivision;
 
@@ -86,10 +86,8 @@
         divisionsList.Insert(0, new Division { Title = "Нет" });
         divisions = divisionsList;
 
-        if (StateMachine.CurrentState == StateMachine.State.Change && division.SubDivisions != null)
-        {
+        if (StateMachine.CurrentState is StateMachine.State.Change && division.SubDivisions != null)
             FillSubDivisions();
-        }
     }
 
     private void FillSubDivisions()
@@ -109,10 +107,8 @@
     {
         var divisionToAdd = divisionsToAdd.FirstOrDefault(d => d.Id == subDivisionId);
 
-        if (divisionToAdd == null)
-        {
+        if (divisionToAdd is null)
             return;
-        }
 
         divisions.Remove(divisionToAdd);
         divisionsToAdd.Remove(divisionToAdd);
@@ -124,15 +120,13 @@
     private async Task ApplyButton_OnClick()
     {
         if (string.IsNullOrWhiteSpace(division.Title))
-        {
             return;
-        }
 
         division.ParentDivision = null;
         division.Employees = new HashSet<Employee>();
         division.SubDivisions = subDivisionsToAdd;
 
-        var response = StateMachine.CurrentState == StateMachine.State.Change 
+        var response = StateMachine.CurrentState is StateMachine.State.Change 
             ? await PutDivisionAsync() 
             : await PostDivisionAsync();
 

@@ -136,7 +136,8 @@ using System.Diagnostics;
             ? new Employee{Gender = firstGender, GenderId = firstGender.Id} 
             : AppData.CurrentEmployee;
         divisions = AppData.Divisions;
-        divisionId = employee.DivisionId;
+        divisionId = employee.DivisionId = StateMachine.CurrentState == StateMachine.State.Add 
+            ? AppData.CurrentDivision.Id : employee.DivisionId;
     }
 
     private async Task Apply()
