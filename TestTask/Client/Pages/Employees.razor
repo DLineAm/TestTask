@@ -144,7 +144,7 @@ else
     }
 
     /// <summary>
-    /// Генерация кода для каждого сотрудника в подразделениях
+    /// Генерирует код для каждого сотрудника в подразделениях
     /// </summary>
     /// <param name="fragment"></param>
     /// <returns></returns>
@@ -159,12 +159,17 @@ else
             <img style="width: 20px; cursor: pointer" src="css/edit--green.svg" @onclick="() => EmployeeChangeButton_OnClick(employee)" alt="" />
             <img style="width: 20px; cursor: pointer" src="css/delete--green.svg" @onclick="() => DeleteButton_OnClick(employee)" alt="" />
         </div>
-    </div>;
+    </div>
+    ;
         }
 
         return fragment;
     }
 
+    /// <summary>
+    /// Заполняет список сотрудников из вложенных подразделений
+    /// </summary>
+    /// <param name="division"></param>
     private void FillEmployeesListFromSubDivisions(Division division)
     {
         var employeesFromDivision = division.Employees.Where(e => _existEmployees.All(emp => emp.Id != e.Id)).ToList();

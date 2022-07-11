@@ -90,6 +90,9 @@
             FillSubDivisions();
     }
 
+    /// <summary>
+    /// Заполняет список вложенных подразделений
+    /// </summary>
     private void FillSubDivisions()
     {
         var subDivisions = _division.SubDivisions.ToList();
@@ -103,6 +106,9 @@
         }
     }
 
+    /// <summary>
+    /// Добавляет подразделение в список вложенных подразделений
+    /// </summary>
     private void AddSubDivision()
     {
         var divisionToAdd = _divisionsToAdd.FirstOrDefault(d => d.Id == _subDivisionId);

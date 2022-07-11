@@ -6,6 +6,9 @@ using TestTask.Shared;
 
 namespace TestTask.Client.Services
 {
+    /// <summary>
+    /// Класс, хранящий в себе данные, используемые в коде страниц
+    /// </summary>
     public class AppData
     {
         private readonly HttpClient _client;

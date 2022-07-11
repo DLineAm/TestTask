@@ -112,11 +112,7 @@
 
     private async Task<HttpResponseMessage> PutEmployeeAsync()
     {
-        var json = JsonConvert.SerializeObject(_employee);
-
-        var content = new StringContent(json, Encoding.UTF8, "application/json");
-
-        var response = await _http.PutAsync("employees/change", content);
+        var response = await _http.PutAsJsonAsync("employees/change", _employee);
         return response;
     }
 
