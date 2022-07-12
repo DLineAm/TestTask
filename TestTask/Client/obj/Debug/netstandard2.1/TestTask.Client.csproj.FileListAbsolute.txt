@@ -1142,6 +1142,6 @@ G:\TestTask\TestTask\Client\bin\Debug\netstandard2.1\wwwroot\_framework\_bin\New
 G:\TestTask\TestTask\Client\obj\Debug\netstandard2.1\integrity\cs8pHUurDt0IqbB8YXPh560au3q3J-1wRL9jBddRVmE=.hash
 G:\TestTask\TestTask\Client\obj\Debug\netstandard2.1\compressed\_framework\_bin\Newtonsoft.Json.dll.gz
 G:\TestTask\TestTask\Client\obj\Debug\netstandard2.1\compressed\_framework\_bin\Newtonsoft.Json.dll.br
-G:\TestTask\TestTask\Client\obj\Debug\netstandard2.1\integrity\dQ5Ov7mTQl2ygNAe0odh1kz2HAHfULbyEVppZFJQIiw=.hash
-G:\TestTask\TestTask\Client\obj\Debug\netstandard2.1\integrity\uW54_5jyTlITScIhMQRZW8Ko6wA4UQMBSCr9D7KcysU=.hash
-G:\TestTask\TestTask\Client\obj\Debug\netstandard2.1\integrity\qoZUjma0aQZry8k9tirPqU3pQ_l2RPXoprxgH8sX_VY=.hash
+G:\TestTask\TestTask\Client\obj\Debug\netstandard2.1\integrity\GANGG5MxzC--D_eoiHhzPP_tcTRLD0YttjGcA0mfNNA=.hash
+G:\TestTask\TestTask\Client\obj\Debug\netstandard2.1\integrity\o1d2BQrqIzjVoM6YEhHNhUSJltaZqx3LDgaTPcP7QnU=.hash
+G:\TestTask\TestTask\Client\obj\Debug\netstandard2.1\integrity\JwIYJac-3-q7apgXku6Rik9H3vJYS-hG3fAikNiKzbw=.hash

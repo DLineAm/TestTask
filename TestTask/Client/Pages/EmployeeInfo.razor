@@ -11,19 +11,19 @@
 
 <div>
     <label for="lastname">Фамилия</label>
-    <input id="lastname" placeholder="Фамилия" @bind-value="@_employee.LastName" />
+    <input id="lastname" placeholder="Фамилия" @bind="@_employee.LastName" @oninput="(e) => { _employee.LastName = (string)e.Value; SaveEmployee(); }"/>
 </div>
 <div>
     <label for="firstname">Имя</label>
-    <input id="firstname" placeholder="Имя" @bind-value="@_employee.FirstName" />
+    <input id="firstname" placeholder="Имя" @bind="@_employee.FirstName" @oninput="(e) => { _employee.FirstName = (string)e.Value; SaveEmployee(); }"/>
 </div>
 <div>
     <label for="middlename">Отчество</label>
-    <input id="middlename" placeholder="Отчество" @bind-value="@_employee.MiddleName" />
+    <input id="middlename" placeholder="Отчество" @bind="@_employee.MiddleName" @oninput="(e) => { _employee.MiddleName = (string)e.Value; SaveEmployee(); }"/>
 </div>
 <div>
     <label for="birth">Дата рождения</label>
-    <input id="birth" type="date" placeholder="Выберите дату" @bind-value="@_employee.DateOfBirth" />
+    <input id="birth" type="date" placeholder="Выберите дату" @bind="@_employee.DateOfBirth" @oninput="(e) => { _employee.DateOfBirth = DateTime.Parse((string)e.Value); SaveEmployee(); }"/>
 </div>
 <div>
     <label for="gender">Пол</label>
@@ -35,11 +35,11 @@
     </select>
 </div>
 <div>
-    <input type="checkbox" @bind="@_employee.HasDriverLicense" /> Есть водительские права
+    <input type="checkbox" @bind="@_employee.HasDriverLicense" @oninput="(e) => { _employee.HasDriverLicense = (bool)e.Value; SaveEmployee(); }"/> Есть водительские права
 </div>
 <div>
     <label for="division">Подразделение</label>
-    <select id="division" @bind="_employee.DivisionId"
+    <select id="division" @bind="DivisionId"
             class="custom-select-sm">
         @foreach (var division in _divisions)
         {
@@ -61,9 +61,20 @@
     private string _errorText;
     private int _divisionId;
 
+    public int DivisionId
+    {
+        get => _divisionId;
+        set
+        {
+            _divisionId = value;
+            _employee.DivisionId = value;
+            _storageService.SetItem("currentDivision", value);
+            SaveEmployee();
+        }
+    }
+
     protected override async Task OnInitializedAsync()
     {
-
         _genders = Program.AppData.Genders;
         var firstGender = _genders.First();
         if (Program.AppData.CurrentEmployee == null)
@@ -77,6 +88,7 @@
                 : Program.AppData.CurrentEmployee;
              _storageService.SetItem("currentEmployee", _employee);
         }
+        DivisionId = _employee.DivisionId;
         _divisions = Program.AppData.Divisions;
     }
 
@@ -127,6 +139,11 @@
     {
         var response = await _http.PutAsJsonAsync("employees/change", _employee);
         return response;
+    }
+
+    private void SaveEmployee()
+    {
+        _storageService.SetItem("currentEmployee", _employee);
     }
 
 }

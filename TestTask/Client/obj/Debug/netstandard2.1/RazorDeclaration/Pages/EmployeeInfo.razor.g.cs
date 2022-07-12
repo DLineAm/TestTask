@@ -121,9 +121,20 @@ using Blazored.SessionStorage;
     private string _errorText;
     private int _divisionId;
 
+    public int DivisionId
+    {
+        get => _divisionId;
+        set
+        {
+            _divisionId = value;
+            _employee.DivisionId = value;
+            _storageService.SetItem("currentDivision", value);
+            SaveEmployee();
+        }
+    }
+
     protected override async Task OnInitializedAsync()
     {
-
         _genders = Program.AppData.Genders;
         var firstGender = _genders.First();
         if (Program.AppData.CurrentEmployee == null)
@@ -137,6 +148,7 @@ using Blazored.SessionStorage;
                 : Program.AppData.CurrentEmployee;
              _storageService.SetItem("currentEmployee", _employee);
         }
+        DivisionId = _employee.DivisionId;
         _divisions = Program.AppData.Divisions;
     }
 
@@ -187,6 +199,11 @@ using Blazored.SessionStorage;
     {
         var response = await _http.PutAsJsonAsync("employees/change", _employee);
         return response;
+    }
+
+    private void SaveEmployee()
+    {
+        _storageService.SetItem("currentEmployee", _employee);
     }
 
 

@@ -158,7 +158,7 @@ using Newtonsoft.Json;
 
     private RenderFragment GetList(Division division, RenderFragment markup)
     {
-        foreach (var subDivision in division.SubDivisions)
+        foreach (var subDivision in _divisions.Where(d => d.DivisionId == division.Id))
         {
             markup += 
 
@@ -271,11 +271,10 @@ __builder2.AddContent(13, markup);
         await GetDivisions();
     }
 
-    private async Task ChangeDivisionButton_OnClick(Division division)
+    private void ChangeDivisionButton_OnClick(Division division)
     {
         _stateMachine.SetChangeState();
         Program.AppData.CurrentDivision = division;
-        //await _storageService.SetItemAsync("currentDivision", division);
 
         _navigationManager.NavigateTo("divisionInfo");
     }

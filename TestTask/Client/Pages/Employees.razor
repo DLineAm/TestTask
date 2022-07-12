@@ -78,6 +78,7 @@ else
 
         _currentDivision = Program.AppData.CurrentDivision 
                            ?? (Program.AppData.CurrentDivision = Program.AppData.Divisions.FirstOrDefault(d => d.Id == Id));
+        Program.AppData.CurrentDivisionFromList = _currentDivision;
         _divisions = Program.AppData.Divisions;
         Debug.WriteLine(_divisions == null);
         _title = _currentDivision?.Title;

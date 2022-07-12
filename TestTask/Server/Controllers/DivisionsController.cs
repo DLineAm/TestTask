@@ -25,7 +25,8 @@ namespace TestTask.Server.Controllers
         public IActionResult Get()
         {
             _logger.LogInformation($"Processing request in method {nameof(DivisionsController)}.{nameof(Get)}");
-            return Ok(_divisionService.Get());
+            var divisions = _divisionService.Get();
+            return Ok(divisions);
         }
 
         [HttpPost]

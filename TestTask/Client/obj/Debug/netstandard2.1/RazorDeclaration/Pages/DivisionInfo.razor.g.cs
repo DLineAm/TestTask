@@ -119,6 +119,21 @@ using Blazored.SessionStorage;
     private List<Division> _divisions;
     private List<Division> _divisionsToAdd;
     private readonly List<Division> _subDivisionsToAdd = new List<Division>();
+    private int _divisionId;
+
+    public int DivisionId
+    {
+        get => _divisionId;
+        set
+        {
+            _divisionId = value;
+            _division.DivisionId = value;
+            _storageService.SetItem("currentDivisionIdFromList", value);
+            SaveDivision();
+        }
+    }
+
+
 
     protected override void OnInitialized()
     {
@@ -126,6 +141,8 @@ using Blazored.SessionStorage;
         if (Program.AppData.CurrentDivision == null && divisionFromSession != null)
         {
             _division = divisionFromSession;
+            GetDivisions();
+            FillSubDivisions();
         }
         else
         {
@@ -135,8 +152,25 @@ using Blazored.SessionStorage;
             _storageService.SetItem("currentDivision", _division);
             Debug.WriteLine(_division == null);
         }
+        Debug.WriteLine("Program.AppData.CurrentDivisionFromList == null: " + (Program.AppData.CurrentDivisionFromList == null));
+        if (Program.AppData.CurrentDivisionFromList == null)
+        {
+            DivisionId = _storageService.GetItem<int>("currentDivisionIdFromList");
+        }
+        else
+        {
+            DivisionId = Program.AppData.CurrentDivisionFromList.Id;
+            _storageService.SetItem("currentDivisionIdFromList", DivisionId);
+        }
 
+        GetDivisions();
 
+        if (_stateMachine.CurrentState is StateMachine.State.Change && _division.SubDivisions != null)
+            FillSubDivisions();
+    }
+
+    private void GetDivisions()
+    {
         var divisionsList = Program.AppData.Divisions.Where(d => d.Id != _division.Id).ToList();
         divisionsList.ForEach(d =>
         {
@@ -145,11 +179,8 @@ using Blazored.SessionStorage;
             d.SubDivisions = new HashSet<Division>();
         });
         _divisionsToAdd = divisionsList;
-        divisionsList.Insert(0, new Division { Title = "Нет" });
+        divisionsList.Insert(0, new Division {Title = "Нет"});
         _divisions = divisionsList;
-
-        if (_stateMachine.CurrentState is StateMachine.State.Change && _division.SubDivisions != null)
-            FillSubDivisions();
     }
 
     /// <summary>
@@ -171,7 +202,7 @@ using Blazored.SessionStorage;
     /// <summary>
     /// Добавляет подразделение в список вложенных подразделений
     /// </summary>
-    private void AddSubDivision()
+    private async Task AddSubDivision()
     {
         var divisionToAdd = _divisionsToAdd.FirstOrDefault(d => d.Id == _subDivisionId);
 
@@ -182,7 +213,10 @@ using Blazored.SessionStorage;
         _divisionsToAdd.Remove(divisionToAdd);
         _subDivisionsToAdd.Add(divisionToAdd);
 
+        _division.SubDivisions = _subDivisionsToAdd;
+
         _subDivisionId = null;
+        SaveDivision();
     }
 
     private async Task ApplyButton_OnClick()
@@ -194,8 +228,8 @@ using Blazored.SessionStorage;
         _division.Employees = new HashSet<Employee>();
         _division.SubDivisions = _subDivisionsToAdd;
 
-        var response = _stateMachine.CurrentState is StateMachine.State.Change 
-            ? await PutDivisionAsync() 
+        var response = _stateMachine.CurrentState is StateMachine.State.Change
+            ? await PutDivisionAsync()
             : await PostDivisionAsync();
 
         if (!response.IsSuccessStatusCode)
@@ -226,6 +260,16 @@ using Blazored.SessionStorage;
     {
         _subDivisionsToAdd.Remove(subDivision);
         _divisionsToAdd.Add(subDivision);
+
+        _division.SubDivisions = _subDivisionsToAdd;
+        _storageService.SetItem("currentDivision", _division);
+    }
+
+    private void SaveDivision()
+    {
+        Debug.WriteLine(_division.DivisionId);
+        _storageService.Clear();
+        _storageService.SetItem("currentDivision", _division);
     }
 
 

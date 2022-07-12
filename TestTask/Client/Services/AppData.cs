@@ -15,7 +15,6 @@ namespace TestTask.Client.Services
     {
         private readonly HttpClient _http;
         private readonly ISessionStorageService _storageService;
-        private Division _currentDivision;
 
         public AppData(ISessionStorageService storageService, HttpClient http)
         {
@@ -25,13 +24,9 @@ namespace TestTask.Client.Services
 
         public Employee CurrentEmployee { get; set; }
 
-        public Division CurrentDivision
-        {
-            get => _currentDivision;
-            set => _currentDivision = value;
-        }
+        public Division CurrentDivision { get; set; }
 
-        public Division CurrentDivisionFromEmployee { get; set; }
+        public Division CurrentDivisionFromList { get; set; }
         public IEnumerable<Division> Divisions { get; set; }
         public IEnumerable<Gender> Genders { get; private set; }
 
