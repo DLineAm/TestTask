@@ -13,9 +13,9 @@ namespace TestTask.Server.Controllers
     public class DivisionsController : Controller
     {
         private readonly ILogger<DivisionsController> _logger;
-        private readonly DivisionService _divisionService;
+        private readonly IDivisionService _divisionService;
 
-        public DivisionsController(ILogger<DivisionsController> logger, DivisionService divisionService)
+        public DivisionsController(ILogger<DivisionsController> logger, IDivisionService divisionService)
         {
             _logger = logger;
             _divisionService = divisionService;
@@ -25,7 +25,7 @@ namespace TestTask.Server.Controllers
         public IActionResult Get()
         {
             _logger.LogInformation($"Processing request in method {nameof(DivisionsController)}.{nameof(Get)}");
-            return Ok(_divisionService.GetDivisions());
+            return Ok(_divisionService.Get());
         }
 
         [HttpPost]
@@ -38,7 +38,7 @@ namespace TestTask.Server.Controllers
 
             try
             {
-                _divisionService.AddDivisionToDatabase(division);
+                _divisionService.Add(division);
                 return Ok();
             }
             catch (Exception e)
@@ -53,12 +53,12 @@ namespace TestTask.Server.Controllers
         {
             _logger.LogInformation($"Processing request in method {nameof(DivisionsController)}.{nameof(Delete)}");
 
-            if (!_divisionService.TryGetDivision(id, out var division))
+            if (!_divisionService.TryGet(id, out var division))
                 return NotFound();
 
             try
             {
-                _divisionService.DeleteDivision(division);
+                _divisionService.Delete(division);
                 return Ok();
             }
             catch (Exception e)
@@ -73,12 +73,12 @@ namespace TestTask.Server.Controllers
         {
             _logger.LogInformation($"Processing request in method {nameof(DivisionsController)}.{nameof(Put)}");
 
-            if (!_divisionService.TryGetDivision(division.Id, out var dbDivision))
+            if (!_divisionService.TryGet(division.Id, out var dbDivision))
                 return NotFound();
 
             try
             {
-                _divisionService.ChangeDivision(division, dbDivision);
+                _divisionService.Change(division, dbDivision);
                 return Ok();
             }
             catch (Exception e)

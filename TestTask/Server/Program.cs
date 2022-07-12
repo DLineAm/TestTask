@@ -3,7 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
 using System;
-
+using Microsoft.EntityFrameworkCore;
 using TestTask.Server.DAL.Context;
 
 namespace TestTask.Server
@@ -26,7 +26,9 @@ namespace TestTask.Server
             try
             {
                 var context = services.GetRequiredService<DatabaseContext>();
-                DatabaseInitializer.InitializeDatabase(context);
+                if (!context.Database.EnsureCreated())
+                    context.Database.Migrate();
+                DatabaseInitializer.InitializeTestData(context);
             }
             catch (Exception e)
             {

@@ -2,11 +2,12 @@
 @using TestTask.Shared
 @using TestTask.Client.Services
 @using System.Diagnostics
-@inject AppData _appData
+@using Blazored.SessionStorage
 @inject StateMachine _stateMachine
 @inject HttpClient _http
 @inject EventAggregator _eventAggregator
 @inject NavigationManager _navigationManager
+@inject ISyncSessionStorageService _storageService
 <h3 class="info__title">Информация о подразделении</h3>
 
 <div>
@@ -71,11 +72,22 @@
 
     protected override void OnInitialized()
     {
-        _division = _stateMachine.CurrentState is StateMachine.State.Add
-            ? new Division()
-            : _appData.CurrentDivision;
+        var divisionFromSession = _storageService.GetItem<Division>("currentDivision");
+        if (Program.AppData.CurrentDivision == null && divisionFromSession != null)
+        {
+            _division = divisionFromSession;
+        }
+        else
+        {
+            _division = _stateMachine.CurrentState is StateMachine.State.Add
+                ? new Division()
+                : Program.AppData.CurrentDivision;
+            _storageService.SetItem("currentDivision", _division);
+            Debug.WriteLine(_division == null);
+        }
 
-        var divisionsList = _appData.Divisions.Where(d => d.Id != _division.Id).ToList();
+
+        var divisionsList = Program.AppData.Divisions.Where(d => d.Id != _division.Id).ToList();
         divisionsList.ForEach(d =>
         {
             d.ParentDivision = null;

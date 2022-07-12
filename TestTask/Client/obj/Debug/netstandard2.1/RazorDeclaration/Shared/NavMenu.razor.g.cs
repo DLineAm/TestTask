@@ -96,6 +96,27 @@ using TestTask.Client.Services;
 #line default
 #line hidden
 #nullable disable
+#nullable restore
+#line 4 "G:\TestTask\TestTask\Client\Shared\NavMenu.razor"
+using System.Diagnostics;
+
+#line default
+#line hidden
+#nullable disable
+#nullable restore
+#line 5 "G:\TestTask\TestTask\Client\Shared\NavMenu.razor"
+using Blazored.SessionStorage;
+
+#line default
+#line hidden
+#nullable disable
+#nullable restore
+#line 6 "G:\TestTask\TestTask\Client\Shared\NavMenu.razor"
+using Newtonsoft.Json;
+
+#line default
+#line hidden
+#nullable disable
     public partial class NavMenu : Microsoft.AspNetCore.Components.ComponentBase
     {
         #pragma warning disable 1998
@@ -104,7 +125,7 @@ using TestTask.Client.Services;
         }
         #pragma warning restore 1998
 #nullable restore
-#line 49 "G:\TestTask\TestTask\Client\Shared\NavMenu.razor"
+#line 52 "G:\TestTask\TestTask\Client\Shared\NavMenu.razor"
        
     private List<Division> _divisions;
     private bool _collapseNavMenu = true;
@@ -119,13 +140,15 @@ using TestTask.Client.Services;
             await GetDivisions();
             StateHasChanged();
         };
+
         await GetDivisions();
+
     }
 
     private async Task GetDivisions()
     {
-        _divisions = await _http.GetFromJsonAsync<List<Division>>("divisions");
-        _appData.Divisions = _divisions;
+        _divisions = Program.AppData.Divisions.ToList();
+        StateHasChanged();
     }
 
     private string GetDivisionHrefById(int divisionId)
@@ -149,35 +172,26 @@ using TestTask.Client.Services;
             __builder2.AddAttribute(3, "class", "pd1248");
             __builder2.AddMarkupContent(4, "\r\n                              ");
             __builder2.OpenElement(5, "a");
-            __builder2.AddAttribute(6, "href", 
+            __builder2.AddAttribute(6, "style", "cursor: pointer");
+            __builder2.AddAttribute(7, "@onclick", "() => SetCurrentDivision(subDivision)");
 #nullable restore
-#line 83 "G:\TestTask\TestTask\Client\Shared\NavMenu.razor"
-                                        GetDivisionHrefById(subDivision.Id)
-
-#line default
-#line hidden
-#nullable disable
-            );
-            __builder2.AddAttribute(7, "style", "cursor: pointer");
-            __builder2.AddAttribute(8, "@onclick", "() => SetCurrentDivision(subDivision)");
-#nullable restore
-#line 83 "G:\TestTask\TestTask\Client\Shared\NavMenu.razor"
-__builder2.AddContent(9, subDivision.Title);
+#line 88 "G:\TestTask\TestTask\Client\Shared\NavMenu.razor"
+__builder2.AddContent(8, subDivision.Title);
 
 #line default
 #line hidden
 #nullable disable
             __builder2.CloseElement();
-            __builder2.AddMarkupContent(10, @"
+            __builder2.AddMarkupContent(9, @"
                               <img src=""css/delete.svg"" style=""cursor: pointer"" @onclick=""() => DeleteDivisionButton_OnClick(subDivision)"" alt>
                               <img src=""css/edit.svg"" style=""cursor: pointer"" @onclick=""() => ChangeDivisionButton_OnClick(subDivision)"" alt>
                           ");
             __builder2.CloseElement();
-            __builder2.AddMarkupContent(11, "\r\n                      ");
+            __builder2.AddMarkupContent(10, "\r\n                      ");
             __builder2.CloseElement();
         }
 #nullable restore
-#line 87 "G:\TestTask\TestTask\Client\Shared\NavMenu.razor"
+#line 92 "G:\TestTask\TestTask\Client\Shared\NavMenu.razor"
                            ;
                           
                           if (subDivision.SubDivisions != null)
@@ -187,10 +201,10 @@ __builder2.AddContent(9, subDivision.Title);
 #line hidden
 #nullable disable
         (__builder2) => {
-            __builder2.AddMarkupContent(12, "<div></div>");
+            __builder2.AddMarkupContent(11, "<div></div>");
         }
 #nullable restore
-#line 90 "G:\TestTask\TestTask\Client\Shared\NavMenu.razor"
+#line 95 "G:\TestTask\TestTask\Client\Shared\NavMenu.razor"
                                                                          );
         }
         return 
@@ -199,10 +213,10 @@ __builder2.AddContent(9, subDivision.Title);
 #line hidden
 #nullable disable
         (__builder2) => {
-            __builder2.OpenElement(13, "ul");
+            __builder2.OpenElement(12, "ul");
 #nullable restore
-#line 92 "G:\TestTask\TestTask\Client\Shared\NavMenu.razor"
-__builder2.AddContent(14, markup);
+#line 97 "G:\TestTask\TestTask\Client\Shared\NavMenu.razor"
+__builder2.AddContent(13, markup);
 
 #line default
 #line hidden
@@ -210,7 +224,7 @@ __builder2.AddContent(14, markup);
             __builder2.CloseElement();
         }
 #nullable restore
-#line 92 "G:\TestTask\TestTask\Client\Shared\NavMenu.razor"
+#line 97 "G:\TestTask\TestTask\Client\Shared\NavMenu.razor"
                                 ;
     }
 
@@ -220,9 +234,10 @@ __builder2.AddContent(14, markup);
         _navigationManager.NavigateTo("divisionInfo");
     }
 
-    private void DeleteDivisionButton_OnClick(Division division)
+    private async Task DeleteDivisionButton_OnClick(Division division)
     {
-        _appData.CurrentDivision = division;
+        Program.AppData.CurrentDivision = division;
+        await _storageService.SetItemAsync("currentDivision", division);
         _modalTitle = "Подтверждение удаления";
         _modalText = "Вы действительно хотите удалить подразделение?";
         _modalOpen = true;
@@ -235,8 +250,9 @@ __builder2.AddContent(14, markup);
         if (_stateMachine.CurrentState != StateMachine.State.Delete)
             return;
 
-        var divisionToDelete = _appData.CurrentDivision;
-        _appData.CurrentDivision = null;
+        var divisionToDelete = Program.AppData.CurrentDivision;
+        Program.AppData.CurrentDivision = null;
+        await _storageService.SetItemAsync<Division>("currentDivision", null);
 
         if (!success)
             return;
@@ -255,26 +271,30 @@ __builder2.AddContent(14, markup);
         await GetDivisions();
     }
 
-    private void ChangeDivisionButton_OnClick(Division division)
+    private async Task ChangeDivisionButton_OnClick(Division division)
     {
         _stateMachine.SetChangeState();
-        _appData.CurrentDivision = division;
+        Program.AppData.CurrentDivision = division;
+        //await _storageService.SetItemAsync("currentDivision", division);
 
         _navigationManager.NavigateTo("divisionInfo");
     }
 
-    private void SetCurrentDivision(Division division)
+    private async Task SetCurrentDivision(Division division)
     {
-        _appData.CurrentDivision = division;
+        await _storageService.SetItemAsync("currentDivision", division);
+        Program.AppData.CurrentDivision = division;
+
+        _navigationManager.NavigateTo(GetDivisionHrefById(division.Id));
     }
 
 #line default
 #line hidden
 #nullable disable
+        [global::Microsoft.AspNetCore.Components.InjectAttribute] private ISessionStorageService _storageService { get; set; }
         [global::Microsoft.AspNetCore.Components.InjectAttribute] private EventAggregator _eventAggregator { get; set; }
         [global::Microsoft.AspNetCore.Components.InjectAttribute] private NavigationManager _navigationManager { get; set; }
         [global::Microsoft.AspNetCore.Components.InjectAttribute] private StateMachine _stateMachine { get; set; }
-        [global::Microsoft.AspNetCore.Components.InjectAttribute] private AppData _appData { get; set; }
         [global::Microsoft.AspNetCore.Components.InjectAttribute] private HttpClient _http { get; set; }
     }
 }

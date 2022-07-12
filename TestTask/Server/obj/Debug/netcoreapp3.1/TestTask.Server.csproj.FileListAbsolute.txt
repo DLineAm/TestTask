@@ -976,3 +976,5 @@ G:\TestTask\TestTask\Server\obj\Debug\netcoreapp3.1\TestTask.Server.csproj.CopyC
 G:\TestTask\TestTask\Server\obj\Debug\netcoreapp3.1\TestTask.Server.dll
 G:\TestTask\TestTask\Server\obj\Debug\netcoreapp3.1\TestTask.Server.pdb
 G:\TestTask\TestTask\Server\obj\Debug\netcoreapp3.1\TestTask.Server.genruntimeconfig.cache
+G:\TestTask\TestTask\Server\bin\Debug\netcoreapp3.1\Blazored.LocalStorage.dll
+G:\TestTask\TestTask\Server\bin\Debug\netcoreapp3.1\Blazored.SessionStorage.dll

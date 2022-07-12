@@ -4,7 +4,7 @@ using TestTask.Shared;
 
 namespace TestTask.Server.Services
 {
-    public class GenderService
+    public class GenderService : IGenderService
     {
         private readonly UnitOfWork _unitOfWork;
 
@@ -13,7 +13,7 @@ namespace TestTask.Server.Services
             _unitOfWork = unitOfWork;
         }
 
-        public IEnumerable<Gender> GetGenders()
+        public IEnumerable<Gender> Get()
         {
             return _unitOfWork.GenderRepository.Get();
         }

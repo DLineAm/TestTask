@@ -91,14 +91,14 @@ using TestTask.Client.Services;
 #nullable disable
 #nullable restore
 #line 4 "G:\TestTask\TestTask\Client\Pages\Employees.razor"
-using System.Diagnostics;
+using Blazored.SessionStorage;
 
 #line default
 #line hidden
 #nullable disable
 #nullable restore
 #line 5 "G:\TestTask\TestTask\Client\Pages\Employees.razor"
-using System.Collections;
+using System.Diagnostics;
 
 #line default
 #line hidden
@@ -117,33 +117,40 @@ using System.Collections;
     [Parameter]
     public int Id { get; set; }
 
+    private string _title;
     private List<Employee> _employees;
     private bool _modalOpen;
     private string _modalText;
     private string _modalTitle;
     private List<Employee> _existEmployees;
+    private Division _currentDivision;
+    private IEnumerable<Division> _divisions;
 
 
     protected override async void OnParametersSet()
     {
-        await LoadEmployees();
+        //await LoadEmployees();
     }
 
     private async Task LoadEmployees()
     {
         _existEmployees = new List<Employee>();
 
-        var division = _appData.CurrentDivision;
-        if (division.SubDivisions != null && division.SubDivisions.Count > 0)
+        _currentDivision = Program.AppData.CurrentDivision 
+                           ?? (Program.AppData.CurrentDivision = Program.AppData.Divisions.FirstOrDefault(d => d.Id == Id));
+        _divisions = Program.AppData.Divisions;
+        Debug.WriteLine(_divisions == null);
+        _title = _currentDivision?.Title;
+        if (_currentDivision.SubDivisions != null && _currentDivision.SubDivisions.Count > 0)
         {
 
-            foreach (var subDivision in division.SubDivisions)
+            foreach (var subDivision in _currentDivision.SubDivisions)
             {
                 FillEmployeesListFromSubDivisions(subDivision);
             }
         }
         _employees = new List<Employee>();
-        _employees = await _http.GetFromJsonAsync<List<Employee>>($"employees?divisionId={_appData.CurrentDivision.Id}");
+        _employees = await _http.GetFromJsonAsync<List<Employee>>($"employees?divisionId={_currentDivision.Id}");
         StateHasChanged();
     }
 
@@ -152,11 +159,14 @@ using System.Collections;
         await LoadEmployees();
     }
 
-    private void EmployeeChangeButton_OnClick(Employee employee)
+    private async Task EmployeeChangeButton_OnClick(Employee employee)
     {
         _stateMachine.SetChangeState();
-        _appData.CurrentDivisionFromEmployee = _appData.Divisions.FirstOrDefault(d => d.Id == employee.DivisionId);
-        _appData.CurrentEmployee = employee;
+        //Program.AppData.CurrentDivisionFromEmployee = _divisions.FirstOrDefault(d => d.Id == employee.DivisionId);
+        Program.AppData.CurrentEmployee = employee;
+        await _storageService.SetItemAsync("employeeId", employee.Id);
+    //await _storageService.SetItemAsync("currentDivisionFromEmployee", Program.AppData.CurrentDivisionFromEmployee);
+        //await _storageService.SetItemAsync("currentEmployee", employee);
         _navigationManager.NavigateTo("employeeInfo");
     }
 
@@ -167,8 +177,10 @@ using System.Collections;
         {
             return;
         }
-        var employeeToDelete = _appData.CurrentEmployee;
-        _appData.CurrentEmployee = null;
+        var employeeToDelete = Program.AppData.CurrentEmployee;
+        Program.AppData.CurrentEmployee = null;
+
+        await _storageService.SetItemAsync<Employee>("currentEmployee", null);
 
         if (!success)
         {
@@ -189,24 +201,26 @@ using System.Collections;
         _employees.Remove(employeeToDelete);
     }
 
-    private void DeleteButton_OnClick(Employee employee)
+    private async Task DeleteButton_OnClick(Employee employee)
     {
-        _appData.CurrentEmployee = employee;
+        //Program.AppData.CurrentEmployee = employee;
+        await _storageService.SetItemAsync("currentEmployee", employee);
         _modalTitle = "Подтверждение удаления";
         _modalText = "Вы действительно хотите удалить сотрудника?";
         _modalOpen = true;
         _stateMachine.SetDeleteState();
     }
 
-    private void EmployeeAddButton_OnClick()
+    private async Task EmployeeAddButton_OnClick()
     {
         _stateMachine.SetAddState();
-        _appData.CurrentEmployee = null;
+        //Program.AppData.CurrentEmployee = null;
+        await _storageService.SetItemAsync<Employee>("currentEmployee", null);
         _navigationManager.NavigateTo("employeeInfo");
     }
 
     /// <summary>
-    /// Генерация кода для каждого сотрудника в подразделениях
+    /// Генерирует код для каждого сотрудника в подразделениях
     /// </summary>
     /// <param name="fragment"></param>
     /// <returns></returns>
@@ -227,7 +241,7 @@ using System.Collections;
             __builder2.OpenElement(3, "span");
             __builder2.AddAttribute(4, "style", "font-size: 20px; font-weight: 700");
 #nullable restore
-#line 159 "G:\TestTask\TestTask\Client\Pages\Employees.razor"
+#line 173 "G:\TestTask\TestTask\Client\Pages\Employees.razor"
 __builder2.AddContent(5, employee.FullName);
 
 #line default
@@ -235,8 +249,8 @@ __builder2.AddContent(5, employee.FullName);
 #nullable disable
             __builder2.AddContent(6, " (");
 #nullable restore
-#line 159 "G:\TestTask\TestTask\Client\Pages\Employees.razor"
-__builder2.AddContent(7, _appData.Divisions.FirstOrDefault(d => d.Id == employee.DivisionId)?.Title);
+#line 173 "G:\TestTask\TestTask\Client\Pages\Employees.razor"
+__builder2.AddContent(7, _divisions.FirstOrDefault(d => d.Id == employee.DivisionId)?.Title);
 
 #line default
 #line hidden
@@ -250,15 +264,20 @@ __builder2.AddContent(7, _appData.Divisions.FirstOrDefault(d => d.Id == employee
         </div>
     ");
             __builder2.CloseElement();
+            __builder2.AddMarkupContent(11, "\r\n");
         }
 #nullable restore
-#line 164 "G:\TestTask\TestTask\Client\Pages\Employees.razor"
-          ;
+#line 179 "G:\TestTask\TestTask\Client\Pages\Employees.razor"
+    ;
         }
 
         return fragment;
     }
 
+    /// <summary>
+    /// Заполняет список сотрудников из вложенных подразделений
+    /// </summary>
+    /// <param name="division"></param>
     private void FillEmployeesListFromSubDivisions(Division division)
     {
         var employeesFromDivision = division.Employees.Where(e => _existEmployees.All(emp => emp.Id != e.Id)).ToList();
@@ -277,8 +296,8 @@ __builder2.AddContent(7, _appData.Divisions.FirstOrDefault(d => d.Id == employee
 #line default
 #line hidden
 #nullable disable
+        [global::Microsoft.AspNetCore.Components.InjectAttribute] private ISessionStorageService _storageService { get; set; }
         [global::Microsoft.AspNetCore.Components.InjectAttribute] private StateMachine _stateMachine { get; set; }
-        [global::Microsoft.AspNetCore.Components.InjectAttribute] private AppData _appData { get; set; }
         [global::Microsoft.AspNetCore.Components.InjectAttribute] private NavigationManager _navigationManager { get; set; }
         [global::Microsoft.AspNetCore.Components.InjectAttribute] private HttpClient _http { get; set; }
     }

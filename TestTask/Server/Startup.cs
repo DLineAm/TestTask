@@ -36,9 +36,9 @@ namespace TestTask.Server
             services.AddDbContext<DatabaseContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("TestDB")));
             services.AddScoped<UnitOfWork>();
-            services.AddScoped<EmployeeService>();
-            services.AddScoped<DivisionService>();
-            services.AddScoped<GenderService>();
+            services.AddTransient<IDivisionService, DivisionService>();
+            services.AddTransient<IEmployeeService, EmployeeService>();
+            services.AddTransient<IGenderService, GenderService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

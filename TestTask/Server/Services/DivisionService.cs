@@ -5,7 +5,7 @@ using TestTask.Shared;
 
 namespace TestTask.Server.Services
 {
-    public class DivisionService
+    public class DivisionService : IDivisionService
     {
         private readonly UnitOfWork _unitOfWork;
 
@@ -14,18 +14,18 @@ namespace TestTask.Server.Services
             _unitOfWork = unitOfWork;
         }
 
-        public IEnumerable<Division> GetDivisions()
+        public IEnumerable<Division> Get()
         {
             return _unitOfWork.DivisionRepository.GetWithChildren();
         }
 
-        public bool TryGetDivision(int id, out Division division)
+        public bool TryGet(int id, out Division division)
         {
-            division = GetDivisions().FirstOrDefault(d => d.Id == id);
+            division = Get().FirstOrDefault(d => d.Id == id);
             return division != null;
         }
 
-        public void AddDivisionToDatabase(Division division)
+        public void Add(Division division)
         {
             division.Id = 0;
             var subDivisions = division.SubDivisions.ToList();
@@ -48,7 +48,7 @@ namespace TestTask.Server.Services
             _unitOfWork.Save();
         }
 
-        public void DeleteDivision(Division division)
+        public void Delete(Division division)
         {
             foreach (var subDivision in division.SubDivisions)
             {
@@ -59,7 +59,7 @@ namespace TestTask.Server.Services
             _unitOfWork.Save();
         }
 
-        public void ChangeDivision(Division division, Division dbDivision)
+        public void Change(Division division, Division dbDivision)
         {
             dbDivision.Title = division.Title;
             dbDivision.Description = division.Description;

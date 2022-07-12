@@ -1,11 +1,14 @@
 ﻿@using TestTask.Shared
 @using System.Net
 @using TestTask.Client.Services
+@using System.Diagnostics
+@using Blazored.SessionStorage
+@using Newtonsoft.Json
 @inject HttpClient _http
-@inject AppData _appData
 @inject StateMachine _stateMachine
 @inject NavigationManager _navigationManager
 @inject EventAggregator _eventAggregator
+@inject ISessionStorageService _storageService
 <div>
     <a class="sidebar__title" href="">Подразделения</a>
 </div>
@@ -26,7 +29,7 @@ else
             @foreach (var division in _divisions.Where(d => d.DivisionId is null))
             {
                 <li>
-                        <a href="@GetDivisionHrefById(division.Id)" style="cursor: pointer" @onclick="() => SetCurrentDivision(division)">@division.Title</a>
+                        <a style="cursor: pointer" @onclick="() => SetCurrentDivision(division)">@division.Title</a>
                         <img src="css/delete.svg" style="cursor: pointer" @onclick="() => DeleteDivisionButton_OnClick(division)" alt=""/>
                         <img src="css/edit.svg" style="cursor: pointer" @onclick="() => ChangeDivisionButton_OnClick(division)" alt=""/>
                         @if (division.SubDivisions != null)
@@ -60,13 +63,15 @@ else
             await GetDivisions();
             StateHasChanged();
         };
+
         await GetDivisions();
+
     }
 
     private async Task GetDivisions()
     {
-        _divisions = await _http.GetFromJsonAsync<List<Division>>("divisions");
-        _appData.Divisions = _divisions;
+        _divisions = Program.AppData.Divisions.ToList();
+        StateHasChanged();
     }
 
     private string GetDivisionHrefById(int divisionId)
@@ -80,7 +85,7 @@ else
         {
             markup += @<li>
                           <div class="pd1248">
-                              <a href="@GetDivisionHrefById(subDivision.Id)" style="cursor: pointer" @onclick="() => SetCurrentDivision(subDivision)">@subDivision.Title</a>
+                              <a style="cursor: pointer" @onclick="() => SetCurrentDivision(subDivision)">@subDivision.Title</a>
                               <img src="css/delete.svg" style="cursor: pointer" @onclick="() => DeleteDivisionButton_OnClick(subDivision)" alt=""/>
                               <img src="css/edit.svg" style="cursor: pointer" @onclick="() => ChangeDivisionButton_OnClick(subDivision)" alt=""/>
                           </div>
@@ -98,9 +103,10 @@ else
         _navigationManager.NavigateTo("divisionInfo");
     }
 
-    private void DeleteDivisionButton_OnClick(Division division)
+    private async Task DeleteDivisionButton_OnClick(Division division)
     {
-        _appData.CurrentDivision = division;
+        Program.AppData.CurrentDivision = division;
+        await _storageService.SetItemAsync("currentDivision", division);
         _modalTitle = "Подтверждение удаления";
         _modalText = "Вы действительно хотите удалить подразделение?";
         _modalOpen = true;
@@ -113,8 +119,9 @@ else
         if (_stateMachine.CurrentState != StateMachine.State.Delete)
             return;
 
-        var divisionToDelete = _appData.CurrentDivision;
-        _appData.CurrentDivision = null;
+        var divisionToDelete = Program.AppData.CurrentDivision;
+        Program.AppData.CurrentDivision = null;
+        await _storageService.SetItemAsync<Division>("currentDivision", null);
 
         if (!success)
             return;
@@ -133,17 +140,21 @@ else
         await GetDivisions();
     }
 
-    private void ChangeDivisionButton_OnClick(Division division)
+    private async Task ChangeDivisionButton_OnClick(Division division)
     {
         _stateMachine.SetChangeState();
-        _appData.CurrentDivision = division;
+        Program.AppData.CurrentDivision = division;
+        //await _storageService.SetItemAsync("currentDivision", division);
 
         _navigationManager.NavigateTo("divisionInfo");
     }
 
-    private void SetCurrentDivision(Division division)
+    private async Task SetCurrentDivision(Division division)
     {
-        _appData.CurrentDivision = division;
+        await _storageService.SetItemAsync("currentDivision", division);
+        Program.AppData.CurrentDivision = division;
+
+        _navigationManager.NavigateTo(GetDivisionHrefById(division.Id));
     }
 }
 

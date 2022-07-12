@@ -13,10 +13,10 @@ namespace TestTask.Server.Controllers
     public class EmployeesController : Controller
     {
         private readonly ILogger<EmployeesController> _logger;
-        private readonly EmployeeService _employeeService;
-        private readonly DivisionService _divisionService;
+        private readonly IEmployeeService _employeeService;
+        private readonly IDivisionService _divisionService;
 
-        public EmployeesController(ILogger<EmployeesController> logger, EmployeeService employeeService, DivisionService divisionService)
+        public EmployeesController(ILogger<EmployeesController> logger, IEmployeeService employeeService, IDivisionService divisionService)
         {
             _logger = logger;
             _employeeService = employeeService;
@@ -28,10 +28,10 @@ namespace TestTask.Server.Controllers
         {
             _logger.LogInformation($"Processing request in method {nameof(EmployeesController)}.{nameof(Get)}");
 
-            if (!_divisionService.TryGetDivision(divisionId, out _))
+            if (!_divisionService.TryGet(divisionId, out _))
                 return NotFound();
 
-            var employees = _employeeService.GetEmployeesFromDivision(divisionId);
+            var employees = _employeeService.GetWithParameter(divisionId);
 
             return Ok(employees);
         }
@@ -41,12 +41,12 @@ namespace TestTask.Server.Controllers
         {
             _logger.LogInformation($"Processing request in method {nameof(EmployeesController)}.{nameof(Put)}");
 
-            if (!_employeeService.TryGetEmployee(employee.Id, out var dbEmployee))
+            if (!_employeeService.TryGet(employee.Id, out var dbEmployee))
                 return NotFound();
 
             try
             {
-                _employeeService.ChangeEmployee(employee, dbEmployee);
+                _employeeService.Change(employee, dbEmployee);
                 return Ok();
             }
             catch (Exception e)
@@ -61,12 +61,12 @@ namespace TestTask.Server.Controllers
         {
             _logger.LogInformation($"Processing request in method {nameof(EmployeesController)}.{nameof(Delete)}");
 
-            if (!_employeeService.TryGetEmployee(id, out var employee))
+            if (!_employeeService.TryGet(id, out var employee))
                 return NotFound();
 
             try
             {
-                _employeeService.DeleteEmployeeFromDatabase(employee);
+                _employeeService.Delete(employee);
                 return Ok();
             }
             catch (Exception e)
@@ -84,7 +84,7 @@ namespace TestTask.Server.Controllers
 
             try
             {
-                _employeeService.AddEmployeeToDatabase(employee);
+                _employeeService.Add(employee);
                 return Ok();
             }
             catch (Exception e)

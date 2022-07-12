@@ -1,6 +1,9 @@
 ﻿@using TestTask.Client.Services
+@using Blazored.SessionStorage
+@using TestTask.Shared
 @inherits LayoutComponentBase
-@inject AppData AppData
+@inject ISessionStorageService _storageService
+@inject HttpClient _http
 
 <div class="sidebar">
     <NavMenu />
@@ -17,6 +20,10 @@
 {
     protected override async Task OnInitializedAsync()
     {
-        await AppData.InitializeBaseProperties();
+        await Program.AppData.InitializeBaseProperties();
+        //await _storageService.ClearAsync();
+        //await _storageService.SetItemAsync("genders", Program.AppData.Genders);
+        var response = await _http.GetFromJsonAsync<IEnumerable<Division>>("divisions");
+        Program.AppData.Divisions = response;
     }
 }

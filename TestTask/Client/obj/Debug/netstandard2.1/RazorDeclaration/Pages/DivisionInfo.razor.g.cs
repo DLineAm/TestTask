@@ -96,6 +96,13 @@ using System.Diagnostics;
 #line default
 #line hidden
 #nullable disable
+#nullable restore
+#line 5 "G:\TestTask\TestTask\Client\Pages\DivisionInfo.razor"
+using Blazored.SessionStorage;
+
+#line default
+#line hidden
+#nullable disable
     [Microsoft.AspNetCore.Components.RouteAttribute("/divisionInfo")]
     public partial class DivisionInfo : Microsoft.AspNetCore.Components.ComponentBase
     {
@@ -105,7 +112,7 @@ using System.Diagnostics;
         }
         #pragma warning restore 1998
 #nullable restore
-#line 65 "G:\TestTask\TestTask\Client\Pages\DivisionInfo.razor"
+#line 66 "G:\TestTask\TestTask\Client\Pages\DivisionInfo.razor"
        
     private Division _division;
     private int? _subDivisionId;
@@ -115,11 +122,22 @@ using System.Diagnostics;
 
     protected override void OnInitialized()
     {
-        _division = _stateMachine.CurrentState is StateMachine.State.Add
-            ? new Division()
-            : _appData.CurrentDivision;
+        var divisionFromSession = _storageService.GetItem<Division>("currentDivision");
+        if (Program.AppData.CurrentDivision == null && divisionFromSession != null)
+        {
+            _division = divisionFromSession;
+        }
+        else
+        {
+            _division = _stateMachine.CurrentState is StateMachine.State.Add
+                ? new Division()
+                : Program.AppData.CurrentDivision;
+            _storageService.SetItem("currentDivision", _division);
+            Debug.WriteLine(_division == null);
+        }
 
-        var divisionsList = _appData.Divisions.Where(d => d.Id != _division.Id).ToList();
+
+        var divisionsList = Program.AppData.Divisions.Where(d => d.Id != _division.Id).ToList();
         divisionsList.ForEach(d =>
         {
             d.ParentDivision = null;
@@ -134,6 +152,9 @@ using System.Diagnostics;
             FillSubDivisions();
     }
 
+    /// <summary>
+    /// Заполняет список вложенных подразделений
+    /// </summary>
     private void FillSubDivisions()
     {
         var subDivisions = _division.SubDivisions.ToList();
@@ -147,6 +168,9 @@ using System.Diagnostics;
         }
     }
 
+    /// <summary>
+    /// Добавляет подразделение в список вложенных подразделений
+    /// </summary>
     private void AddSubDivision()
     {
         var divisionToAdd = _divisionsToAdd.FirstOrDefault(d => d.Id == _subDivisionId);
@@ -208,11 +232,11 @@ using System.Diagnostics;
 #line default
 #line hidden
 #nullable disable
+        [global::Microsoft.AspNetCore.Components.InjectAttribute] private ISyncSessionStorageService _storageService { get; set; }
         [global::Microsoft.AspNetCore.Components.InjectAttribute] private NavigationManager _navigationManager { get; set; }
         [global::Microsoft.AspNetCore.Components.InjectAttribute] private EventAggregator _eventAggregator { get; set; }
         [global::Microsoft.AspNetCore.Components.InjectAttribute] private HttpClient _http { get; set; }
         [global::Microsoft.AspNetCore.Components.InjectAttribute] private StateMachine _stateMachine { get; set; }
-        [global::Microsoft.AspNetCore.Components.InjectAttribute] private AppData _appData { get; set; }
     }
 }
 #pragma warning restore 1591

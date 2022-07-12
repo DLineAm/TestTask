@@ -10,15 +10,12 @@ namespace TestTask.Server.DAL.Context
 {
     public class DatabaseInitializer
     {
-        public static void InitializeDatabase(DatabaseContext context)
+        /// <summary>
+        /// Заполняет базу данных тестовыми данными
+        /// </summary>
+        /// <param name="context"></param>
+        public static void InitializeTestData(DatabaseContext context)
         {
-            if (!context.Database.EnsureCreated())
-            {
-                context.Database.Migrate();
-            }
-
-            context.Database.EnsureCreated();
-
             var divisions = InitializeDivisions(context);
 
             var (mGenderId, fGenderId) = InitializeGenders(context);
@@ -26,6 +23,11 @@ namespace TestTask.Server.DAL.Context
             InitializeEmployees(context, divisions, mGenderId, fGenderId);
         }
 
+        /// <summary>
+        /// Заполняет таблицу подразделений тестовыми даными
+        /// </summary>
+        /// <param name="context"></param>
+        /// <returns></returns>
         private static IEnumerable<Division> InitializeDivisions(DatabaseContext context)
         {
             if (context.Divisions.Count() > 0)
@@ -78,6 +80,12 @@ namespace TestTask.Server.DAL.Context
             return savedEntity.Entity;
         }
 
+        /// <summary>
+        /// Заполняет таблицу генденров тестовыми данными
+        /// </summary>
+        /// <param name="context"></param>
+        /// <returns></returns>
+        /// <exception cref="InvalidOperationException"></exception>
         private static (int mGenderId, int fGenderId) InitializeGenders(DatabaseContext context)
         {
             if (context.Genders.Count() > 0)
@@ -101,6 +109,13 @@ namespace TestTask.Server.DAL.Context
             return (mGender.Id, fGender.Id);
         }
 
+        /// <summary>
+        /// Заполняет таблицу сотрудников тестовыми данными
+        /// </summary>
+        /// <param name="context"></param>
+        /// <param name="divisions"></param>
+        /// <param name="mGenderId"></param>
+        /// <param name="fGenderId"></param>
         private static void InitializeEmployees(DatabaseContext context, IEnumerable<Division> divisions, int mGenderId, int fGenderId)
         {
             if (context.Employees.Count() > 0)

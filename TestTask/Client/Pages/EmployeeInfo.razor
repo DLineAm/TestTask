@@ -1,13 +1,12 @@
 ﻿@page "/employeeInfo"
 @using TestTask.Shared
 @using TestTask.Client.Services
-@using Newtonsoft.Json
-@using System.Text
 @using System.Diagnostics
-@inject AppData _appData
+@using Blazored.SessionStorage
 @inject HttpClient _http
 @inject NavigationManager _navigationManager
 @inject StateMachine _stateMachine
+@inject ISyncSessionStorageService _storageService
 <h3 class="info__title">Информация о сотруднике</h3>
 
 <div>
@@ -36,7 +35,7 @@
     </select>
 </div>
 <div>
-    <input type="checkbox" @bind="@_employee.HasDriverLicense"/> Есть водительские права 
+    <input type="checkbox" @bind="@_employee.HasDriverLicense" /> Есть водительские права
 </div>
 <div>
     <label for="division">Подразделение</label>
@@ -62,17 +61,23 @@
     private string _errorText;
     private int _divisionId;
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
-        _genders = _appData.Genders;
+
+        _genders = Program.AppData.Genders;
         var firstGender = _genders.First();
-        _employee = _stateMachine.CurrentState is StateMachine.State.Add 
-            ? new Employee{Gender = firstGender, GenderId = firstGender.Id} 
-            : _appData.CurrentEmployee;
-        _divisions = _appData.Divisions;
-        _divisionId = _appData.CurrentDivision.Id;
-        _employee.DivisionId = _stateMachine.CurrentState is StateMachine.State.Add 
-            ? _appData.CurrentDivision.Id : _appData.CurrentDivisionFromEmployee.Id;
+        if (Program.AppData.CurrentEmployee == null)
+        {
+            _employee = _storageService.GetItem<Employee>("currentEmployee");
+        }
+        else
+        {
+            _employee = _stateMachine.CurrentState == StateMachine.State.Add
+                ? new Employee { DateOfBirth = DateTime.Now - TimeSpan.FromDays(365 * 18), DivisionId = Program.AppData.CurrentDivision.Id, GenderId = firstGender.Id }
+                : Program.AppData.CurrentEmployee;
+             _storageService.SetItem("currentEmployee", _employee);
+        }
+        _divisions = Program.AppData.Divisions;
     }
 
     private async Task Apply()
@@ -82,6 +87,14 @@
             string.IsNullOrWhiteSpace(_employee.MiddleName))
         {
             _errorText = "Все поля должны быть заполнены!";
+            _isErrorHidden = false;
+            return;
+        }
+
+        Debug.WriteLine(_employee.DateOfBirth.Year);
+        if (_employee.DateOfBirth > DateTime.Now - TimeSpan.FromDays(365 * 18))
+        {
+            _errorText = "Работнику должно быть не меньше 18 лет";
             _isErrorHidden = false;
             return;
         }

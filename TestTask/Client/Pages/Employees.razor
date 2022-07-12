@@ -1,17 +1,19 @@
 ﻿@page "/employees/{Id:int}"
 @using TestTask.Shared
 @using TestTask.Client.Services
+@using Blazored.SessionStorage
+@using System.Diagnostics
 @inject HttpClient _http
 @inject NavigationManager _navigationManager
-@inject AppData _appData
 @inject StateMachine _stateMachine
+@inject ISessionStorageService _storageService
 <h1 class="info__title">Сотрудники</h1>
-<h1 class="info__title">@_appData.CurrentDivision.Title</h1>
+<h1 class="info__title">@_title</h1>
 <button @onclick="EmployeeAddButton_OnClick" class="main--btn inverted">Добавить</button>
 
 
 
-@if (_employees is null)
+@if (_employees is null || _currentDivision is null || _divisions is null)
 {
     <span>Загрузка</span>
 }
@@ -31,7 +33,7 @@ else
         <div>
             <h3>Работники во вложенных подразделениях</h3>
 
-            @if (_appData.CurrentDivision.SubDivisions != null && _appData.CurrentDivision.SubDivisions.Count > 0)
+            @if (_currentDivision.SubDivisions != null && _currentDivision.SubDivisions.Count > 0)
             {
                 @(GetEmployeesInSubDivisions(@<div></div>))
             }
@@ -55,33 +57,40 @@ else
     [Parameter]
     public int Id { get; set; }
 
+    private string _title;
     private List<Employee> _employees;
     private bool _modalOpen;
     private string _modalText;
     private string _modalTitle;
     private List<Employee> _existEmployees;
+    private Division _currentDivision;
+    private IEnumerable<Division> _divisions;
 
 
     protected override async void OnParametersSet()
     {
-        await LoadEmployees();
+        //await LoadEmployees();
     }
 
     private async Task LoadEmployees()
     {
         _existEmployees = new List<Employee>();
 
-        var division = _appData.CurrentDivision;
-        if (division.SubDivisions != null && division.SubDivisions.Count > 0)
+        _currentDivision = Program.AppData.CurrentDivision 
+                           ?? (Program.AppData.CurrentDivision = Program.AppData.Divisions.FirstOrDefault(d => d.Id == Id));
+        _divisions = Program.AppData.Divisions;
+        Debug.WriteLine(_divisions == null);
+        _title = _currentDivision?.Title;
+        if (_currentDivision.SubDivisions != null && _currentDivision.SubDivisions.Count > 0)
         {
 
-            foreach (var subDivision in division.SubDivisions)
+            foreach (var subDivision in _currentDivision.SubDivisions)
             {
                 FillEmployeesListFromSubDivisions(subDivision);
             }
         }
         _employees = new List<Employee>();
-        _employees = await _http.GetFromJsonAsync<List<Employee>>($"employees?divisionId={_appData.CurrentDivision.Id}");
+        _employees = await _http.GetFromJsonAsync<List<Employee>>($"employees?divisionId={_currentDivision.Id}");
         StateHasChanged();
     }
 
@@ -90,11 +99,14 @@ else
         await LoadEmployees();
     }
 
-    private void EmployeeChangeButton_OnClick(Employee employee)
+    private async Task EmployeeChangeButton_OnClick(Employee employee)
     {
         _stateMachine.SetChangeState();
-        _appData.CurrentDivisionFromEmployee = _appData.Divisions.FirstOrDefault(d => d.Id == employee.DivisionId);
-        _appData.CurrentEmployee = employee;
+        //Program.AppData.CurrentDivisionFromEmployee = _divisions.FirstOrDefault(d => d.Id == employee.DivisionId);
+        Program.AppData.CurrentEmployee = employee;
+        await _storageService.SetItemAsync("employeeId", employee.Id);
+    //await _storageService.SetItemAsync("currentDivisionFromEmployee", Program.AppData.CurrentDivisionFromEmployee);
+        //await _storageService.SetItemAsync("currentEmployee", employee);
         _navigationManager.NavigateTo("employeeInfo");
     }
 
@@ -105,8 +117,10 @@ else
         {
             return;
         }
-        var employeeToDelete = _appData.CurrentEmployee;
-        _appData.CurrentEmployee = null;
+        var employeeToDelete = Program.AppData.CurrentEmployee;
+        Program.AppData.CurrentEmployee = null;
+
+        await _storageService.SetItemAsync<Employee>("currentEmployee", null);
 
         if (!success)
         {
@@ -127,19 +141,21 @@ else
         _employees.Remove(employeeToDelete);
     }
 
-    private void DeleteButton_OnClick(Employee employee)
+    private async Task DeleteButton_OnClick(Employee employee)
     {
-        _appData.CurrentEmployee = employee;
+        //Program.AppData.CurrentEmployee = employee;
+        await _storageService.SetItemAsync("currentEmployee", employee);
         _modalTitle = "Подтверждение удаления";
         _modalText = "Вы действительно хотите удалить сотрудника?";
         _modalOpen = true;
         _stateMachine.SetDeleteState();
     }
 
-    private void EmployeeAddButton_OnClick()
+    private async Task EmployeeAddButton_OnClick()
     {
         _stateMachine.SetAddState();
-        _appData.CurrentEmployee = null;
+        //Program.AppData.CurrentEmployee = null;
+        await _storageService.SetItemAsync<Employee>("currentEmployee", null);
         _navigationManager.NavigateTo("employeeInfo");
     }
 
@@ -154,7 +170,7 @@ else
         {
             fragment +=
     @<div class="subdiv__item">
-        <span style="font-size: 20px; font-weight: 700">@employee.FullName (@_appData.Divisions.FirstOrDefault(d => d.Id == employee.DivisionId)?.Title)</span>
+        <span style="font-size: 20px; font-weight: 700">@employee.FullName (@_divisions.FirstOrDefault(d => d.Id == employee.DivisionId)?.Title)</span>
         <div>
             <img style="width: 20px; cursor: pointer" src="css/edit--green.svg" @onclick="() => EmployeeChangeButton_OnClick(employee)" alt="" />
             <img style="width: 20px; cursor: pointer" src="css/delete--green.svg" @onclick="() => DeleteButton_OnClick(employee)" alt="" />
@@ -185,5 +201,6 @@ else
     }
 
 }
+
 
 

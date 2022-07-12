@@ -91,21 +91,14 @@ using TestTask.Client.Services;
 #nullable disable
 #nullable restore
 #line 4 "G:\TestTask\TestTask\Client\Pages\EmployeeInfo.razor"
-using Newtonsoft.Json;
+using System.Diagnostics;
 
 #line default
 #line hidden
 #nullable disable
 #nullable restore
 #line 5 "G:\TestTask\TestTask\Client\Pages\EmployeeInfo.razor"
-using System.Text;
-
-#line default
-#line hidden
-#nullable disable
-#nullable restore
-#line 6 "G:\TestTask\TestTask\Client\Pages\EmployeeInfo.razor"
-using System.Diagnostics;
+using Blazored.SessionStorage;
 
 #line default
 #line hidden
@@ -119,7 +112,7 @@ using System.Diagnostics;
         }
         #pragma warning restore 1998
 #nullable restore
-#line 57 "G:\TestTask\TestTask\Client\Pages\EmployeeInfo.razor"
+#line 56 "G:\TestTask\TestTask\Client\Pages\EmployeeInfo.razor"
        
     private Employee _employee;
     private IEnumerable<Division> _divisions;
@@ -128,17 +121,23 @@ using System.Diagnostics;
     private string _errorText;
     private int _divisionId;
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
-        _genders = _appData.Genders;
+
+        _genders = Program.AppData.Genders;
         var firstGender = _genders.First();
-        _employee = _stateMachine.CurrentState is StateMachine.State.Add 
-            ? new Employee{Gender = firstGender, GenderId = firstGender.Id} 
-            : _appData.CurrentEmployee;
-        _divisions = _appData.Divisions;
-        _divisionId = _appData.CurrentDivision.Id;
-        _employee.DivisionId = _stateMachine.CurrentState is StateMachine.State.Add 
-            ? _appData.CurrentDivision.Id : _appData.CurrentDivisionFromEmployee.Id;
+        if (Program.AppData.CurrentEmployee == null)
+        {
+            _employee = _storageService.GetItem<Employee>("currentEmployee");
+        }
+        else
+        {
+            _employee = _stateMachine.CurrentState == StateMachine.State.Add
+                ? new Employee { DateOfBirth = DateTime.Now - TimeSpan.FromDays(365 * 18), DivisionId = Program.AppData.CurrentDivision.Id, GenderId = firstGender.Id }
+                : Program.AppData.CurrentEmployee;
+             _storageService.SetItem("currentEmployee", _employee);
+        }
+        _divisions = Program.AppData.Divisions;
     }
 
     private async Task Apply()
@@ -148,6 +147,14 @@ using System.Diagnostics;
             string.IsNullOrWhiteSpace(_employee.MiddleName))
         {
             _errorText = "Все поля должны быть заполнены!";
+            _isErrorHidden = false;
+            return;
+        }
+
+        Debug.WriteLine(_employee.DateOfBirth.Year);
+        if (_employee.DateOfBirth > DateTime.Now - TimeSpan.FromDays(365 * 18))
+        {
+            _errorText = "Работнику должно быть не меньше 18 лет";
             _isErrorHidden = false;
             return;
         }
@@ -178,11 +185,7 @@ using System.Diagnostics;
 
     private async Task<HttpResponseMessage> PutEmployeeAsync()
     {
-        var json = JsonConvert.SerializeObject(_employee);
-
-        var content = new StringContent(json, Encoding.UTF8, "application/json");
-
-        var response = await _http.PutAsync("employees/change", content);
+        var response = await _http.PutAsJsonAsync("employees/change", _employee);
         return response;
     }
 
@@ -190,10 +193,10 @@ using System.Diagnostics;
 #line default
 #line hidden
 #nullable disable
+        [global::Microsoft.AspNetCore.Components.InjectAttribute] private ISyncSessionStorageService _storageService { get; set; }
         [global::Microsoft.AspNetCore.Components.InjectAttribute] private StateMachine _stateMachine { get; set; }
         [global::Microsoft.AspNetCore.Components.InjectAttribute] private NavigationManager _navigationManager { get; set; }
         [global::Microsoft.AspNetCore.Components.InjectAttribute] private HttpClient _http { get; set; }
-        [global::Microsoft.AspNetCore.Components.InjectAttribute] private AppData _appData { get; set; }
     }
 }
 #pragma warning restore 1591
