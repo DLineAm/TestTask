@@ -149,7 +149,11 @@ else
     {
         Program.AppData.CurrentDivision = division;
 
-        _navigationManager.NavigateTo(GetDivisionHrefById(division.Id));
+        var url = GetDivisionHrefById(division.Id);
+
+        Program.LastPageUrl = url;
+
+        _navigationManager.NavigateTo(url);
     }
 }
 

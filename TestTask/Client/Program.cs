@@ -15,6 +15,7 @@ namespace TestTask.Client
     public class Program
     {
         public static AppData AppData;
+        public static string LastPageUrl = "";
         public static async Task Main(string[] args)
         {
             var builder = WebAssemblyHostBuilder.CreateDefault(args);

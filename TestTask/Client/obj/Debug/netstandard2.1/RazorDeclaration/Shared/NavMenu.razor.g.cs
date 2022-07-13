@@ -281,7 +281,11 @@ __builder2.AddContent(13, markup);
     {
         Program.AppData.CurrentDivision = division;
 
-        _navigationManager.NavigateTo(GetDivisionHrefById(division.Id));
+        var url = GetDivisionHrefById(division.Id);
+
+        Program.LastPageUrl = url;
+
+        _navigationManager.NavigateTo(url);
     }
 
 #line default

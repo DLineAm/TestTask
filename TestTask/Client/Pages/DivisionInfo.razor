@@ -9,6 +9,7 @@
 @inject NavigationManager _navigationManager
 @inject ISyncSessionStorageService _storageService
 <h3 class="info__title">Информация о подразделении</h3>
+<button @onclick="GoBack">Назад</button>
 
 <div>
     <label for="title">Наименование</label>
@@ -239,6 +240,11 @@
     {
         _storageService.Clear();
         _storageService.SetItem("currentDivision", _division);
+    }
+
+    private void GoBack()
+    {
+        _navigationManager.NavigateTo(Program.LastPageUrl);
     }
 
 }

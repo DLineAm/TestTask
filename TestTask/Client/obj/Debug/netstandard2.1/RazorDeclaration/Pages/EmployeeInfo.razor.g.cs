@@ -112,7 +112,7 @@ using Blazored.SessionStorage;
         }
         #pragma warning restore 1998
 #nullable restore
-#line 56 "G:\TestTask\TestTask\Client\Pages\EmployeeInfo.razor"
+#line 57 "G:\TestTask\TestTask\Client\Pages\EmployeeInfo.razor"
        
     private Employee _employee;
     private IEnumerable<Division> _divisions;
@@ -147,7 +147,7 @@ using Blazored.SessionStorage;
     {
         _genders = Program.AppData.Genders;
         var firstGender = _genders.First();
-        if (Program.AppData.CurrentEmployee == null)
+        if (Program.AppData.CurrentEmployee == null && _stateMachine.CurrentState is StateMachine.State.Change)
         {
             _employee = _storageService.GetItem<Employee>("currentEmployee");
         }
@@ -178,7 +178,6 @@ using Blazored.SessionStorage;
             return;
         }
 
-        Debug.WriteLine(_employee.DateOfBirth.Year);
         if (_employee.DateOfBirth > DateTime.Now - TimeSpan.FromDays(365 * 18))
         {
             _errorText = "Работнику должно быть не меньше 18 лет";
@@ -219,6 +218,11 @@ using Blazored.SessionStorage;
     private void SaveEmployee()
     {
         _storageService.SetItem("currentEmployee", _employee);
+    }
+
+    private void GoBack()
+    {
+        _navigationManager.NavigateTo(Program.LastPageUrl);
     }
 
 

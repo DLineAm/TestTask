@@ -112,7 +112,7 @@ using Blazored.SessionStorage;
         }
         #pragma warning restore 1998
 #nullable restore
-#line 66 "G:\TestTask\TestTask\Client\Pages\DivisionInfo.razor"
+#line 67 "G:\TestTask\TestTask\Client\Pages\DivisionInfo.razor"
        
     [Parameter]
     public int Id { get; set; }
@@ -143,11 +143,6 @@ using Blazored.SessionStorage;
         StateHasChanged();
     }
 
-    protected override void OnInitialized()
-    {
-      //InitializeData();
-    }
-
     private void InitializeData()
     {
         var divisionFromSession = GetDivisionFromSession();
@@ -163,11 +158,8 @@ using Blazored.SessionStorage;
                 ? new Division()
                 : Program.AppData.CurrentDivision;
             _storageService.SetItem("currentDivision", _division);
-            Debug.WriteLine(_division == null);
         }
 
-        Debug.WriteLine("Program.AppData.CurrentDivisionFromList == null: " +
-                        (Program.AppData.CurrentDivisionFromList == null));
         if (Program.AppData.CurrentDivisionFromList == null)
         {
             DivisionId = _storageService.GetItem<int>("currentDivisionIdFromList");
@@ -295,9 +287,13 @@ using Blazored.SessionStorage;
 
     private void SaveDivision()
     {
-        Debug.WriteLine(_division.DivisionId);
         _storageService.Clear();
         _storageService.SetItem("currentDivision", _division);
+    }
+
+    private void GoBack()
+    {
+        _navigationManager.NavigateTo(Program.LastPageUrl);
     }
 
 

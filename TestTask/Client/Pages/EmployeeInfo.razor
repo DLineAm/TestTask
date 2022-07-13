@@ -8,6 +8,7 @@
 @inject StateMachine _stateMachine
 @inject ISyncSessionStorageService _storageService
 <h3 class="info__title">Информация о сотруднике</h3>
+<button @onclick="GoBack">Назад</button>
 
 <div>
     <label for="lastname">Фамилия</label>
@@ -87,7 +88,7 @@
     {
         _genders = Program.AppData.Genders;
         var firstGender = _genders.First();
-        if (Program.AppData.CurrentEmployee == null)
+        if (Program.AppData.CurrentEmployee == null && _stateMachine.CurrentState is StateMachine.State.Change)
         {
             _employee = _storageService.GetItem<Employee>("currentEmployee");
         }
@@ -158,6 +159,11 @@
     private void SaveEmployee()
     {
         _storageService.SetItem("currentEmployee", _employee);
+    }
+
+    private void GoBack()
+    {
+        _navigationManager.NavigateTo(Program.LastPageUrl);
     }
 
 }
