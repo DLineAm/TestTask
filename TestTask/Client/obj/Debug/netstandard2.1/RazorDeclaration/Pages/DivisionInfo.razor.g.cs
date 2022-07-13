@@ -181,7 +181,6 @@ using Blazored.SessionStorage;
         try
         {
             return _storageService.GetItem<Division>("currentDivision");
-
         }
         catch
         {
@@ -266,8 +265,6 @@ using Blazored.SessionStorage;
         _eventAggregator.InvokeDivisionCollectionChanged();
 
         _navigationManager.NavigateTo("");
-
-        //GetDivisions();
     }
 
     private async Task<HttpResponseMessage> PutDivisionAsync()

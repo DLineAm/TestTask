@@ -4,7 +4,6 @@ using Microsoft.Extensions.Logging;
 using System;
 
 using TestTask.Server.Services;
-using TestTask.Server.Utils;
 using TestTask.Shared;
 
 namespace TestTask.Server.Controllers
@@ -26,7 +25,6 @@ namespace TestTask.Server.Controllers
         public IActionResult Get()
         {
             _logger.LogInformation($"Processing request in method {nameof(DivisionsController)}.{nameof(Get)}");
-            Cache.Session ??= HttpContext.Session;
             return Ok(_divisionService.Get());
         }
 

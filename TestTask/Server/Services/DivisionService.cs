@@ -1,9 +1,11 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
+
 using Newtonsoft.Json;
+
+using System.Collections.Generic;
+using System.Linq;
+
 using TestTask.Server.DAL;
-using TestTask.Server.Utils;
 using TestTask.Shared;
 
 namespace TestTask.Server.Services

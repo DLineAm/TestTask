@@ -12,7 +12,6 @@ using Newtonsoft.Json;
 using TestTask.Server.DAL;
 using TestTask.Server.DAL.Context;
 using TestTask.Server.Services;
-using TestTask.Server.Utils;
 
 namespace TestTask.Server
 {
@@ -40,7 +39,6 @@ namespace TestTask.Server
             services.AddDbContext<DatabaseContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("TestDB")).EnableSensitiveDataLogging());
             services.AddScoped<UnitOfWork>();
-            services.AddScoped<Cache>();
             services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddTransient<IDivisionService, DivisionService>();
             services.AddTransient<IEmployeeService, EmployeeService>();
