@@ -132,7 +132,6 @@
         try
         {
             return _storageService.GetItem<Division>("currentDivision");
-
         }
         catch
         {
@@ -217,8 +216,6 @@
         _eventAggregator.InvokeDivisionCollectionChanged();
 
         _navigationManager.NavigateTo("");
-
-        //GetDivisions();
     }
 
     private async Task<HttpResponseMessage> PutDivisionAsync()
