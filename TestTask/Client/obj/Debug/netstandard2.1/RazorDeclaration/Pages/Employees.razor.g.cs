@@ -96,13 +96,6 @@ using Blazored.SessionStorage;
 #line default
 #line hidden
 #nullable disable
-#nullable restore
-#line 5 "G:\TestTask\TestTask\Client\Pages\Employees.razor"
-using System.Diagnostics;
-
-#line default
-#line hidden
-#nullable disable
     [Microsoft.AspNetCore.Components.RouteAttribute("/employees/{Id:int}")]
     public partial class Employees : Microsoft.AspNetCore.Components.ComponentBase
     {
@@ -112,7 +105,7 @@ using System.Diagnostics;
         }
         #pragma warning restore 1998
 #nullable restore
-#line 56 "G:\TestTask\TestTask\Client\Pages\Employees.razor"
+#line 55 "G:\TestTask\TestTask\Client\Pages\Employees.razor"
        
     [Parameter]
     public int Id { get; set; }
@@ -154,11 +147,6 @@ using System.Diagnostics;
         StateHasChanged();
     }
 
-    protected override async Task OnInitializedAsync()
-    {
-        await LoadEmployees();
-    }
-
     private async Task EmployeeChangeButton_OnClick(Employee employee)
     {
         _stateMachine.SetChangeState();
@@ -177,8 +165,6 @@ using System.Diagnostics;
         var employeeToDelete = Program.AppData.CurrentEmployee;
         Program.AppData.CurrentEmployee = null;
 
-        await _storageService.SetItemAsync<Employee>("currentEmployee", null);
-
         if (!success)
         {
             return;
@@ -195,12 +181,17 @@ using System.Diagnostics;
             return;
         }
 
+        if (employeeToDelete.DivisionId != Id)
+        {
+            _existEmployees.Remove(employeeToDelete);
+            return;
+        }
         _employees.Remove(employeeToDelete);
     }
 
     private async Task DeleteButton_OnClick(Employee employee)
     {
-        //Program.AppData.CurrentEmployee = employee;
+        Program.AppData.CurrentEmployee = employee;
         await _storageService.SetItemAsync("currentEmployee", employee);
         _modalTitle = "Подтверждение удаления";
         _modalText = "Вы действительно хотите удалить сотрудника?";
@@ -237,7 +228,7 @@ using System.Diagnostics;
             __builder2.OpenElement(3, "span");
             __builder2.AddAttribute(4, "style", "font-size: 20px; font-weight: 700");
 #nullable restore
-#line 169 "G:\TestTask\TestTask\Client\Pages\Employees.razor"
+#line 166 "G:\TestTask\TestTask\Client\Pages\Employees.razor"
 __builder2.AddContent(5, employee.FullName);
 
 #line default
@@ -245,7 +236,7 @@ __builder2.AddContent(5, employee.FullName);
 #nullable disable
             __builder2.AddContent(6, " (");
 #nullable restore
-#line 169 "G:\TestTask\TestTask\Client\Pages\Employees.razor"
+#line 166 "G:\TestTask\TestTask\Client\Pages\Employees.razor"
 __builder2.AddContent(7, _divisions.FirstOrDefault(d => d.Id == employee.DivisionId)?.Title);
 
 #line default
@@ -263,7 +254,7 @@ __builder2.AddContent(7, _divisions.FirstOrDefault(d => d.Id == employee.Divisio
             __builder2.AddMarkupContent(11, "\r\n");
         }
 #nullable restore
-#line 175 "G:\TestTask\TestTask\Client\Pages\Employees.razor"
+#line 172 "G:\TestTask\TestTask\Client\Pages\Employees.razor"
     ;
         }
 

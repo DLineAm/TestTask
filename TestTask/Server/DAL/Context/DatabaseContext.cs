@@ -79,7 +79,8 @@ namespace TestTask.Server.DAL.Context
 
                 entity.HasOne(d => d.Division)
                     .WithMany(p => p.Employees)
-                    .HasForeignKey(d => d.DivisionId);
+                    .HasForeignKey(d => d.DivisionId)
+                    .OnDelete(DeleteBehavior.NoAction);
 
                 entity.Property(d => d.GenderId)
                     .HasDefaultValue(1);

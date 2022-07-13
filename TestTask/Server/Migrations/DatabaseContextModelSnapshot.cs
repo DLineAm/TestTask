@@ -30,14 +30,12 @@ namespace TestTask.Server.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Description")
-                        .IsRequired()
                         .HasColumnType("nvarchar(MAX)");
 
                     b.Property<int?>("DivisionId")
                         .HasColumnType("int");
 
                     b.Property<string>("Title")
-                        .IsRequired()
                         .HasColumnType("nvarchar(150)");
 
                     b.HasKey("Id");
@@ -57,10 +55,11 @@ namespace TestTask.Server.Migrations
                     b.Property<DateTime>("DateOfBirth")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("DivisionId")
+                    b.Property<int?>("DivisionId")
                         .HasColumnType("int");
 
                     b.Property<string>("FirstName")
+                        .IsRequired()
                         .HasColumnType("nvarchar(50)");
 
                     b.Property<int>("GenderId")
@@ -72,6 +71,7 @@ namespace TestTask.Server.Migrations
                         .HasColumnType("bit");
 
                     b.Property<string>("LastName")
+                        .IsRequired()
                         .HasColumnType("nvarchar(50)");
 
                     b.Property<string>("MiddleName")
@@ -116,8 +116,7 @@ namespace TestTask.Server.Migrations
                     b.HasOne("TestTask.Shared.Division", "Division")
                         .WithMany("Employees")
                         .HasForeignKey("DivisionId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.NoAction);
 
                     b.HasOne("TestTask.Shared.Gender", "Gender")
                         .WithMany("Employees")

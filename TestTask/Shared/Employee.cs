@@ -61,14 +61,14 @@ namespace TestTask.Shared
         /// <summary>
         /// Идентификатор подразделения сотрудника
         /// </summary>
-        public int DivisionId { get; set; }
+        public int? DivisionId { get; set; }
 
         public string FullName => LastName + " " + FirstName + " " + MiddleName; 
 
         /// <summary>
         /// Подразделение сотрудника
         /// </summary>
-        public Division Division { get; set; }
+        public Division? Division { get; set; }
         /// <summary>
         /// Гендер сотрудника
         /// </summary>

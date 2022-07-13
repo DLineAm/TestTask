@@ -1,8 +1,9 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+﻿using System;
+using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace TestTask.Server.Migrations
 {
-    public partial class IdTypeChange_Migration : Migration
+    public partial class Initial_Migration : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -13,7 +14,9 @@ namespace TestTask.Server.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Title = table.Column<string>(type: "nvarchar(150)", nullable: true),
-                    DivisionId = table.Column<int>(type: "int", nullable: false)
+                    CreateDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(MAX)", nullable: true),
+                    DivisionId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -26,14 +29,30 @@ namespace TestTask.Server.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Gender",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Title = table.Column<string>(type: "nvarchar(1)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Gender", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Employee",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    FirstName = table.Column<string>(type: "nvarchar(50)", nullable: true),
+                    FirstName = table.Column<string>(type: "nvarchar(50)", nullable: false),
                     MiddleName = table.Column<string>(type: "nvarchar(50)", nullable: true),
-                    LastName = table.Column<string>(type: "nvarchar(50)", nullable: true),
+                    LastName = table.Column<string>(type: "nvarchar(50)", nullable: false),
+                    DateOfBirth = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    GenderId = table.Column<int>(type: "int", nullable: false, defaultValue: 1),
+                    HasDriverLicense = table.Column<bool>(type: "bit", nullable: false),
                     DivisionId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
@@ -45,6 +64,11 @@ namespace TestTask.Server.Migrations
                         principalTable: "Division",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Employee_Gender_GenderId",
+                        column: x => x.GenderId,
+                        principalTable: "Gender",
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateIndex(
@@ -56,6 +80,11 @@ namespace TestTask.Server.Migrations
                 name: "IX_Employee_DivisionId",
                 table: "Employee",
                 column: "DivisionId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Employee_GenderId",
+                table: "Employee",
+                column: "GenderId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -65,6 +94,9 @@ namespace TestTask.Server.Migrations
 
             migrationBuilder.DropTable(
                 name: "Division");
+
+            migrationBuilder.DropTable(
+                name: "Gender");
         }
     }
 }

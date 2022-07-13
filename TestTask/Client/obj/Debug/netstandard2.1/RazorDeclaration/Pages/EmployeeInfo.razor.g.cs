@@ -103,6 +103,13 @@ using Blazored.SessionStorage;
 #line default
 #line hidden
 #nullable disable
+#nullable restore
+#line 6 "G:\TestTask\TestTask\Client\Pages\EmployeeInfo.razor"
+using Newtonsoft.Json;
+
+#line default
+#line hidden
+#nullable disable
     [Microsoft.AspNetCore.Components.RouteAttribute("/employeeInfo")]
     public partial class EmployeeInfo : Microsoft.AspNetCore.Components.ComponentBase
     {
@@ -112,16 +119,16 @@ using Blazored.SessionStorage;
         }
         #pragma warning restore 1998
 #nullable restore
-#line 57 "G:\TestTask\TestTask\Client\Pages\EmployeeInfo.razor"
+#line 58 "G:\TestTask\TestTask\Client\Pages\EmployeeInfo.razor"
        
     private Employee _employee;
     private IEnumerable<Division> _divisions;
     private IEnumerable<Gender> _genders;
     private bool _isErrorHidden = true;
     private string _errorText;
-    private int _divisionId;
+    private int? _divisionId;
 
-    public int DivisionId
+    public int? DivisionId
     {
         get => _divisionId;
         set
@@ -147,17 +154,21 @@ using Blazored.SessionStorage;
     {
         _genders = Program.AppData.Genders;
         var firstGender = _genders.First();
-        if (Program.AppData.CurrentEmployee == null && _stateMachine.CurrentState is StateMachine.State.Change)
+
+        var divisionFromSession = _storageService.GetItem<Employee>("currentEmployee");
+            
+        if (Program.AppData.CurrentEmployee == null && divisionFromSession != null)
         {
-            _employee = _storageService.GetItem<Employee>("currentEmployee");
+            _employee = divisionFromSession;
         }
         else
         {
+            var currentDivision = GetDivisionFromSession();
             _employee = _stateMachine.CurrentState == StateMachine.State.Add
                 ? new Employee
                 {
                     DateOfBirth = DateTime.Now - TimeSpan.FromDays(365 * 18),
-                    DivisionId = Program.AppData.CurrentDivision.Id, GenderId = firstGender.Id
+                    DivisionId = Program.AppData.CurrentDivision?.Id ?? currentDivision?.Id, GenderId = firstGender.Id
                 }
                 : Program.AppData.CurrentEmployee;
             _storageService.SetItem("currentEmployee", _employee);
@@ -165,6 +176,18 @@ using Blazored.SessionStorage;
 
         DivisionId = _employee.DivisionId;
         _divisions = Program.AppData.Divisions;
+    }
+
+    private Division GetDivisionFromSession()
+    {
+        try
+        {
+            return JsonConvert.DeserializeObject<Division>(_storageService.GetItemAsString("currentDivision"));
+        }
+        catch
+        {
+            return null;
+        }
     }
 
     private async Task Apply()
@@ -188,7 +211,7 @@ using Blazored.SessionStorage;
         _isErrorHidden = true;
 
         _employee.Division = null;
-        _employee.Gender = null;
+        _employee.Gender = new Gender();
 
         var response = _stateMachine.CurrentState is StateMachine.State.Change
         ? await PutEmployeeAsync()

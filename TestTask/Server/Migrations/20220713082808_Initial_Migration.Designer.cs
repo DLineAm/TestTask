@@ -10,8 +10,8 @@ using TestTask.Server.DAL.Context;
 namespace TestTask.Server.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    [Migration("20220707073428_ChangeGenderDescriptionType_Migration")]
-    partial class ChangeGenderDescriptionType_Migration
+    [Migration("20220713082808_Initial_Migration")]
+    partial class Initial_Migration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -32,14 +32,12 @@ namespace TestTask.Server.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Description")
-                        .IsRequired()
                         .HasColumnType("nvarchar(MAX)");
 
                     b.Property<int?>("DivisionId")
                         .HasColumnType("int");
 
                     b.Property<string>("Title")
-                        .IsRequired()
                         .HasColumnType("nvarchar(150)");
 
                     b.HasKey("Id");
@@ -63,6 +61,7 @@ namespace TestTask.Server.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("FirstName")
+                        .IsRequired()
                         .HasColumnType("nvarchar(50)");
 
                     b.Property<int>("GenderId")
@@ -74,6 +73,7 @@ namespace TestTask.Server.Migrations
                         .HasColumnType("bit");
 
                     b.Property<string>("LastName")
+                        .IsRequired()
                         .HasColumnType("nvarchar(50)");
 
                     b.Property<string>("MiddleName")

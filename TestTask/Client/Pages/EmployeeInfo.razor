@@ -3,6 +3,7 @@
 @using TestTask.Client.Services
 @using System.Diagnostics
 @using Blazored.SessionStorage
+@using Newtonsoft.Json
 @inject HttpClient _http
 @inject NavigationManager _navigationManager
 @inject StateMachine _stateMachine
@@ -60,9 +61,9 @@
     private IEnumerable<Gender> _genders;
     private bool _isErrorHidden = true;
     private string _errorText;
-    private int _divisionId;
+    private int? _divisionId;
 
-    public int DivisionId
+    public int? DivisionId
     {
         get => _divisionId;
         set
@@ -88,17 +89,21 @@
     {
         _genders = Program.AppData.Genders;
         var firstGender = _genders.First();
-        if (Program.AppData.CurrentEmployee == null && _stateMachine.CurrentState is StateMachine.State.Change)
+
+        var divisionFromSession = _storageService.GetItem<Employee>("currentEmployee");
+            
+        if (Program.AppData.CurrentEmployee == null && divisionFromSession != null)
         {
-            _employee = _storageService.GetItem<Employee>("currentEmployee");
+            _employee = divisionFromSession;
         }
         else
         {
+            var currentDivision = GetDivisionFromSession();
             _employee = _stateMachine.CurrentState == StateMachine.State.Add
                 ? new Employee
                 {
                     DateOfBirth = DateTime.Now - TimeSpan.FromDays(365 * 18),
-                    DivisionId = Program.AppData.CurrentDivision.Id, GenderId = firstGender.Id
+                    DivisionId = Program.AppData.CurrentDivision?.Id ?? currentDivision?.Id, GenderId = firstGender.Id
                 }
                 : Program.AppData.CurrentEmployee;
             _storageService.SetItem("currentEmployee", _employee);
@@ -106,6 +111,18 @@
 
         DivisionId = _employee.DivisionId;
         _divisions = Program.AppData.Divisions;
+    }
+
+    private Division GetDivisionFromSession()
+    {
+        try
+        {
+            return JsonConvert.DeserializeObject<Division>(_storageService.GetItemAsString("currentDivision"));
+        }
+        catch
+        {
+            return null;
+        }
     }
 
     private async Task Apply()
@@ -129,7 +146,7 @@
         _isErrorHidden = true;
 
         _employee.Division = null;
-        _employee.Gender = null;
+        _employee.Gender = new Gender();
 
         var response = _stateMachine.CurrentState is StateMachine.State.Change
         ? await PutEmployeeAsync()

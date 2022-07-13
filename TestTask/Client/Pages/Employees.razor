@@ -2,7 +2,6 @@
 @using TestTask.Shared
 @using TestTask.Client.Services
 @using Blazored.SessionStorage
-@using System.Diagnostics
 @inject HttpClient _http
 @inject NavigationManager _navigationManager
 @inject StateMachine _stateMachine
@@ -94,11 +93,6 @@ else
         StateHasChanged();
     }
 
-    protected override async Task OnInitializedAsync()
-    {
-        await LoadEmployees();
-    }
-
     private async Task EmployeeChangeButton_OnClick(Employee employee)
     {
         _stateMachine.SetChangeState();
@@ -117,8 +111,6 @@ else
         var employeeToDelete = Program.AppData.CurrentEmployee;
         Program.AppData.CurrentEmployee = null;
 
-        await _storageService.SetItemAsync<Employee>("currentEmployee", null);
-
         if (!success)
         {
             return;
@@ -135,12 +127,17 @@ else
             return;
         }
 
+        if (employeeToDelete.DivisionId != Id)
+        {
+            _existEmployees.Remove(employeeToDelete);
+            return;
+        }
         _employees.Remove(employeeToDelete);
     }
 
     private async Task DeleteButton_OnClick(Employee employee)
     {
-        //Program.AppData.CurrentEmployee = employee;
+        Program.AppData.CurrentEmployee = employee;
         await _storageService.SetItemAsync("currentEmployee", employee);
         _modalTitle = "Подтверждение удаления";
         _modalText = "Вы действительно хотите удалить сотрудника?";

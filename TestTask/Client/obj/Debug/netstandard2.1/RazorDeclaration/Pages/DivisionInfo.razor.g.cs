@@ -244,6 +244,10 @@ using Blazored.SessionStorage;
         if (string.IsNullOrWhiteSpace(_division.Title))
             return;
 
+        if (_division.DivisionId == 0)
+        {
+            _division.DivisionId = null;
+        }
         _division.ParentDivision = null;
         _division.Employees = new HashSet<Employee>();
         _division.SubDivisions = _subDivisionsToAdd;
@@ -258,9 +262,12 @@ using Blazored.SessionStorage;
             return;
         }
 
+        await Program.AppData.RefreshBaseProperties();
         _eventAggregator.InvokeDivisionCollectionChanged();
 
         _navigationManager.NavigateTo("");
+
+        //GetDivisions();
     }
 
     private async Task<HttpResponseMessage> PutDivisionAsync()

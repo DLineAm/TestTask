@@ -11,12 +11,14 @@ namespace TestTask.Server.Services
     public class DivisionService : IDivisionService
     {
         private readonly UnitOfWork _unitOfWork;
+        private readonly IHttpContextAccessor _accessor;
 
-        public DivisionService(UnitOfWork unitOfWork)
+        public DivisionService(UnitOfWork unitOfWork ,IHttpContextAccessor accessor)
         {
             JsonConvert.DefaultSettings = () => new JsonSerializerSettings
                 {ReferenceLoopHandling = ReferenceLoopHandling.Ignore};
             _unitOfWork = unitOfWork;
+            _accessor = accessor;
         }
 
         /// <summary>
@@ -25,12 +27,12 @@ namespace TestTask.Server.Services
         /// <returns></returns>
         public IEnumerable<Division> Get()
         {
-            var divisionFromSession = Cache.Session.GetString("divisions");
+            var divisionFromSession = _accessor.HttpContext?.Session?.GetString("divisions");
             if (divisionFromSession != null)
                 return JsonConvert.DeserializeObject<IEnumerable<Division>>(divisionFromSession);
 
             var divisions = _unitOfWork.DivisionRepository.GetWithChildren();
-            Cache.Session.SetString("divisions", JsonConvert.SerializeObject(divisions));
+            _accessor.HttpContext?.Session?.SetString("divisions", JsonConvert.SerializeObject(divisions));
             return divisions;
 
         }
@@ -72,6 +74,9 @@ namespace TestTask.Server.Services
             }
 
             _unitOfWork.Save();
+
+            var divisions = _unitOfWork.DivisionRepository.GetWithChildren();
+            _accessor.HttpContext?.Session?.SetString("divisions", JsonConvert.SerializeObject(divisions));
         }
 
         /// <summary>
@@ -80,13 +85,39 @@ namespace TestTask.Server.Services
         /// <param name="division"></param>
         public void Delete(Division division)
         {
-            foreach (var subDivision in division.SubDivisions)
+            if (division.SubDivisions != null)
             {
-                subDivision.DivisionId = null;
+                foreach (var subDivision in division.SubDivisions)
+                {
+                    subDivision.DivisionId = null;
+                }
             }
 
-            _unitOfWork.DivisionRepository.Delete(division);
             _unitOfWork.Save();
+
+            division.DivisionId = null;
+            var employees = _unitOfWork.EmployeeRepository.Get()
+                .Select(e => new KeyValuePair<int?,Employee>(e.DivisionId, e));
+            var newEmployees = new Dictionary<int?, Employee>();
+            foreach (var (id, employee) in employees)
+            {
+                employee.DivisionId = null;
+                newEmployees[id ?? 0] = employee;
+            }
+            _unitOfWork.Save();
+
+            var dbDivision = _unitOfWork.DivisionRepository.GetById(division.Id);
+
+            _unitOfWork.DivisionRepository.Delete(dbDivision);
+            foreach (var (id, employee) in newEmployees)
+            {
+                var dbEmployee = _unitOfWork.EmployeeRepository.GetById(employee.Id);
+                dbEmployee.DivisionId = id == 0 ? null : id;
+            }
+            _unitOfWork.Save();
+
+            var divisions = _unitOfWork.DivisionRepository.GetWithChildren().ToList();
+            _accessor.HttpContext?.Session?.SetString("divisions", JsonConvert.SerializeObject(divisions));
         }
 
         /// <summary>
@@ -117,6 +148,9 @@ namespace TestTask.Server.Services
 
             _unitOfWork.DivisionRepository.Update(divisionToChange);
             _unitOfWork.Save();
+
+            var divisions = _unitOfWork.DivisionRepository.GetWithChildren();
+            _accessor.HttpContext?.Session?.SetString("divisions", JsonConvert.SerializeObject(divisions));
         }
     }
 }

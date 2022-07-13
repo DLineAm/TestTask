@@ -29,6 +29,11 @@ namespace TestTask.Client.Services
         public IEnumerable<Division> Divisions { get; set; }
         public IEnumerable<Gender> Genders { get; private set; }
 
+        public async Task RefreshBaseProperties()
+        {
+            Divisions = await _http.GetFromJsonAsync<IEnumerable<Division>>("divisions");
+        }
+
         public async Task InitializeBaseProperties()
         {
             Genders = await _http.GetFromJsonAsync<IEnumerable<Gender>>("genders");

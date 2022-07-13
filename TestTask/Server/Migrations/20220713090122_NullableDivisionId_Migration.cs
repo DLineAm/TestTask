@@ -2,13 +2,13 @@
 
 namespace TestTask.Server.Migrations
 {
-    public partial class DivisionFKNull_Migration : Migration
+    public partial class NullableDivisionId_Migration : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.AlterColumn<int>(
                 name: "DivisionId",
-                table: "Division",
+                table: "Employee",
                 type: "int",
                 nullable: true,
                 oldClrType: typeof(int),
@@ -19,7 +19,7 @@ namespace TestTask.Server.Migrations
         {
             migrationBuilder.AlterColumn<int>(
                 name: "DivisionId",
-                table: "Division",
+                table: "Employee",
                 type: "int",
                 nullable: false,
                 defaultValue: 0,

@@ -241,6 +241,8 @@ __builder2.AddContent(13, markup);
         _modalText = "Вы действительно хотите удалить подразделение?";
         _modalOpen = true;
         _stateMachine.SetDeleteState();
+
+
     }
 
     private async Task Modal_OnClose(bool success)
@@ -266,6 +268,7 @@ __builder2.AddContent(13, markup);
             return;
         }
 
+        await Program.AppData.RefreshBaseProperties();
         GetDivisions();
     }
 

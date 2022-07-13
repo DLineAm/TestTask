@@ -10,8 +10,8 @@ using TestTask.Server.DAL.Context;
 namespace TestTask.Server.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    [Migration("20220706134826_DivisionFKNull_Migration")]
-    partial class DivisionFKNull_Migration
+    [Migration("20220713090122_NullableDivisionId_Migration")]
+    partial class NullableDivisionId_Migration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -27,6 +27,12 @@ namespace TestTask.Server.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<DateTime>("CreateDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(MAX)");
 
                     b.Property<int?>("DivisionId")
                         .HasColumnType("int");
@@ -48,13 +54,26 @@ namespace TestTask.Server.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int>("DivisionId")
+                    b.Property<DateTime>("DateOfBirth")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("DivisionId")
                         .HasColumnType("int");
 
                     b.Property<string>("FirstName")
+                        .IsRequired()
                         .HasColumnType("nvarchar(50)");
 
+                    b.Property<int>("GenderId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValue(1);
+
+                    b.Property<bool>("HasDriverLicense")
+                        .HasColumnType("bit");
+
                     b.Property<string>("LastName")
+                        .IsRequired()
                         .HasColumnType("nvarchar(50)");
 
                     b.Property<string>("MiddleName")
@@ -64,7 +83,24 @@ namespace TestTask.Server.Migrations
 
                     b.HasIndex("DivisionId");
 
+                    b.HasIndex("GenderId");
+
                     b.ToTable("Employee");
+                });
+
+            modelBuilder.Entity("TestTask.Shared.Gender", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("Title")
+                        .HasColumnType("nvarchar(1)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Gender");
                 });
 
             modelBuilder.Entity("TestTask.Shared.Division", b =>
@@ -82,10 +118,17 @@ namespace TestTask.Server.Migrations
                     b.HasOne("TestTask.Shared.Division", "Division")
                         .WithMany("Employees")
                         .HasForeignKey("DivisionId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction);
+
+                    b.HasOne("TestTask.Shared.Gender", "Gender")
+                        .WithMany("Employees")
+                        .HasForeignKey("GenderId")
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.Navigation("Division");
+
+                    b.Navigation("Gender");
                 });
 
             modelBuilder.Entity("TestTask.Shared.Division", b =>
@@ -93,6 +136,11 @@ namespace TestTask.Server.Migrations
                     b.Navigation("Employees");
 
                     b.Navigation("SubDivisions");
+                });
+
+            modelBuilder.Entity("TestTask.Shared.Gender", b =>
+                {
+                    b.Navigation("Employees");
                 });
 #pragma warning restore 612, 618
         }

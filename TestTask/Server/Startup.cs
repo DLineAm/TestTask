@@ -1,8 +1,10 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
 
 using Newtonsoft.Json;
@@ -36,9 +38,10 @@ namespace TestTask.Server
             services.AddRazorPages();
             services.AddSession();
             services.AddDbContext<DatabaseContext>(options =>
-                options.UseSqlServer(Configuration.GetConnectionString("TestDB")));
+                options.UseSqlServer(Configuration.GetConnectionString("TestDB")).EnableSensitiveDataLogging());
             services.AddScoped<UnitOfWork>();
             services.AddScoped<Cache>();
+            services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddTransient<IDivisionService, DivisionService>();
             services.AddTransient<IEmployeeService, EmployeeService>();
             services.AddTransient<IGenderService, GenderService>();
