@@ -10,18 +10,27 @@ namespace TestTask.Shared
     /// </summary>
     public class Division
     {
+        /// <summary>
+        /// Идентификатор подразделения
+        /// </summary>
         public int Id { get; set; }
         /// <summary>
         /// Наименование подразделения
         /// </summary>
         public string? Title { get; set; }
+
+        /// <summary>
+        /// Дата создания подразделения
+        /// </summary>
         public DateTime CreateDate { get; set; } = DateTime.Now;
+
         /// <summary>
         /// Описание подразделения
         /// </summary>
         public string? Description { get; set; }
+
         /// <summary>
-        /// Id родительского подразделения
+        /// Идентификатор родительского подразделения
         /// </summary>
         public int? DivisionId { get; set; }
 

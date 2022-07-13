@@ -103,7 +103,7 @@ using Blazored.SessionStorage;
 #line default
 #line hidden
 #nullable disable
-    [Microsoft.AspNetCore.Components.RouteAttribute("/divisionInfo")]
+    [Microsoft.AspNetCore.Components.RouteAttribute("/divisionInfo/{Id:int}")]
     public partial class DivisionInfo : Microsoft.AspNetCore.Components.ComponentBase
     {
         #pragma warning disable 1998
@@ -114,11 +114,14 @@ using Blazored.SessionStorage;
 #nullable restore
 #line 66 "G:\TestTask\TestTask\Client\Pages\DivisionInfo.razor"
        
+    [Parameter]
+    public int Id { get; set; }
+
     private Division _division;
     private int? _subDivisionId;
     private List<Division> _divisions;
     private List<Division> _divisionsToAdd;
-    private readonly List<Division> _subDivisionsToAdd = new List<Division>();
+    private List<Division> _subDivisionsToAdd = new List<Division>();
     private int _divisionId;
 
     public int DivisionId
@@ -133,11 +136,21 @@ using Blazored.SessionStorage;
         }
     }
 
-
+    protected override void OnParametersSet()
+    {
+        _divisions = _divisionsToAdd = _subDivisionsToAdd = new List<Division>();
+        InitializeData();
+        StateHasChanged();
+    }
 
     protected override void OnInitialized()
     {
-        var divisionFromSession = _storageService.GetItem<Division>("currentDivision");
+      //InitializeData();
+    }
+
+    private void InitializeData()
+    {
+        var divisionFromSession = GetDivisionFromSession();
         if (Program.AppData.CurrentDivision == null && divisionFromSession != null)
         {
             _division = divisionFromSession;
@@ -152,7 +165,9 @@ using Blazored.SessionStorage;
             _storageService.SetItem("currentDivision", _division);
             Debug.WriteLine(_division == null);
         }
-        Debug.WriteLine("Program.AppData.CurrentDivisionFromList == null: " + (Program.AppData.CurrentDivisionFromList == null));
+
+        Debug.WriteLine("Program.AppData.CurrentDivisionFromList == null: " +
+                        (Program.AppData.CurrentDivisionFromList == null));
         if (Program.AppData.CurrentDivisionFromList == null)
         {
             DivisionId = _storageService.GetItem<int>("currentDivisionIdFromList");
@@ -169,6 +184,19 @@ using Blazored.SessionStorage;
             FillSubDivisions();
     }
 
+    private Division GetDivisionFromSession()
+    {
+        try
+        {
+            return _storageService.GetItem<Division>("currentDivision");
+
+        }
+        catch
+        {
+            return null;
+        }
+    }
+
     private void GetDivisions()
     {
         var divisionsList = Program.AppData.Divisions.Where(d => d.Id != _division.Id).ToList();
@@ -180,7 +208,7 @@ using Blazored.SessionStorage;
         });
         _divisionsToAdd = divisionsList;
         divisionsList.Insert(0, new Division {Title = "Нет"});
-        _divisions = divisionsList;
+        _divisions = divisionsList.ToList();
     }
 
     /// <summary>
@@ -202,7 +230,7 @@ using Blazored.SessionStorage;
     /// <summary>
     /// Добавляет подразделение в список вложенных подразделений
     /// </summary>
-    private async Task AddSubDivision()
+    private void AddSubDivision()
     {
         var divisionToAdd = _divisionsToAdd.FirstOrDefault(d => d.Id == _subDivisionId);
 

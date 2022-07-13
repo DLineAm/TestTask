@@ -1,9 +1,10 @@
-﻿using System;
+﻿using Blazored.SessionStorage;
+
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
-using Blazored.SessionStorage;
+
 using TestTask.Shared;
 
 namespace TestTask.Client.Services
@@ -14,12 +15,10 @@ namespace TestTask.Client.Services
     public class AppData
     {
         private readonly HttpClient _http;
-        private readonly ISessionStorageService _storageService;
 
-        public AppData(ISessionStorageService storageService, HttpClient http)
+        public AppData(HttpClient http)
         {
             _http = http;
-            _storageService = storageService;
         }
 
         public Employee CurrentEmployee { get; set; }
@@ -33,8 +32,7 @@ namespace TestTask.Client.Services
         public async Task InitializeBaseProperties()
         {
             Genders = await _http.GetFromJsonAsync<IEnumerable<Gender>>("genders");
-            var divisionFromSession = await _storageService.GetItemAsync<IEnumerable<Division>>("divisions");
-            Divisions = divisionFromSession ?? await _http.GetFromJsonAsync<IEnumerable<Division>>("divisions");
+            Divisions = await _http.GetFromJsonAsync<IEnumerable<Division>>("divisions");
         }
     }
 }

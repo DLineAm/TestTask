@@ -77,20 +77,13 @@ using TestTask.Client.Shared;
 #nullable disable
 #nullable restore
 #line 1 "G:\TestTask\TestTask\Client\Shared\MainLayout.razor"
-using TestTask.Client.Services;
-
-#line default
-#line hidden
-#nullable disable
-#nullable restore
-#line 2 "G:\TestTask\TestTask\Client\Shared\MainLayout.razor"
 using Blazored.SessionStorage;
 
 #line default
 #line hidden
 #nullable disable
 #nullable restore
-#line 3 "G:\TestTask\TestTask\Client\Shared\MainLayout.razor"
+#line 2 "G:\TestTask\TestTask\Client\Shared\MainLayout.razor"
 using TestTask.Shared;
 
 #line default
@@ -104,13 +97,11 @@ using TestTask.Shared;
         }
         #pragma warning restore 1998
 #nullable restore
-#line 20 "G:\TestTask\TestTask\Client\Shared\MainLayout.razor"
+#line 19 "G:\TestTask\TestTask\Client\Shared\MainLayout.razor"
  
     protected override async Task OnInitializedAsync()
     {
         await Program.AppData.InitializeBaseProperties();
-        //await _storageService.ClearAsync();
-        //await _storageService.SetItemAsync("genders", Program.AppData.Genders);
         var response = await _http.GetFromJsonAsync<IEnumerable<Division>>("divisions");
         Program.AppData.Divisions = response;
     }

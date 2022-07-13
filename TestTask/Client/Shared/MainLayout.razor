@@ -1,5 +1,4 @@
-﻿@using TestTask.Client.Services
-@using Blazored.SessionStorage
+﻿@using Blazored.SessionStorage
 @using TestTask.Shared
 @inherits LayoutComponentBase
 @inject ISessionStorageService _storageService
@@ -21,8 +20,6 @@
     protected override async Task OnInitializedAsync()
     {
         await Program.AppData.InitializeBaseProperties();
-        //await _storageService.ClearAsync();
-        //await _storageService.SetItemAsync("genders", Program.AppData.Genders);
         var response = await _http.GetFromJsonAsync<IEnumerable<Division>>("divisions");
         Program.AppData.Divisions = response;
     }

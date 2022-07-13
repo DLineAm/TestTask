@@ -2,12 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 
-using Microsoft.EntityFrameworkCore;
-
 using TestTask.Shared;
 
 namespace TestTask.Server.DAL.Context
 {
+    /// <summary>
+    /// Класс, заполяющий базу данных тестовыми данными
+    /// </summary>
     public class DatabaseInitializer
     {
         /// <summary>
@@ -73,6 +74,13 @@ namespace TestTask.Server.DAL.Context
             return context.Divisions.ToList();
         }
 
+        /// <summary>
+        /// Создает запись и сохраняет ее в бд
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="entity"></param>
+        /// <param name="context"></param>
+        /// <returns></returns>
         private static T CreateEntity<T>(T entity, DatabaseContext context) where T : class
         {
             var savedEntity = context.Set<T>().Add(entity);

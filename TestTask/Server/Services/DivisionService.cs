@@ -1,6 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using Microsoft.AspNetCore.Http;
+using Newtonsoft.Json;
 using TestTask.Server.DAL;
+using TestTask.Server.Utils;
 using TestTask.Shared;
 
 namespace TestTask.Server.Services
@@ -11,20 +14,43 @@ namespace TestTask.Server.Services
 
         public DivisionService(UnitOfWork unitOfWork)
         {
+            JsonConvert.DefaultSettings = () => new JsonSerializerSettings
+                {ReferenceLoopHandling = ReferenceLoopHandling.Ignore};
             _unitOfWork = unitOfWork;
         }
 
+        /// <summary>
+        /// Получение списка подразделений по идентификатору
+        /// </summary>
+        /// <returns></returns>
         public IEnumerable<Division> Get()
         {
-            return _unitOfWork.DivisionRepository.GetWithChildren();
+            var divisionFromSession = Cache.Session.GetString("divisions");
+            if (divisionFromSession != null)
+                return JsonConvert.DeserializeObject<IEnumerable<Division>>(divisionFromSession);
+
+            var divisions = _unitOfWork.DivisionRepository.GetWithChildren();
+            Cache.Session.SetString("divisions", JsonConvert.SerializeObject(divisions));
+            return divisions;
+
         }
 
+        /// <summary>
+        /// Попытка получить подразделение из бд по идентификатору
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="division"></param>
+        /// <returns></returns>
         public bool TryGet(int id, out Division division)
         {
             division = Get().FirstOrDefault(d => d.Id == id);
             return division != null;
         }
 
+        /// <summary>
+        /// Добавление подразделения в бд
+        /// </summary>
+        /// <param name="division"></param>
         public void Add(Division division)
         {
             division.Id = 0;
@@ -48,6 +74,10 @@ namespace TestTask.Server.Services
             _unitOfWork.Save();
         }
 
+        /// <summary>
+        /// Удаление подразделения из бд
+        /// </summary>
+        /// <param name="division"></param>
         public void Delete(Division division)
         {
             foreach (var subDivision in division.SubDivisions)
@@ -59,16 +89,21 @@ namespace TestTask.Server.Services
             _unitOfWork.Save();
         }
 
-        public void Change(Division division, Division dbDivision)
+        /// <summary>
+        /// Изменение подразделения divisionToChange
+        /// </summary>
+        /// <param name="division"></param>
+        /// <param name="divisionToChange"></param>
+        public void Change(Division division, Division divisionToChange)
         {
-            dbDivision.Title = division.Title;
-            dbDivision.Description = division.Description;
-            dbDivision.DivisionId = division.DivisionId;
-            dbDivision.CreateDate = division.CreateDate;
+            divisionToChange.Title = division.Title;
+            divisionToChange.Description = division.Description;
+            divisionToChange.DivisionId = division.DivisionId;
+            divisionToChange.CreateDate = division.CreateDate;
 
             var subDivisions = division.SubDivisions;
 
-            dbDivision.SubDivisions = new HashSet<Division>();
+            divisionToChange.SubDivisions = new HashSet<Division>();
 
             foreach (var subDivision in subDivisions)
             {
@@ -77,10 +112,10 @@ namespace TestTask.Server.Services
                 if (dbSubDivision is null)
                     continue;
 
-                dbDivision.SubDivisions.Add(dbSubDivision);
+                divisionToChange.SubDivisions.Add(dbSubDivision);
             }
 
-            _unitOfWork.DivisionRepository.Update(dbDivision);
+            _unitOfWork.DivisionRepository.Update(divisionToChange);
             _unitOfWork.Save();
         }
     }

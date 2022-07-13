@@ -69,7 +69,7 @@ else
 
     protected override async void OnParametersSet()
     {
-        //await LoadEmployees();
+        await LoadEmployees();
     }
 
     private async Task LoadEmployees()
@@ -80,7 +80,6 @@ else
                            ?? (Program.AppData.CurrentDivision = Program.AppData.Divisions.FirstOrDefault(d => d.Id == Id));
         Program.AppData.CurrentDivisionFromList = _currentDivision;
         _divisions = Program.AppData.Divisions;
-        Debug.WriteLine(_divisions == null);
         _title = _currentDivision?.Title;
         if (_currentDivision.SubDivisions != null && _currentDivision.SubDivisions.Count > 0)
         {
@@ -103,11 +102,8 @@ else
     private async Task EmployeeChangeButton_OnClick(Employee employee)
     {
         _stateMachine.SetChangeState();
-        //Program.AppData.CurrentDivisionFromEmployee = _divisions.FirstOrDefault(d => d.Id == employee.DivisionId);
         Program.AppData.CurrentEmployee = employee;
         await _storageService.SetItemAsync("employeeId", employee.Id);
-    //await _storageService.SetItemAsync("currentDivisionFromEmployee", Program.AppData.CurrentDivisionFromEmployee);
-        //await _storageService.SetItemAsync("currentEmployee", employee);
         _navigationManager.NavigateTo("employeeInfo");
     }
 
@@ -155,13 +151,12 @@ else
     private async Task EmployeeAddButton_OnClick()
     {
         _stateMachine.SetAddState();
-        //Program.AppData.CurrentEmployee = null;
         await _storageService.SetItemAsync<Employee>("currentEmployee", null);
         _navigationManager.NavigateTo("employeeInfo");
     }
 
     /// <summary>
-    /// Генерирует код для каждого сотрудника в подразделениях
+    /// Генерирует разметку для каждого сотрудника в подразделениях
     /// </summary>
     /// <param name="fragment"></param>
     /// <returns></returns>

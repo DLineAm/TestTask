@@ -3,6 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
 using System;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using TestTask.Server.DAL.Context;
 
@@ -10,10 +11,13 @@ namespace TestTask.Server
 {
     public class Program
     {
+        //public static ISession Session { get; private set; }
+
         public static void Main(string[] args)
         {
             var host = CreateHostBuilder(args).Build();
             CreateDbIfNotExists(host);
+            //Session = host.Services.GetService<ISession>();
             host.Run();
         }
 

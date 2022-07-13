@@ -1120,8 +1120,6 @@ G:\TestTask\TestTask\Client\obj\Debug\netstandard2.1\TestTask.Client.RazorTarget
 G:\TestTask\TestTask\Client\obj\Debug\netstandard2.1\TestTask.Client.csproj.CopyComplete
 G:\TestTask\TestTask\Client\obj\Debug\netstandard2.1\TestTask.Client.dll
 G:\TestTask\TestTask\Client\obj\Debug\netstandard2.1\TestTask.Client.pdb
-G:\TestTask\TestTask\Client\obj\Debug\netstandard2.1\integrity\Sp_G6q3Kn5RLSoBt8297Qns1q2GDh68lSwe9ms1kEdQ=.hash
-G:\TestTask\TestTask\Client\obj\Debug\netstandard2.1\integrity\wRg8sYfF8yTAlvtx4X5JEluMF0oiHVjVar_rr7chqDM=.hash
 G:\TestTask\TestTask\Client\obj\Debug\netstandard2.1\integrity\yBGdA-WBGsr_xdnzLSJh-HFRppLRc4qWmX9gvLRJh04=.hash
 G:\TestTask\TestTask\Client\obj\Debug\netstandard2.1\integrity\wB4WfCZAJe40lF9s6DPasdoVrCZUrqivPm-iFfGG-FM=.hash
 G:\TestTask\TestTask\Client\obj\Debug\netstandard2.1\integrity\qohgx6UXUVGuwzRXAW0wxKFTSND5cctWfzl8_2-NiWA=.hash
@@ -1142,6 +1140,8 @@ G:\TestTask\TestTask\Client\bin\Debug\netstandard2.1\wwwroot\_framework\_bin\New
 G:\TestTask\TestTask\Client\obj\Debug\netstandard2.1\integrity\cs8pHUurDt0IqbB8YXPh560au3q3J-1wRL9jBddRVmE=.hash
 G:\TestTask\TestTask\Client\obj\Debug\netstandard2.1\compressed\_framework\_bin\Newtonsoft.Json.dll.gz
 G:\TestTask\TestTask\Client\obj\Debug\netstandard2.1\compressed\_framework\_bin\Newtonsoft.Json.dll.br
-G:\TestTask\TestTask\Client\obj\Debug\netstandard2.1\integrity\GANGG5MxzC--D_eoiHhzPP_tcTRLD0YttjGcA0mfNNA=.hash
-G:\TestTask\TestTask\Client\obj\Debug\netstandard2.1\integrity\o1d2BQrqIzjVoM6YEhHNhUSJltaZqx3LDgaTPcP7QnU=.hash
-G:\TestTask\TestTask\Client\obj\Debug\netstandard2.1\integrity\JwIYJac-3-q7apgXku6Rik9H3vJYS-hG3fAikNiKzbw=.hash
+G:\TestTask\TestTask\Client\obj\Debug\netstandard2.1\integrity\G34x9ataOLyZ8Vw7_7kwRcYZFGiXR-fqxdWy2qvERNs=.hash
+G:\TestTask\TestTask\Client\obj\Debug\netstandard2.1\integrity\N3oeAYJ1KvVKkGl6jJZwncmp8bdJ83tEY6etkarISVM=.hash
+G:\TestTask\TestTask\Client\obj\Debug\netstandard2.1\integrity\NI21epOdD_qzpK24NuYkFt31VCDEJcFH-l4lPQkyCa0=.hash
+G:\TestTask\TestTask\Client\obj\Debug\netstandard2.1\integrity\VzKzk6fdbPgfH_bhl_1tvzbSGj1mW7H5G8DGdSQ4CpA=.hash
+G:\TestTask\TestTask\Client\obj\Debug\netstandard2.1\integrity\XyPHZ0RK8FyTc2JtIkXO5jZxnMm1O_0XAXp42go5WS0=.hash

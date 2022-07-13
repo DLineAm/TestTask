@@ -133,7 +133,17 @@ using Blazored.SessionStorage;
         }
     }
 
-    protected override async Task OnInitializedAsync()
+    protected override void OnParametersSet()
+    {
+        InitializeData();
+    }
+
+    protected override void OnInitialized()
+    {
+        InitializeData();
+    }
+
+    private void InitializeData()
     {
         _genders = Program.AppData.Genders;
         var firstGender = _genders.First();
@@ -144,10 +154,15 @@ using Blazored.SessionStorage;
         else
         {
             _employee = _stateMachine.CurrentState == StateMachine.State.Add
-                ? new Employee { DateOfBirth = DateTime.Now - TimeSpan.FromDays(365 * 18), DivisionId = Program.AppData.CurrentDivision.Id, GenderId = firstGender.Id }
+                ? new Employee
+                {
+                    DateOfBirth = DateTime.Now - TimeSpan.FromDays(365 * 18),
+                    DivisionId = Program.AppData.CurrentDivision.Id, GenderId = firstGender.Id
+                }
                 : Program.AppData.CurrentEmployee;
-             _storageService.SetItem("currentEmployee", _employee);
+            _storageService.SetItem("currentEmployee", _employee);
         }
+
         DivisionId = _employee.DivisionId;
         _divisions = Program.AppData.Divisions;
     }

@@ -10,6 +10,7 @@ using Newtonsoft.Json;
 using TestTask.Server.DAL;
 using TestTask.Server.DAL.Context;
 using TestTask.Server.Services;
+using TestTask.Server.Utils;
 
 namespace TestTask.Server
 {
@@ -33,9 +34,11 @@ namespace TestTask.Server
                     options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
                 });
             services.AddRazorPages();
+            services.AddSession();
             services.AddDbContext<DatabaseContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("TestDB")));
             services.AddScoped<UnitOfWork>();
+            services.AddScoped<Cache>();
             services.AddTransient<IDivisionService, DivisionService>();
             services.AddTransient<IEmployeeService, EmployeeService>();
             services.AddTransient<IGenderService, GenderService>();
@@ -55,6 +58,7 @@ namespace TestTask.Server
             app.UseStaticFiles();
 
             app.UseRouting();
+            app.UseSession();
 
             app.UseEndpoints(endpoints =>
             {

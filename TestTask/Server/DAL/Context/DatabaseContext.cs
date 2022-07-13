@@ -69,11 +69,13 @@ namespace TestTask.Server.DAL.Context
                     .HasColumnType("int");
 
                 entity.Property(d => d.FirstName)
-                    .HasColumnType("nvarchar(50)");
+                    .HasColumnType("nvarchar(50)")
+                    .IsRequired();
                 entity.Property(d => d.MiddleName)
                     .HasColumnType("nvarchar(50)");
                 entity.Property(d => d.LastName)
-                    .HasColumnType("nvarchar(50)");
+                    .HasColumnType("nvarchar(50)")
+                    .IsRequired();
 
                 entity.HasOne(d => d.Division)
                     .WithMany(p => p.Employees)

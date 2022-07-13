@@ -8,8 +8,6 @@ namespace TestTask.Server.DAL
     {
         private readonly DatabaseContext _context;
 
-        private bool _disposed;
-
         private Repository<Division> _divisionRepository;
         private Repository<Employee> _employeeRepository;
         private Repository<Gender> _genderRepository;
@@ -19,13 +17,27 @@ namespace TestTask.Server.DAL
             _context = context;
         }
 
+        /// <summary>
+        /// Репозиторий подразделений
+        /// </summary>
         public Repository<Division> DivisionRepository => _divisionRepository
         ??= new Repository<Division>(_context);
+
+        /// <summary>
+        /// Репозиторий сотрудников
+        /// </summary>
         public Repository<Employee> EmployeeRepository => _employeeRepository
             ??= new Repository<Employee>(_context);
+
+        /// <summary>
+        /// Репозиторий гендеров
+        /// </summary>
         public Repository<Gender> GenderRepository => _genderRepository
             ??= new Repository<Gender>(_context);
 
+        /// <summary>
+        /// Фиксация изменений в бд
+        /// </summary>
         public void Save()
         {
             _context.SaveChanges();
@@ -33,26 +45,7 @@ namespace TestTask.Server.DAL
 
         public void Dispose()
         {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-
-        protected virtual void Dispose(bool disposing)
-        {
-            if (!_disposed)
-            {
-                if (disposing)
-                {
-                    _context?.Dispose();
-                }
-            }
-
-            this._disposed = true;
-        }
-
-        ~UnitOfWork()
-        {
-            Dispose(true);
+            _context?.Dispose();
         }
     }
 }

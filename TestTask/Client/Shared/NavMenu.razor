@@ -8,7 +8,6 @@
 @inject StateMachine _stateMachine
 @inject NavigationManager _navigationManager
 @inject EventAggregator _eventAggregator
-@inject ISessionStorageService _storageService
 <div>
     <a class="sidebar__title" href="">Подразделения</a>
 </div>
@@ -29,7 +28,7 @@ else
             @foreach (var division in _divisions.Where(d => d.DivisionId is null))
             {
                 <li>
-                        <a style="cursor: pointer" @onclick="() => SetCurrentDivision(division)">@division.Title</a>
+                        <a style="cursor: pointer; color: #fff" @onclick="() => SetCurrentDivision(division)">@division.Title</a>
                         <img src="css/delete.svg" style="cursor: pointer" @onclick="() => DeleteDivisionButton_OnClick(division)" alt=""/>
                         <img src="css/edit.svg" style="cursor: pointer" @onclick="() => ChangeDivisionButton_OnClick(division)" alt=""/>
                         @if (division.SubDivisions != null)
@@ -58,17 +57,17 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        _eventAggregator.DivisionCollectionChanged += async () =>
+        _eventAggregator.DivisionCollectionChanged += () =>
         {
-            await GetDivisions();
+            GetDivisions();
             StateHasChanged();
         };
 
-        await GetDivisions();
+        GetDivisions();
 
     }
 
-    private async Task GetDivisions()
+    private void GetDivisions()
     {
         _divisions = Program.AppData.Divisions.ToList();
         StateHasChanged();
@@ -81,11 +80,11 @@ else
 
     private RenderFragment GetList(Division division, RenderFragment markup)
     {
-        foreach (var subDivision in _divisions.Where(d => d.DivisionId == division.Id))
+        foreach (var subDivision in division.SubDivisions)
         {
             markup += @<li>
                           <div class="pd1248">
-                              <a style="cursor: pointer" @onclick="() => SetCurrentDivision(subDivision)">@subDivision.Title</a>
+                              <a style="cursor: pointer; color: #fff" @onclick="() => SetCurrentDivision(subDivision)">@subDivision.Title</a>
                               <img src="css/delete.svg" style="cursor: pointer" @onclick="() => DeleteDivisionButton_OnClick(subDivision)" alt=""/>
                               <img src="css/edit.svg" style="cursor: pointer" @onclick="() => ChangeDivisionButton_OnClick(subDivision)" alt=""/>
                           </div>
@@ -100,13 +99,12 @@ else
     private void DivisionAddButton_OnClick()
     {
         _stateMachine.SetAddState();
-        _navigationManager.NavigateTo("divisionInfo");
+        _navigationManager.NavigateTo("divisionInfo/0");
     }
 
-    private async Task DeleteDivisionButton_OnClick(Division division)
+    private void DeleteDivisionButton_OnClick(Division division)
     {
         Program.AppData.CurrentDivision = division;
-        await _storageService.SetItemAsync("currentDivision", division);
         _modalTitle = "Подтверждение удаления";
         _modalText = "Вы действительно хотите удалить подразделение?";
         _modalOpen = true;
@@ -121,7 +119,6 @@ else
 
         var divisionToDelete = Program.AppData.CurrentDivision;
         Program.AppData.CurrentDivision = null;
-        await _storageService.SetItemAsync<Division>("currentDivision", null);
 
         if (!success)
             return;
@@ -137,7 +134,7 @@ else
             return;
         }
 
-        await GetDivisions();
+        GetDivisions();
     }
 
     private void ChangeDivisionButton_OnClick(Division division)
@@ -145,12 +142,11 @@ else
         _stateMachine.SetChangeState();
         Program.AppData.CurrentDivision = division;
 
-        _navigationManager.NavigateTo("divisionInfo");
+        _navigationManager.NavigateTo("divisionInfo/" + division.Id);
     }
 
-    private async Task SetCurrentDivision(Division division)
+    private void SetCurrentDivision(Division division)
     {
-        await _storageService.SetItemAsync("currentDivision", division);
         Program.AppData.CurrentDivision = division;
 
         _navigationManager.NavigateTo(GetDivisionHrefById(division.Id));

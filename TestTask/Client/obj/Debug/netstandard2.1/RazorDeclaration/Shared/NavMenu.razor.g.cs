@@ -125,7 +125,7 @@ using Newtonsoft.Json;
         }
         #pragma warning restore 1998
 #nullable restore
-#line 52 "G:\TestTask\TestTask\Client\Shared\NavMenu.razor"
+#line 51 "G:\TestTask\TestTask\Client\Shared\NavMenu.razor"
        
     private List<Division> _divisions;
     private bool _collapseNavMenu = true;
@@ -135,17 +135,17 @@ using Newtonsoft.Json;
 
     protected override async Task OnInitializedAsync()
     {
-        _eventAggregator.DivisionCollectionChanged += async () =>
+        _eventAggregator.DivisionCollectionChanged += () =>
         {
-            await GetDivisions();
+            GetDivisions();
             StateHasChanged();
         };
 
-        await GetDivisions();
+        GetDivisions();
 
     }
 
-    private async Task GetDivisions()
+    private void GetDivisions()
     {
         _divisions = Program.AppData.Divisions.ToList();
         StateHasChanged();
@@ -158,7 +158,7 @@ using Newtonsoft.Json;
 
     private RenderFragment GetList(Division division, RenderFragment markup)
     {
-        foreach (var subDivision in _divisions.Where(d => d.DivisionId == division.Id))
+        foreach (var subDivision in division.SubDivisions)
         {
             markup += 
 
@@ -172,10 +172,10 @@ using Newtonsoft.Json;
             __builder2.AddAttribute(3, "class", "pd1248");
             __builder2.AddMarkupContent(4, "\r\n                              ");
             __builder2.OpenElement(5, "a");
-            __builder2.AddAttribute(6, "style", "cursor: pointer");
+            __builder2.AddAttribute(6, "style", "cursor: pointer; color: #fff");
             __builder2.AddAttribute(7, "@onclick", "() => SetCurrentDivision(subDivision)");
 #nullable restore
-#line 88 "G:\TestTask\TestTask\Client\Shared\NavMenu.razor"
+#line 87 "G:\TestTask\TestTask\Client\Shared\NavMenu.razor"
 __builder2.AddContent(8, subDivision.Title);
 
 #line default
@@ -191,7 +191,7 @@ __builder2.AddContent(8, subDivision.Title);
             __builder2.CloseElement();
         }
 #nullable restore
-#line 92 "G:\TestTask\TestTask\Client\Shared\NavMenu.razor"
+#line 91 "G:\TestTask\TestTask\Client\Shared\NavMenu.razor"
                            ;
                           
                           if (subDivision.SubDivisions != null)
@@ -204,7 +204,7 @@ __builder2.AddContent(8, subDivision.Title);
             __builder2.AddMarkupContent(11, "<div></div>");
         }
 #nullable restore
-#line 95 "G:\TestTask\TestTask\Client\Shared\NavMenu.razor"
+#line 94 "G:\TestTask\TestTask\Client\Shared\NavMenu.razor"
                                                                          );
         }
         return 
@@ -215,7 +215,7 @@ __builder2.AddContent(8, subDivision.Title);
         (__builder2) => {
             __builder2.OpenElement(12, "ul");
 #nullable restore
-#line 97 "G:\TestTask\TestTask\Client\Shared\NavMenu.razor"
+#line 96 "G:\TestTask\TestTask\Client\Shared\NavMenu.razor"
 __builder2.AddContent(13, markup);
 
 #line default
@@ -224,20 +224,19 @@ __builder2.AddContent(13, markup);
             __builder2.CloseElement();
         }
 #nullable restore
-#line 97 "G:\TestTask\TestTask\Client\Shared\NavMenu.razor"
+#line 96 "G:\TestTask\TestTask\Client\Shared\NavMenu.razor"
                                 ;
     }
 
     private void DivisionAddButton_OnClick()
     {
         _stateMachine.SetAddState();
-        _navigationManager.NavigateTo("divisionInfo");
+        _navigationManager.NavigateTo("divisionInfo/0");
     }
 
-    private async Task DeleteDivisionButton_OnClick(Division division)
+    private void DeleteDivisionButton_OnClick(Division division)
     {
         Program.AppData.CurrentDivision = division;
-        await _storageService.SetItemAsync("currentDivision", division);
         _modalTitle = "Подтверждение удаления";
         _modalText = "Вы действительно хотите удалить подразделение?";
         _modalOpen = true;
@@ -252,7 +251,6 @@ __builder2.AddContent(13, markup);
 
         var divisionToDelete = Program.AppData.CurrentDivision;
         Program.AppData.CurrentDivision = null;
-        await _storageService.SetItemAsync<Division>("currentDivision", null);
 
         if (!success)
             return;
@@ -268,7 +266,7 @@ __builder2.AddContent(13, markup);
             return;
         }
 
-        await GetDivisions();
+        GetDivisions();
     }
 
     private void ChangeDivisionButton_OnClick(Division division)
@@ -276,12 +274,11 @@ __builder2.AddContent(13, markup);
         _stateMachine.SetChangeState();
         Program.AppData.CurrentDivision = division;
 
-        _navigationManager.NavigateTo("divisionInfo");
+        _navigationManager.NavigateTo("divisionInfo/" + division.Id);
     }
 
-    private async Task SetCurrentDivision(Division division)
+    private void SetCurrentDivision(Division division)
     {
-        await _storageService.SetItemAsync("currentDivision", division);
         Program.AppData.CurrentDivision = division;
 
         _navigationManager.NavigateTo(GetDivisionHrefById(division.Id));
@@ -290,7 +287,6 @@ __builder2.AddContent(13, markup);
 #line default
 #line hidden
 #nullable disable
-        [global::Microsoft.AspNetCore.Components.InjectAttribute] private ISessionStorageService _storageService { get; set; }
         [global::Microsoft.AspNetCore.Components.InjectAttribute] private EventAggregator _eventAggregator { get; set; }
         [global::Microsoft.AspNetCore.Components.InjectAttribute] private NavigationManager _navigationManager { get; set; }
         [global::Microsoft.AspNetCore.Components.InjectAttribute] private StateMachine _stateMachine { get; set; }

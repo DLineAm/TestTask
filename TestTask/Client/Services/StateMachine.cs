@@ -2,6 +2,9 @@
 
 namespace TestTask.Client.Services
 {
+    /// <summary>
+    /// "Машина состояний"
+    /// </summary>
     public class StateMachine
     {
         public enum State

@@ -129,7 +129,7 @@ using System.Diagnostics;
 
     protected override async void OnParametersSet()
     {
-        //await LoadEmployees();
+        await LoadEmployees();
     }
 
     private async Task LoadEmployees()
@@ -163,11 +163,8 @@ using System.Diagnostics;
     private async Task EmployeeChangeButton_OnClick(Employee employee)
     {
         _stateMachine.SetChangeState();
-        //Program.AppData.CurrentDivisionFromEmployee = _divisions.FirstOrDefault(d => d.Id == employee.DivisionId);
         Program.AppData.CurrentEmployee = employee;
         await _storageService.SetItemAsync("employeeId", employee.Id);
-    //await _storageService.SetItemAsync("currentDivisionFromEmployee", Program.AppData.CurrentDivisionFromEmployee);
-        //await _storageService.SetItemAsync("currentEmployee", employee);
         _navigationManager.NavigateTo("employeeInfo");
     }
 
@@ -215,13 +212,12 @@ using System.Diagnostics;
     private async Task EmployeeAddButton_OnClick()
     {
         _stateMachine.SetAddState();
-        //Program.AppData.CurrentEmployee = null;
         await _storageService.SetItemAsync<Employee>("currentEmployee", null);
         _navigationManager.NavigateTo("employeeInfo");
     }
 
     /// <summary>
-    /// Генерирует код для каждого сотрудника в подразделениях
+    /// Генерирует разметку для каждого сотрудника в подразделениях
     /// </summary>
     /// <param name="fragment"></param>
     /// <returns></returns>
@@ -242,7 +238,7 @@ using System.Diagnostics;
             __builder2.OpenElement(3, "span");
             __builder2.AddAttribute(4, "style", "font-size: 20px; font-weight: 700");
 #nullable restore
-#line 174 "G:\TestTask\TestTask\Client\Pages\Employees.razor"
+#line 170 "G:\TestTask\TestTask\Client\Pages\Employees.razor"
 __builder2.AddContent(5, employee.FullName);
 
 #line default
@@ -250,7 +246,7 @@ __builder2.AddContent(5, employee.FullName);
 #nullable disable
             __builder2.AddContent(6, " (");
 #nullable restore
-#line 174 "G:\TestTask\TestTask\Client\Pages\Employees.razor"
+#line 170 "G:\TestTask\TestTask\Client\Pages\Employees.razor"
 __builder2.AddContent(7, _divisions.FirstOrDefault(d => d.Id == employee.DivisionId)?.Title);
 
 #line default
@@ -268,7 +264,7 @@ __builder2.AddContent(7, _divisions.FirstOrDefault(d => d.Id == employee.Divisio
             __builder2.AddMarkupContent(11, "\r\n");
         }
 #nullable restore
-#line 180 "G:\TestTask\TestTask\Client\Pages\Employees.razor"
+#line 176 "G:\TestTask\TestTask\Client\Pages\Employees.razor"
     ;
         }
 

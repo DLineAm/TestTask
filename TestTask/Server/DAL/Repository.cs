@@ -30,6 +30,12 @@ namespace TestTask.Server.DAL
             return query;
         }
 
+        /// <summary>
+        /// Получение списка из бд
+        /// </summary>
+        /// <param name="filter">выражение фильтра</param>
+        /// <param name="orderBy">функция сортировки</param>
+        /// <returns></returns>
         public IEnumerable<TEntity> Get(
             Expression<Func<TEntity, bool>> filter = null,
             Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null)
@@ -39,6 +45,12 @@ namespace TestTask.Server.DAL
             return FilterAndOrderEntities(filter, orderBy, query);
         }
 
+        /// <summary>
+        /// Получение списка из бд с включенными внешними ключами
+        /// </summary>
+        /// <param name="filter">выражение фильтра</param>
+        /// <param name="orderBy">функция сортировки</param>
+        /// <returns></returns>
         public IEnumerable<TEntity> GetWithChildren(
             Expression<Func<TEntity, bool>> filter = null,
             Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null)
@@ -60,16 +72,30 @@ namespace TestTask.Server.DAL
                 : query.ToList();
         }
 
+        /// <summary>
+        /// Получение записи из бд по идентификатору
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public TEntity GetById(object id)
         {
             return _dbSet.Find(id);
         }
 
+        /// <summary>
+        /// Добавление записи в бд
+        /// </summary>
+        /// <param name="entity"></param>
+        /// <returns></returns>
         public EntityEntry<TEntity> Insert(TEntity entity)
         {
             return _dbSet.Add(entity);
         }
 
+        /// <summary>
+        /// Удаление записи из бд
+        /// </summary>
+        /// <param name="entityToDelete"></param>
         public void Delete(TEntity entityToDelete)
         {
             if (_context.Entry(entityToDelete).State is EntityState.Detached)
@@ -80,6 +106,10 @@ namespace TestTask.Server.DAL
             _dbSet.Remove(entityToDelete);
         }
 
+        /// <summary>
+        /// Изменение состояния записи из бд в измененное
+        /// </summary>
+        /// <param name="entityToUpdate"></param>
         public void Update(TEntity entityToUpdate)
         {
             if (_context.Entry(entityToUpdate).State is EntityState.Detached)

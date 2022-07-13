@@ -13,6 +13,10 @@ namespace TestTask.Server.Services
             _unitOfWork = unitOfWork;
         }
 
+        /// <summary>
+        /// Получение списка гендеров
+        /// </summary>
+        /// <returns></returns>
         public IEnumerable<Gender> Get()
         {
             return _unitOfWork.GenderRepository.Get();
