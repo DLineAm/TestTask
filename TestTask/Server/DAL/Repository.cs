@@ -7,6 +7,7 @@ using System.Linq;
 using System.Linq.Expressions;
 
 using TestTask.Server.DAL.Context;
+using TestTask.Shared;
 
 namespace TestTask.Server.DAL
 {
@@ -21,7 +22,7 @@ namespace TestTask.Server.DAL
             _dbSet = context.Set<TEntity>();
         }
 
-        private IQueryable<TEntity> GetEntities(bool ignoreAutoInclude)
+        private IQueryable<TEntity> GetQuery(bool ignoreAutoInclude)
         {
             var query = ignoreAutoInclude
                 ? _dbSet.IgnoreAutoIncludes()
@@ -40,7 +41,7 @@ namespace TestTask.Server.DAL
             Expression<Func<TEntity, bool>> filter = null,
             Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null)
         {
-            IQueryable<TEntity> query = GetEntities(true);
+            var query = GetQuery(true);
 
             return FilterAndOrderEntities(filter, orderBy, query);
         }
@@ -55,7 +56,7 @@ namespace TestTask.Server.DAL
             Expression<Func<TEntity, bool>> filter = null,
             Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null)
         {
-            IQueryable<TEntity> query = GetEntities(false);
+            var query = GetQuery(false);
 
             return FilterAndOrderEntities(filter, orderBy, query);
         }
@@ -77,22 +78,9 @@ namespace TestTask.Server.DAL
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public TEntity GetById(object id)
+        public TEntity Get(int id)
         {
             return _dbSet.Find(id);
-        }
-
-        public void DetachAllEntities()
-        {
-            var changedEntriesCopy = _context.ChangeTracker.Entries()
-                .Where(e => e.Entity.GetType() == typeof(TEntity) &&(e.State == EntityState.Added ||
-                            e.State == EntityState.Modified ||
-                            e.State == EntityState.Deleted ||
-                            e.State == EntityState.Unchanged))
-                .ToList();
-
-            foreach (var entry in changedEntriesCopy)
-                entry.State = EntityState.Detached;
         }
 
         /// <summary>
@@ -100,7 +88,7 @@ namespace TestTask.Server.DAL
         /// </summary>
         /// <param name="entity"></param>
         /// <returns></returns>
-        public EntityEntry<TEntity> Insert(TEntity entity)
+        public EntityEntry<TEntity> Add(TEntity entity)
         {
             return _dbSet.Add(entity);
         }
@@ -111,11 +99,7 @@ namespace TestTask.Server.DAL
         /// <param name="entityToDelete"></param>
         public void Delete(TEntity entityToDelete)
         {
-            if (_context.Entry(entityToDelete).State is EntityState.Detached)
-            {
-                _dbSet.Attach(entityToDelete);
-            }
-
+            AttachEntity(entityToDelete);
 
             _dbSet.Remove(entityToDelete);
         }
@@ -126,13 +110,24 @@ namespace TestTask.Server.DAL
         /// <param name="entityToUpdate"></param>
         public void Update(TEntity entityToUpdate)
         {
-            if (_context.Entry(entityToUpdate).State is EntityState.Detached)
-            {
-                _dbSet.Attach(entityToUpdate);
-            }
+            if (!(entityToUpdate is IIdentity identity))
+                throw new InvalidOperationException($"{nameof(entityToUpdate)} must be IIdentity");
+            
+            AttachEntity(entityToUpdate);
 
-            _context.Entry(entityToUpdate).State = EntityState.Modified;
+            var dbEntry = _dbSet.Find(identity.Id);
+
+            _context.Entry(dbEntry).CurrentValues.SetValues(entityToUpdate);
+
+            //_context.Entry(entityToUpdate).State = EntityState.Modified;
         }
 
+        private void AttachEntity(TEntity entity)
+        {
+            if (_context.Entry(entity).State is EntityState.Detached)
+            {
+                _dbSet.Attach(entity);
+            }
+        }
     }
 }

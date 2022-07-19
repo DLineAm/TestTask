@@ -160,15 +160,9 @@ using Blazored.SessionStorage;
             _storageService.SetItem("currentDivision", _division);
         }
 
-        if (Program.AppData.CurrentDivisionFromList == null)
-        {
-            DivisionId = _storageService.GetItem<int>("currentDivisionIdFromList");
-        }
-        else
-        {
-            DivisionId = Program.AppData.CurrentDivisionFromList.Id;
-            _storageService.SetItem("currentDivisionIdFromList", DivisionId);
-        }
+        DivisionId = Program.AppData.CurrentDivisionFromList?.Id ?? _division.DivisionId ?? 0;
+        Debug.WriteLine(DivisionId);
+        StateHasChanged();
 
         GetDivisions();
 
@@ -264,7 +258,7 @@ using Blazored.SessionStorage;
         await Program.AppData.RefreshBaseProperties();
         _eventAggregator.InvokeDivisionCollectionChanged();
 
-        _navigationManager.NavigateTo("");
+        _navigationManager.NavigateTo(Program.LastPageUrl);
     }
 
     private async Task<HttpResponseMessage> PutDivisionAsync()

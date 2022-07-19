@@ -21,7 +21,7 @@
 </div>
 <div>
     <label for="parent">Родительское подразделение</label>
-    <select id="parent" @bind="DivisionId">
+    <select id="parent" value="@DivisionId">
         @foreach (var divisionFromData in _divisions)
         {
             <option value="@divisionFromData.Id">@divisionFromData.Title</option>
@@ -111,15 +111,9 @@
             _storageService.SetItem("currentDivision", _division);
         }
 
-        if (Program.AppData.CurrentDivisionFromList == null)
-        {
-            DivisionId = _storageService.GetItem<int>("currentDivisionIdFromList");
-        }
-        else
-        {
-            DivisionId = Program.AppData.CurrentDivisionFromList.Id;
-            _storageService.SetItem("currentDivisionIdFromList", DivisionId);
-        }
+        DivisionId = Program.AppData.CurrentDivisionFromList?.Id ?? _division.DivisionId ?? 0;
+        Debug.WriteLine(DivisionId);
+        StateHasChanged();
 
         GetDivisions();
 
@@ -215,7 +209,7 @@
         await Program.AppData.RefreshBaseProperties();
         _eventAggregator.InvokeDivisionCollectionChanged();
 
-        _navigationManager.NavigateTo("");
+        _navigationManager.NavigateTo(Program.LastPageUrl);
     }
 
     private async Task<HttpResponseMessage> PutDivisionAsync()

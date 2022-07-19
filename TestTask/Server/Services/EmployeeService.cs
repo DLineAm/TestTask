@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.SqlTypes;
 using TestTask.Server.DAL;
 using TestTask.Shared;
 
@@ -20,13 +21,10 @@ namespace TestTask.Server.Services
         /// <param name="param"></param>
         /// <returns></returns>
         /// <exception cref="InvalidOperationException"></exception>
-        public IEnumerable<Employee> GetWithParameter(object param)
+        public IEnumerable<Employee> GetByDivisionId(int divisionId)
         {
-            if (param is int divisionId)
-                return _unitOfWork.EmployeeRepository
+            return _unitOfWork.EmployeeRepository
                     .GetWithChildren(e => e.DivisionId == divisionId);
-
-            throw new InvalidOperationException("param must be int");
         }
 
         /// <summary>
@@ -37,7 +35,7 @@ namespace TestTask.Server.Services
         /// <returns></returns>
         public bool TryGet(int id, out Employee employee)
         {
-            employee = _unitOfWork.EmployeeRepository.GetById(id);
+            employee = _unitOfWork.EmployeeRepository.Get(id);
             return employee != null;
         }
 
@@ -46,15 +44,20 @@ namespace TestTask.Server.Services
         /// </summary>
         /// <param name="employee"></param>
         /// <param name="divisionToChange">Сотрудник из бд, которого нужно изменить</param>
-        public void Change(Employee employee, Employee divisionToChange)
+        public void Change(Employee employee)
         {
-            divisionToChange.FirstName = employee.FirstName;
-            divisionToChange.LastName = employee.LastName;
-            divisionToChange.MiddleName = employee.MiddleName;
-            divisionToChange.GenderId = employee.GenderId;
-            divisionToChange.DateOfBirth = employee.DateOfBirth;
-            divisionToChange.HasDriverLicense = employee.HasDriverLicense;
-            divisionToChange.DivisionId = employee.DivisionId;
+            _unitOfWork.EmployeeRepository.Update(employee);
+            //var employeeToChange = _unitOfWork.EmployeeRepository.Get(employee.Id);
+            //if (employeeToChange == null)
+            //    throw new SqlNullValueException();
+
+            //employeeToChange.FirstName = employee.FirstName;
+            //employeeToChange.LastName = employee.LastName;
+            //employeeToChange.MiddleName = employee.MiddleName;
+            //employeeToChange.Gender = employee.Gender;
+            //employeeToChange.DateOfBirth = employee.DateOfBirth;
+            //employeeToChange.HasDriverLicense = employee.HasDriverLicense;
+            //employeeToChange.DivisionId = employee.DivisionId;
 
             _unitOfWork.Save();
         }
@@ -63,8 +66,12 @@ namespace TestTask.Server.Services
         /// Удаление сотрудника из бд
         /// </summary>
         /// <param name="employee"></param>
-        public void Delete(Employee employee)
+        public void Delete(int Id)
         {
+            var employee = _unitOfWork.EmployeeRepository.Get(Id);
+            if (employee == null)
+                throw new SqlNullValueException();
+
             _unitOfWork.EmployeeRepository.Delete(employee);
             _unitOfWork.Save();
         }
@@ -75,7 +82,7 @@ namespace TestTask.Server.Services
         /// <param name="employee"></param>
         public void Add(Employee employee)
         {
-            _unitOfWork.EmployeeRepository.Insert(employee);
+            _unitOfWork.EmployeeRepository.Add(employee);
             _unitOfWork.Save();
         }
     }

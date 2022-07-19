@@ -1,9 +1,13 @@
-﻿using TestTask.Shared;
+﻿using System.Collections.Generic;
+using TestTask.Shared;
 
 namespace TestTask.Server.Services
 {
     /// <summary>
     /// Сервис сотрудников
     /// </summary>
-    public interface IEmployeeService : IMaybeGettable<Employee>, IGettableWithParameter<Employee>, IWritable<Employee>{}
+    public interface IEmployeeService : IMaybeGettable<Employee>, IWritable<Employee>
+    {
+        IEnumerable<Employee> GetByDivisionId(int divisionId);
+    }
 }

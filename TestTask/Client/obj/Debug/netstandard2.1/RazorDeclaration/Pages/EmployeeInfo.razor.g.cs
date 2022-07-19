@@ -123,7 +123,6 @@ using Newtonsoft.Json;
        
     private Employee _employee;
     private IEnumerable<Division> _divisions;
-    private IEnumerable<Gender> _genders;
     private bool _isErrorHidden = true;
     private string _errorText;
     private int? _divisionId;
@@ -152,9 +151,6 @@ using Newtonsoft.Json;
 
     private void InitializeData()
     {
-        _genders = Program.AppData.Genders;
-        var firstGender = _genders.First();
-
         var divisionFromSession = _storageService.GetItem<Employee>("currentEmployee");
             
         if (Program.AppData.CurrentEmployee == null && divisionFromSession != null)
@@ -168,7 +164,7 @@ using Newtonsoft.Json;
                 ? new Employee
                 {
                     DateOfBirth = DateTime.Now - TimeSpan.FromDays(365 * 18),
-                    DivisionId = Program.AppData.CurrentDivision?.Id ?? currentDivision?.Id, GenderId = firstGender.Id
+                    DivisionId = Program.AppData.CurrentDivision?.Id ?? currentDivision?.Id
                 }
                 : Program.AppData.CurrentEmployee;
             _storageService.SetItem("currentEmployee", _employee);

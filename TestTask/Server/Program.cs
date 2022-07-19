@@ -29,8 +29,13 @@ namespace TestTask.Server
             {
                 var context = services.GetRequiredService<DatabaseContext>();
                 if (!context.Database.EnsureCreated())
+                {
                     context.Database.Migrate();
-                DatabaseInitializer.InitializeTestData(context);
+                    return;
+                }
+
+                var initializer = services.GetRequiredService<IDataInitializer>();
+                initializer.Initialize(context);
             }
             catch (Exception e)
             {

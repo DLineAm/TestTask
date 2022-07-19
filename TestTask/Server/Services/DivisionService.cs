@@ -3,8 +3,9 @@
 using Newtonsoft.Json;
 
 using System.Collections.Generic;
+using System.Data.SqlTypes;
 using System.Linq;
-
+using Microsoft.Extensions.Logging;
 using TestTask.Server.DAL;
 using TestTask.Shared;
 
@@ -14,13 +15,15 @@ namespace TestTask.Server.Services
     {
         private readonly UnitOfWork _unitOfWork;
         private readonly IHttpContextAccessor _accessor;
+        private readonly ILogger<DivisionService> _logger;
 
-        public DivisionService(UnitOfWork unitOfWork ,IHttpContextAccessor accessor)
+        public DivisionService(UnitOfWork unitOfWork ,IHttpContextAccessor accessor, ILogger<DivisionService> logger)
         {
             JsonConvert.DefaultSettings = () => new JsonSerializerSettings
                 {ReferenceLoopHandling = ReferenceLoopHandling.Ignore};
             _unitOfWork = unitOfWork;
             _accessor = accessor;
+            _logger = logger;
         }
 
         /// <summary>
@@ -47,7 +50,7 @@ namespace TestTask.Server.Services
         /// <returns></returns>
         public bool TryGet(int id, out Division division)
         {
-            division = Get().FirstOrDefault(d => d.Id == id);
+            division = _unitOfWork.DivisionRepository.Get(id);
             return division != null;
         }
 
@@ -61,16 +64,19 @@ namespace TestTask.Server.Services
             var subDivisions = division.SubDivisions.ToList();
             division.SubDivisions = null;
             var entity = _unitOfWork.DivisionRepository
-                .Insert(division).Entity;
+                .Add(division).Entity;
 
             _unitOfWork.Save();
 
             foreach (var subDivision in subDivisions)
             {
                 var dbDivision = _unitOfWork.DivisionRepository
-                    .GetById(subDivision.Id);
+                    .Get(subDivision.Id);
                 if (dbDivision is null)
+                {
+                    _logger.LogWarning("One of subdivisions is null");
                     continue;
+                }
 
                 dbDivision.DivisionId = entity.Id;
             }
@@ -85,8 +91,12 @@ namespace TestTask.Server.Services
         /// Удаление подразделения из бд
         /// </summary>
         /// <param name="division"></param>
-        public void Delete(Division division)
+        public void Delete(int Id)
         {
+            var division = _unitOfWork.DivisionRepository.Get(Id);
+            if (division == null)
+                throw new SqlNullValueException();
+
             if (division.SubDivisions != null)
             {
                 foreach (var subDivision in division.SubDivisions)
@@ -108,12 +118,12 @@ namespace TestTask.Server.Services
             }
             _unitOfWork.Save();
 
-            var dbDivision = _unitOfWork.DivisionRepository.GetById(division.Id);
+            var dbDivision = _unitOfWork.DivisionRepository.Get(division.Id);
 
             _unitOfWork.DivisionRepository.Delete(dbDivision);
             foreach (var (id, employee) in newEmployees)
             {
-                var dbEmployee = _unitOfWork.EmployeeRepository.GetById(employee.Id);
+                var dbEmployee = _unitOfWork.EmployeeRepository.Get(employee.Id);
                 dbEmployee.DivisionId = id == 0 ? null : id;
             }
             _unitOfWork.Save();
@@ -126,29 +136,35 @@ namespace TestTask.Server.Services
         /// Изменение подразделения divisionToChange
         /// </summary>
         /// <param name="division"></param>
-        /// <param name="divisionToChange"></param>
-        public void Change(Division division, Division divisionToChange)
+        public void Change(Division division)
         {
-            divisionToChange.Title = division.Title;
-            divisionToChange.Description = division.Description;
-            divisionToChange.DivisionId = division.DivisionId;
-            divisionToChange.CreateDate = division.CreateDate;
+            _unitOfWork.DivisionRepository.Update(division);
+            //var divisionToChange = _unitOfWork.DivisionRepository.Get(division.Id);
+            //if (divisionToChange == null)
+            //    throw new SqlNullValueException();
 
-            var subDivisions = division.SubDivisions;
 
-            divisionToChange.SubDivisions = new HashSet<Division>();
+            
+            //divisionToChange.Title = division.Title;
+            //divisionToChange.Description = division.Description;
+            //divisionToChange.DivisionId = division.DivisionId;
+            //divisionToChange.CreateDate = division.CreateDate;
 
-            foreach (var subDivision in subDivisions)
-            {
-                var dbSubDivision = _unitOfWork.DivisionRepository.GetById(subDivision.Id);
+            //var subDivisions = division.SubDivisions;
 
-                if (dbSubDivision is null)
-                    continue;
+            //divisionToChange.SubDivisions = new HashSet<Division>();
 
-                divisionToChange.SubDivisions.Add(dbSubDivision);
-            }
+            //foreach (var subDivision in subDivisions)
+            //{
+            //    var dbSubDivision = _unitOfWork.DivisionRepository.Get(subDivision.Id);
 
-            _unitOfWork.DivisionRepository.Update(divisionToChange);
+            //    if (dbSubDivision is null)
+            //        continue;
+
+            //    divisionToChange.SubDivisions.Add(dbSubDivision);
+            //}
+
+            //_unitOfWork.DivisionRepository.Update(divisionToChange);
             _unitOfWork.Save();
 
             var divisions = _unitOfWork.DivisionRepository.GetWithChildren();

@@ -42,7 +42,7 @@ namespace TestTask.Server
             services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddTransient<IDivisionService, DivisionService>();
             services.AddTransient<IEmployeeService, EmployeeService>();
-            services.AddTransient<IGenderService, GenderService>();
+            services.AddTransient<IDataInitializer, DatabaseInitializer>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

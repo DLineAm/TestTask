@@ -8,7 +8,7 @@ namespace TestTask.Shared
     /// <summary>
     /// Подразделение сотрудников
     /// </summary>
-    public class Division
+    public class Division : IIdentity
     {
         /// <summary>
         /// Идентификатор подразделения

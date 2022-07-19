@@ -6,15 +6,15 @@ namespace TestTask.Shared
     /// <summary>
     /// Сотрудник
     /// </summary>
-    public class Employee
+    public class Employee : IIdentity
     {
-        public Employee(string firstName, string middleName, string lastName, Division division, int genderId, DateTime dateOfBirth, bool hasDriverLicense = false)
+        public Employee(string firstName, string middleName, string lastName, Division division,Gender gender ,DateTime dateOfBirth, bool hasDriverLicense = false)
         {
             FirstName = firstName;
             MiddleName = middleName;
             LastName = lastName;
             Division = division;
-            GenderId = genderId;
+            Gender = gender;
             HasDriverLicense = hasDriverLicense;
             DateOfBirth = dateOfBirth;
         }
@@ -47,11 +47,6 @@ namespace TestTask.Shared
         /// Дата рождения сотрудника
         /// </summary>
         public DateTime DateOfBirth { get; set; } = DateTime.Now;
-
-        /// <summary>
-        /// Идентификатор гендера сотрудника
-        /// </summary>
-        public int GenderId { get; set; } = 1;
 
         /// <summary>
         /// Имеет ли сотрудник водительское удостоверение

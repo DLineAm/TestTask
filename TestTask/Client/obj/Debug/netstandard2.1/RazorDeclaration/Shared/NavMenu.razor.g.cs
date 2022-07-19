@@ -241,8 +241,6 @@ __builder2.AddContent(13, markup);
         _modalText = "Вы действительно хотите удалить подразделение?";
         _modalOpen = true;
         _stateMachine.SetDeleteState();
-
-
     }
 
     private async Task Modal_OnClose(bool success)
@@ -270,6 +268,8 @@ __builder2.AddContent(13, markup);
 
         await Program.AppData.RefreshBaseProperties();
         GetDivisions();
+        if (Program.LastPageUrl == "employees/" + divisionToDelete.Id)
+            _navigationManager.NavigateTo("");
     }
 
     private void ChangeDivisionButton_OnClick(Division division)

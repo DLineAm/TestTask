@@ -41,11 +41,6 @@ namespace TestTask.Client.Services
         public IEnumerable<Division> Divisions { get; set; }
 
         /// <summary>
-        /// Список гендеров
-        /// </summary>
-        public IEnumerable<Gender> Genders { get; private set; }
-
-        /// <summary>
         /// Обновление базовых свойств из сервера
         /// </summary>
         /// <returns></returns>
@@ -55,12 +50,11 @@ namespace TestTask.Client.Services
         }
 
         /// <summary>
-        /// Инициализация базовых свойств из сервера
+        /// Инициализация базовых свойств
         /// </summary>
         /// <returns></returns>
         public async Task InitializeBaseProperties()
         {
-            Genders = await _http.GetFromJsonAsync<IEnumerable<Gender>>("genders");
             Divisions = await _http.GetFromJsonAsync<IEnumerable<Division>>("divisions");
         }
     }

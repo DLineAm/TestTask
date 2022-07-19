@@ -29,10 +29,10 @@
 </div>
 <div>
     <label for="gender">Пол</label>
-    <select id="gender" @bind="_employee.GenderId">
-        @foreach (var gender in _genders)
+    <select id="gender" @bind="_employee.Gender">
+        @foreach (var gender in GenderHelper.GetGenders())
         {
-            <option value="@gender.Id">@gender.Title</option>
+            <option value="@gender">@GenderHelper.GetGenderTitle(gender)</option>
         }
     </select>
 </div>
@@ -58,7 +58,6 @@
 @code {
     private Employee _employee;
     private IEnumerable<Division> _divisions;
-    private IEnumerable<Gender> _genders;
     private bool _isErrorHidden = true;
     private string _errorText;
     private int? _divisionId;
@@ -87,9 +86,6 @@
 
     private void InitializeData()
     {
-        _genders = Program.AppData.Genders;
-        var firstGender = _genders.First();
-
         var divisionFromSession = _storageService.GetItem<Employee>("currentEmployee");
             
         if (Program.AppData.CurrentEmployee == null && divisionFromSession != null)
@@ -103,7 +99,7 @@
                 ? new Employee
                 {
                     DateOfBirth = DateTime.Now - TimeSpan.FromDays(365 * 18),
-                    DivisionId = Program.AppData.CurrentDivision?.Id ?? currentDivision?.Id, GenderId = firstGender.Id
+                    DivisionId = Program.AppData.CurrentDivision?.Id ?? currentDivision?.Id
                 }
                 : Program.AppData.CurrentEmployee;
             _storageService.SetItem("currentEmployee", _employee);

@@ -9,19 +9,17 @@ namespace TestTask.Server.DAL.Context
     /// <summary>
     /// Класс, заполяющий базу данных тестовыми данными
     /// </summary>
-    public class DatabaseInitializer
+    public class DatabaseInitializer : IDataInitializer
     {
         /// <summary>
         /// Заполняет базу данных тестовыми данными
         /// </summary>
         /// <param name="context"></param>
-        public static void InitializeTestData(DatabaseContext context)
+        public void Initialize(DatabaseContext context)
         {
             var divisions = InitializeDivisions(context);
 
-            var (mGenderId, fGenderId) = InitializeGenders(context);
-
-            InitializeEmployees(context, divisions, mGenderId, fGenderId);
+            InitializeEmployees(context, divisions);
         }
 
         /// <summary>
@@ -29,7 +27,7 @@ namespace TestTask.Server.DAL.Context
         /// </summary>
         /// <param name="context"></param>
         /// <returns></returns>
-        private static IEnumerable<Division> InitializeDivisions(DatabaseContext context)
+        private IEnumerable<Division> InitializeDivisions(DatabaseContext context)
         {
             if (context.Divisions.Count() > 0)
                 return context.Divisions.ToList();
@@ -88,59 +86,33 @@ namespace TestTask.Server.DAL.Context
             return savedEntity.Entity;
         }
 
-        /// <summary>
-        /// Заполняет таблицу генденров тестовыми данными
-        /// </summary>
-        /// <param name="context"></param>
-        /// <returns></returns>
-        /// <exception cref="InvalidOperationException"></exception>
-        private static (int mGenderId, int fGenderId) InitializeGenders(DatabaseContext context)
-        {
-            if (context.Genders.Count() > 0)
-            {
-                var genderList = context.Genders.ToList();
-                if (genderList.Count != 2)
-                    throw new InvalidOperationException("Count of genders is not 2");
-
-                var mGenderId = genderList.ElementAt(0).Id;
-                var fGenderId = genderList.ElementAt(1).Id;
-
-                return (mGenderId, fGenderId);
-            }
-            var mGender = new Gender { Title = "М" };
-            mGender = context.Genders.Add(mGender).Entity;
-            var fGender = new Gender { Title = "Ж" };
-            fGender = context.Genders.Add(fGender).Entity;
-
-            context.SaveChanges();
-
-            return (mGender.Id, fGender.Id);
-        }
-
+       
         /// <summary>
         /// Заполняет таблицу сотрудников тестовыми данными
         /// </summary>
         /// <param name="context"></param>
         /// <param name="divisions"></param>
-        /// <param name="mGenderId"></param>
-        /// <param name="fGenderId"></param>
-        private static void InitializeEmployees(DatabaseContext context, IEnumerable<Division> divisions, int mGenderId, int fGenderId)
+        /// <param name="genders[0]"></param>
+        /// <param name="genders[1]"></param>
+        private void InitializeEmployees(DatabaseContext context, IEnumerable<Division> divisions)
         {
             if (context.Employees.Count() > 0)
                 return;
 
+            var genders = GenderHelper.GetGenders();
+
             var employees = new List<Employee>
             {
-                new Employee("София", "Максимовна", "Галкина", divisions.First(), fGenderId, new DateTime(1990, 8, 23)),
-                new Employee("Валерия", "Матвеевна", "Суханова", divisions.ElementAt(1), fGenderId, new DateTime(1991, 10, 10), true),
-                new Employee("Андрей", "Николаевич", "Чернышев", divisions.ElementAt(2), mGenderId, new DateTime(1996, 10, 22)),
-                new Employee("Дмитрий", "Михайлович", "Морозов", divisions.ElementAt(2), mGenderId, new DateTime(1995, 1, 6), true),
-                new Employee("Елизавета", "Руслановна", "Шарова", divisions.ElementAt(3), fGenderId, new DateTime(1999, 7, 9)),
-                new Employee("Мария", "Андреевна", "Данилова", divisions.ElementAt(3), fGenderId, new DateTime(1997, 4, 29)),
-                new Employee("Мила", "Данииловна", "Жукова", divisions.ElementAt(5), fGenderId, new DateTime(1989, 8, 31)),
-                new Employee("Александр", "Иванович", "Рыбаков", divisions.ElementAt(5), mGenderId, new DateTime(1995, 2, 21), true),
-                new Employee("Владимир", "Матвеевич", "Лебедев", divisions.ElementAt(6), mGenderId, new DateTime(1985, 5, 13)),
-                new Employee("Всеволод", "Михайлович", "Андреев", divisions.ElementAt(6), mGenderId, new DateTime(2001, 8, 17), true),
+                new Employee("София", "Максимовна", "Галкина", divisions.First(), genders[1], new DateTime(1990, 8, 23)),
+                new Employee("Валерия", "Матвеевна", "Суханова", divisions.ElementAt(1), genders[1], new DateTime(1991, 10, 10), true),
+                new Employee("Андрей", "Николаевич", "Чернышев", divisions.ElementAt(2), genders[0], new DateTime(1996, 10, 22)),
+                new Employee("Дмитрий", "Михайлович", "Морозов", divisions.ElementAt(2), genders[0], new DateTime(1995, 1, 6), true),
+                new Employee("Елизавета", "Руслановна", "Шарова", divisions.ElementAt(3), genders[1], new DateTime(1999, 7, 9)),
+                new Employee("Мария", "Андреевна", "Данилова", divisions.ElementAt(3), genders[1], new DateTime(1997, 4, 29)),
+                new Employee("Мила", "Данииловна", "Жукова", divisions.ElementAt(5), genders[1], new DateTime(1989, 8, 31)),
+                new Employee("Александр", "Иванович", "Рыбаков", divisions.ElementAt(5), genders[0], new DateTime(1995, 2, 21), true),
+                new Employee("Владимир", "Матвеевич", "Лебедев", divisions.ElementAt(6), genders[0], new DateTime(1985, 5, 13)),
+                new Employee("Всеволод", "Михайлович", "Андреев", divisions.ElementAt(6), genders[0], new DateTime(2001, 8, 17), true),
             };
 
             foreach (var employee in employees)

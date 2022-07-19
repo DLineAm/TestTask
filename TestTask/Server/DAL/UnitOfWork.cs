@@ -10,7 +10,6 @@ namespace TestTask.Server.DAL
 
         private Repository<Division> _divisionRepository;
         private Repository<Employee> _employeeRepository;
-        private Repository<Gender> _genderRepository;
 
         public UnitOfWork(DatabaseContext context)
         {
@@ -28,12 +27,6 @@ namespace TestTask.Server.DAL
         /// </summary>
         public Repository<Employee> EmployeeRepository => _employeeRepository
             ??= new Repository<Employee>(_context);
-
-        /// <summary>
-        /// Репозиторий гендеров
-        /// </summary>
-        public Repository<Gender> GenderRepository => _genderRepository
-            ??= new Repository<Gender>(_context);
 
         /// <summary>
         /// Фиксация изменений в бд

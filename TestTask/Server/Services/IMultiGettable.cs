@@ -3,13 +3,13 @@
 namespace TestTask.Server.Services
 {
     /// <summary>
-    /// Интерфейс, позволяющий получить список из бд
+    /// Интерфейс, позволяющий получить список данных
     /// </summary>
     /// <typeparam name="T"></typeparam>
     public interface IMultiGettable<T>
     {
         /// <summary>
-        /// Получение списка из бд
+        /// Получение списка данных
         /// </summary>
         /// <returns></returns>
         IEnumerable<T> Get();

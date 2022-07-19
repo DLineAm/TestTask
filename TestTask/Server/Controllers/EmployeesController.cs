@@ -2,7 +2,8 @@
 using Microsoft.Extensions.Logging;
 
 using System;
-
+using System.Collections.Generic;
+using System.Data.SqlTypes;
 using TestTask.Server.Services;
 using TestTask.Shared;
 
@@ -24,14 +25,14 @@ namespace TestTask.Server.Controllers
         }
 
         [HttpGet]
-        public IActionResult Get(int divisionId)
+        public ActionResult<IEnumerable<Employee>> Get(int divisionId)
         {
             _logger.LogInformation($"Processing request in method {nameof(EmployeesController)}.{nameof(Get)}");
-
+            //
             if (!_divisionService.TryGet(divisionId, out _))
                 return NotFound();
-
-            var employees = _employeeService.GetWithParameter(divisionId);
+            //
+            var employees = _employeeService.GetByDivisionId(divisionId);
 
             return Ok(employees);
         }
@@ -41,13 +42,14 @@ namespace TestTask.Server.Controllers
         {
             _logger.LogInformation($"Processing request in method {nameof(EmployeesController)}.{nameof(Put)}");
 
-            if (!_employeeService.TryGet(employee.Id, out var dbEmployee))
-                return NotFound();
-
             try
             {
-                _employeeService.Change(employee, dbEmployee);
+                _employeeService.Change(employee);
                 return Ok();
+            }
+            catch (SqlNullValueException)
+            {
+                return NotFound();
             }
             catch (Exception e)
             {
@@ -61,13 +63,14 @@ namespace TestTask.Server.Controllers
         {
             _logger.LogInformation($"Processing request in method {nameof(EmployeesController)}.{nameof(Delete)}");
 
-            if (!_employeeService.TryGet(id, out var employee))
-                return NotFound();
-
             try
             {
-                _employeeService.Delete(employee);
+                _employeeService.Delete(id);
                 return Ok();
+            }
+            catch (SqlNullValueException)
+            {
+                return NotFound();
             }
             catch (Exception e)
             {
