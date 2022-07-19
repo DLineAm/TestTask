@@ -7,6 +7,7 @@ using System.Data.SqlTypes;
 using System.Linq;
 using Microsoft.Extensions.Logging;
 using TestTask.Server.DAL;
+using TestTask.Server.Utils;
 using TestTask.Shared;
 
 namespace TestTask.Server.Services
@@ -14,16 +15,16 @@ namespace TestTask.Server.Services
     public class DivisionService : IDivisionService
     {
         private readonly UnitOfWork _unitOfWork;
-        private readonly IHttpContextAccessor _accessor;
         private readonly ILogger<DivisionService> _logger;
+        private readonly AppData _appData;
 
         public DivisionService(UnitOfWork unitOfWork ,IHttpContextAccessor accessor, ILogger<DivisionService> logger)
         {
             JsonConvert.DefaultSettings = () => new JsonSerializerSettings
                 {ReferenceLoopHandling = ReferenceLoopHandling.Ignore};
             _unitOfWork = unitOfWork;
-            _accessor = accessor;
             _logger = logger;
+            _appData = new AppData(accessor, unitOfWork);
         }
 
         /// <summary>
@@ -32,15 +33,10 @@ namespace TestTask.Server.Services
         /// <returns></returns>
         public IEnumerable<Division> Get()
         {
-            var divisionFromSession = _accessor.HttpContext?.Session?.GetString("divisions");
-            if (divisionFromSession != null)
-                return JsonConvert.DeserializeObject<IEnumerable<Division>>(divisionFromSession);
-
-            var divisions = _unitOfWork.DivisionRepository.GetWithChildren();
-            _accessor.HttpContext?.Session?.SetString("divisions", JsonConvert.SerializeObject(divisions));
-            return divisions;
-
+            return _appData.GetDivisions();
         }
+
+        
 
         /// <summary>
         /// Попытка получить подразделение из бд по идентификатору
@@ -81,10 +77,7 @@ namespace TestTask.Server.Services
                 dbDivision.DivisionId = entity.Id;
             }
 
-            _unitOfWork.Save();
-
-            var divisions = _unitOfWork.DivisionRepository.GetWithChildren();
-            _accessor.HttpContext?.Session?.SetString("divisions", JsonConvert.SerializeObject(divisions));
+            SaveAndUpdateDivisions();
         }
 
         /// <summary>
@@ -126,10 +119,8 @@ namespace TestTask.Server.Services
                 var dbEmployee = _unitOfWork.EmployeeRepository.Get(employee.Id);
                 dbEmployee.DivisionId = id == 0 ? null : id;
             }
-            _unitOfWork.Save();
 
-            var divisions = _unitOfWork.DivisionRepository.GetWithChildren().ToList();
-            _accessor.HttpContext?.Session?.SetString("divisions", JsonConvert.SerializeObject(divisions));
+            SaveAndUpdateDivisions();
         }
 
         /// <summary>
@@ -165,10 +156,14 @@ namespace TestTask.Server.Services
             //}
 
             //_unitOfWork.DivisionRepository.Update(divisionToChange);
+            SaveAndUpdateDivisions();
+        }
+
+        private void SaveAndUpdateDivisions()
+        {
             _unitOfWork.Save();
 
-            var divisions = _unitOfWork.DivisionRepository.GetWithChildren();
-            _accessor.HttpContext?.Session?.SetString("divisions", JsonConvert.SerializeObject(divisions));
+            _appData.UpdateDivisions();
         }
     }
 }

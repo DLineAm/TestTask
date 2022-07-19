@@ -28,9 +28,9 @@ else
             @foreach (var division in _divisions.Where(d => d.DivisionId is null))
             {
                 <li>
-                        <a style="cursor: pointer; color: #fff" @onclick="() => SetCurrentDivision(division)">@division.Title</a>
-                        <img src="css/delete.svg" style="cursor: pointer" @onclick="() => DeleteDivisionButton_OnClick(division)" alt=""/>
+                        <a style="cursor: pointer; color: #fff;  @(_currentDivisionId == division.Id ? "font-weight: 700" : "")" @onclick="() => SetCurrentDivision(division)">@division.Title</a>
                         <img src="css/edit.svg" style="cursor: pointer" @onclick="() => ChangeDivisionButton_OnClick(division)" alt=""/>
+                        <img src="css/delete.svg" style="cursor: pointer" @onclick="() => DeleteDivisionButton_OnClick(division)" alt=""/>
                         @if (division.SubDivisions != null)
                         {
                             @(GetList(division, @<div></div>))
@@ -54,8 +54,9 @@ else
     private string _modalTitle;
     private string _modalText;
     private bool _modalOpen;
+    private int _currentDivisionId;
 
-    protected override async Task OnInitializedAsync()
+    protected override void OnInitialized()
     {
         _eventAggregator.DivisionCollectionChanged += () =>
         {
@@ -84,9 +85,9 @@ else
         {
             markup += @<li>
                           <div class="pd1248">
-                              <a style="cursor: pointer; color: #fff" @onclick="() => SetCurrentDivision(subDivision)">@subDivision.Title</a>
-                              <img src="css/delete.svg" style="cursor: pointer" @onclick="() => DeleteDivisionButton_OnClick(subDivision)" alt=""/>
+                              <a style="cursor: pointer; color: #fff;  @(_currentDivisionId == subDivision.Id ? "font-weight: 700" : "")" @onclick="() => SetCurrentDivision(subDivision)">@subDivision.Title</a>
                               <img src="css/edit.svg" style="cursor: pointer" @onclick="() => ChangeDivisionButton_OnClick(subDivision)" alt=""/>
+                              <img src="css/delete.svg" style="cursor: pointer" @onclick="() => DeleteDivisionButton_OnClick(subDivision)" alt=""/>
                           </div>
                       </li>;
                           
@@ -150,12 +151,17 @@ else
 
     private void SetCurrentDivision(Division division)
     {
-        Program.AppData.CurrentDivision = division;
-
         var url = GetDivisionHrefById(division.Id);
-
         Program.LastPageUrl = url;
 
+        Program.AppData.CurrentDivision = division;
+        _currentDivisionId = division.Id;
+
+        if (Program.AfterEmployeeInfoPage)
+        {
+            _navigationManager.NavigateTo("Redirect");
+            Program.AfterEmployeeInfoPage = false;
+        }
         _navigationManager.NavigateTo(url);
     }
 }

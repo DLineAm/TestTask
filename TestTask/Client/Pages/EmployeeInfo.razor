@@ -37,7 +37,7 @@
     </select>
 </div>
 <div>
-    <input type="checkbox" @bind="@_employee.HasDriverLicense" @oninput="(e) => { _employee.HasDriverLicense = (bool)e.Value; SaveEmployee(); }"/> Есть водительские права
+    <input type="checkbox" checked="@_employee.HasDriverLicense"/> Есть водительские права
 </div>
 <div>
     <label for="division">Подразделение</label>
@@ -98,7 +98,7 @@
             _employee = _stateMachine.CurrentState == StateMachine.State.Add
                 ? new Employee
                 {
-                    DateOfBirth = DateTime.Now - TimeSpan.FromDays(365 * 18),
+                    DateOfBirth = DateTime.Now - TimeSpan.FromDays(365 * 18 + 1),
                     DivisionId = Program.AppData.CurrentDivision?.Id ?? currentDivision?.Id
                 }
                 : Program.AppData.CurrentEmployee;
@@ -154,6 +154,7 @@
             return;
         }
 
+        Program.AfterEmployeeInfoPage = true;
         _navigationManager.NavigateTo($"employees/{_divisionId}");
     }
 

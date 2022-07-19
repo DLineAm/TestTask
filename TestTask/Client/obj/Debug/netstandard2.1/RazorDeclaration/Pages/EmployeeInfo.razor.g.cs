@@ -163,7 +163,7 @@ using Newtonsoft.Json;
             _employee = _stateMachine.CurrentState == StateMachine.State.Add
                 ? new Employee
                 {
-                    DateOfBirth = DateTime.Now - TimeSpan.FromDays(365 * 18),
+                    DateOfBirth = DateTime.Now - TimeSpan.FromDays(365 * 18 + 1),
                     DivisionId = Program.AppData.CurrentDivision?.Id ?? currentDivision?.Id
                 }
                 : Program.AppData.CurrentEmployee;
@@ -219,6 +219,7 @@ using Newtonsoft.Json;
             return;
         }
 
+        Program.AfterEmployeeInfoPage = true;
         _navigationManager.NavigateTo($"employees/{_divisionId}");
     }
 

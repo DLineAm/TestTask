@@ -132,8 +132,9 @@ using Newtonsoft.Json;
     private string _modalTitle;
     private string _modalText;
     private bool _modalOpen;
+    private int _currentDivisionId;
 
-    protected override async Task OnInitializedAsync()
+    protected override void OnInitialized()
     {
         _eventAggregator.DivisionCollectionChanged += () =>
         {
@@ -172,10 +173,18 @@ using Newtonsoft.Json;
             __builder2.AddAttribute(3, "class", "pd1248");
             __builder2.AddMarkupContent(4, "\r\n                              ");
             __builder2.OpenElement(5, "a");
-            __builder2.AddAttribute(6, "style", "cursor: pointer; color: #fff");
+            __builder2.AddAttribute(6, "style", "cursor:" + " pointer;" + " color:" + " #fff;" + "  " + (
+#nullable restore
+#line 88 "G:\TestTask\TestTask\Client\Shared\NavMenu.razor"
+                                                                         _currentDivisionId == subDivision.Id ? "font-weight: 700" : ""
+
+#line default
+#line hidden
+#nullable disable
+            ));
             __builder2.AddAttribute(7, "@onclick", "() => SetCurrentDivision(subDivision)");
 #nullable restore
-#line 87 "G:\TestTask\TestTask\Client\Shared\NavMenu.razor"
+#line 88 "G:\TestTask\TestTask\Client\Shared\NavMenu.razor"
 __builder2.AddContent(8, subDivision.Title);
 
 #line default
@@ -183,15 +192,15 @@ __builder2.AddContent(8, subDivision.Title);
 #nullable disable
             __builder2.CloseElement();
             __builder2.AddMarkupContent(9, @"
-                              <img src=""css/delete.svg"" style=""cursor: pointer"" @onclick=""() => DeleteDivisionButton_OnClick(subDivision)"" alt>
                               <img src=""css/edit.svg"" style=""cursor: pointer"" @onclick=""() => ChangeDivisionButton_OnClick(subDivision)"" alt>
+                              <img src=""css/delete.svg"" style=""cursor: pointer"" @onclick=""() => DeleteDivisionButton_OnClick(subDivision)"" alt>
                           ");
             __builder2.CloseElement();
             __builder2.AddMarkupContent(10, "\r\n                      ");
             __builder2.CloseElement();
         }
 #nullable restore
-#line 91 "G:\TestTask\TestTask\Client\Shared\NavMenu.razor"
+#line 92 "G:\TestTask\TestTask\Client\Shared\NavMenu.razor"
                            ;
                           
                           if (subDivision.SubDivisions != null)
@@ -204,7 +213,7 @@ __builder2.AddContent(8, subDivision.Title);
             __builder2.AddMarkupContent(11, "<div></div>");
         }
 #nullable restore
-#line 94 "G:\TestTask\TestTask\Client\Shared\NavMenu.razor"
+#line 95 "G:\TestTask\TestTask\Client\Shared\NavMenu.razor"
                                                                          );
         }
         return 
@@ -215,7 +224,7 @@ __builder2.AddContent(8, subDivision.Title);
         (__builder2) => {
             __builder2.OpenElement(12, "ul");
 #nullable restore
-#line 96 "G:\TestTask\TestTask\Client\Shared\NavMenu.razor"
+#line 97 "G:\TestTask\TestTask\Client\Shared\NavMenu.razor"
 __builder2.AddContent(13, markup);
 
 #line default
@@ -224,7 +233,7 @@ __builder2.AddContent(13, markup);
             __builder2.CloseElement();
         }
 #nullable restore
-#line 96 "G:\TestTask\TestTask\Client\Shared\NavMenu.razor"
+#line 97 "G:\TestTask\TestTask\Client\Shared\NavMenu.razor"
                                 ;
     }
 
@@ -282,12 +291,17 @@ __builder2.AddContent(13, markup);
 
     private void SetCurrentDivision(Division division)
     {
-        Program.AppData.CurrentDivision = division;
-
         var url = GetDivisionHrefById(division.Id);
-
         Program.LastPageUrl = url;
 
+        Program.AppData.CurrentDivision = division;
+        _currentDivisionId = division.Id;
+
+        if (Program.AfterEmployeeInfoPage)
+        {
+            _navigationManager.NavigateTo("Redirect");
+            Program.AfterEmployeeInfoPage = false;
+        }
         _navigationManager.NavigateTo(url);
     }
 

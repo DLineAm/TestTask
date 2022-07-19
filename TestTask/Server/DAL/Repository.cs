@@ -113,7 +113,7 @@ namespace TestTask.Server.DAL
             if (!(entityToUpdate is IIdentity identity))
                 throw new InvalidOperationException($"{nameof(entityToUpdate)} must be IIdentity");
             
-            AttachEntity(entityToUpdate);
+            //AttachEntity(entityToUpdate);
 
             var dbEntry = _dbSet.Find(identity.Id);
 
