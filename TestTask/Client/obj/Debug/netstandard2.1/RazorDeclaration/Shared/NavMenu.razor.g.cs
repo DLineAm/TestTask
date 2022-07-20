@@ -133,19 +133,20 @@ using Newtonsoft.Json;
     private string _modalText;
     private bool _modalOpen;
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
-        _eventAggregator.DivisionCollectionChanged += () =>
+        _eventAggregator.DivisionCollectionChanged += async () =>
         {
-            GetDivisions();
+            await GetDivisions();
             StateHasChanged();
         };
 
-        GetDivisions();
+        await GetDivisions();
     }
 
-    private void GetDivisions()
+    private async Task GetDivisions()
     {
+        await Program.AppData.InitializeBaseProperties();
         _divisions = Program.AppData.Divisions.ToList();
         StateHasChanged();
     }
@@ -174,7 +175,7 @@ using Newtonsoft.Json;
             __builder2.OpenElement(6, "a");
             __builder2.AddAttribute(7, "style", "cursor:" + " pointer;" + " color:" + " #fff;" + "  " + (
 #nullable restore
-#line 86 "G:\TestTask\TestTask\Client\Shared\NavMenu.razor"
+#line 87 "G:\TestTask\TestTask\Client\Shared\NavMenu.razor"
                                                                          Program.CurrentDivisionId == subDivision.Id ? "font-weight: 700" : ""
 
 #line default
@@ -183,7 +184,7 @@ using Newtonsoft.Json;
             ));
             __builder2.AddAttribute(8, "@onclick", "() => SetCurrentDivision(subDivision)");
 #nullable restore
-#line 86 "G:\TestTask\TestTask\Client\Shared\NavMenu.razor"
+#line 87 "G:\TestTask\TestTask\Client\Shared\NavMenu.razor"
 __builder2.AddContent(9, subDivision.Title);
 
 #line default
@@ -199,7 +200,7 @@ __builder2.AddContent(9, subDivision.Title);
             __builder2.CloseElement();
         }
 #nullable restore
-#line 90 "G:\TestTask\TestTask\Client\Shared\NavMenu.razor"
+#line 91 "G:\TestTask\TestTask\Client\Shared\NavMenu.razor"
                            ;
                           
                           if (subDivision.SubDivisions != null)
@@ -212,7 +213,7 @@ __builder2.AddContent(9, subDivision.Title);
             __builder2.AddMarkupContent(12, "<div></div>");
         }
 #nullable restore
-#line 93 "G:\TestTask\TestTask\Client\Shared\NavMenu.razor"
+#line 94 "G:\TestTask\TestTask\Client\Shared\NavMenu.razor"
                                                                          );
         }
         return 
@@ -223,7 +224,7 @@ __builder2.AddContent(9, subDivision.Title);
         (__builder2) => {
             __builder2.OpenElement(13, "ul");
 #nullable restore
-#line 95 "G:\TestTask\TestTask\Client\Shared\NavMenu.razor"
+#line 96 "G:\TestTask\TestTask\Client\Shared\NavMenu.razor"
 __builder2.AddContent(14, markup);
 
 #line default
@@ -232,7 +233,7 @@ __builder2.AddContent(14, markup);
             __builder2.CloseElement();
         }
 #nullable restore
-#line 95 "G:\TestTask\TestTask\Client\Shared\NavMenu.razor"
+#line 96 "G:\TestTask\TestTask\Client\Shared\NavMenu.razor"
                                 ;
     }
 

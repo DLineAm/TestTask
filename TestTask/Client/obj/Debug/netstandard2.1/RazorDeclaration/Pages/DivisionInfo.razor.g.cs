@@ -160,9 +160,6 @@ using Blazored.SessionStorage;
             _storageService.SetItem("currentDivision", _division);
         }
 
-        DivisionId = Program.AppData.CurrentDivisionFromList?.Id ?? _division.DivisionId ?? 0;
-        StateHasChanged();
-
         GetDivisions();
 
         if (_stateMachine.CurrentState is StateMachine.State.Change && _division.SubDivisions != null)

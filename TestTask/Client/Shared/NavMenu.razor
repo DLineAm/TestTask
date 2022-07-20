@@ -55,19 +55,20 @@ else
     private string _modalText;
     private bool _modalOpen;
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
-        _eventAggregator.DivisionCollectionChanged += () =>
+        _eventAggregator.DivisionCollectionChanged += async () =>
         {
-            GetDivisions();
+            await GetDivisions();
             StateHasChanged();
         };
 
-        GetDivisions();
+        await GetDivisions();
     }
 
-    private void GetDivisions()
+    private async Task GetDivisions()
     {
+        await Program.AppData.InitializeBaseProperties();
         _divisions = Program.AppData.Divisions.ToList();
         StateHasChanged();
     }
