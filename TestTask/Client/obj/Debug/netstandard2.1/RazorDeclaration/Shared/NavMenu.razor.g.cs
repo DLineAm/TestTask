@@ -132,7 +132,6 @@ using Newtonsoft.Json;
     private string _modalTitle;
     private string _modalText;
     private bool _modalOpen;
-    private int _currentDivisionId;
 
     protected override void OnInitialized()
     {
@@ -175,8 +174,8 @@ using Newtonsoft.Json;
             __builder2.OpenElement(6, "a");
             __builder2.AddAttribute(7, "style", "cursor:" + " pointer;" + " color:" + " #fff;" + "  " + (
 #nullable restore
-#line 87 "G:\TestTask\TestTask\Client\Shared\NavMenu.razor"
-                                                                         _currentDivisionId == subDivision.Id ? "font-weight: 700" : ""
+#line 86 "G:\TestTask\TestTask\Client\Shared\NavMenu.razor"
+                                                                         Program.CurrentDivisionId == subDivision.Id ? "font-weight: 700" : ""
 
 #line default
 #line hidden
@@ -184,7 +183,7 @@ using Newtonsoft.Json;
             ));
             __builder2.AddAttribute(8, "@onclick", "() => SetCurrentDivision(subDivision)");
 #nullable restore
-#line 87 "G:\TestTask\TestTask\Client\Shared\NavMenu.razor"
+#line 86 "G:\TestTask\TestTask\Client\Shared\NavMenu.razor"
 __builder2.AddContent(9, subDivision.Title);
 
 #line default
@@ -200,7 +199,7 @@ __builder2.AddContent(9, subDivision.Title);
             __builder2.CloseElement();
         }
 #nullable restore
-#line 91 "G:\TestTask\TestTask\Client\Shared\NavMenu.razor"
+#line 90 "G:\TestTask\TestTask\Client\Shared\NavMenu.razor"
                            ;
                           
                           if (subDivision.SubDivisions != null)
@@ -213,7 +212,7 @@ __builder2.AddContent(9, subDivision.Title);
             __builder2.AddMarkupContent(12, "<div></div>");
         }
 #nullable restore
-#line 94 "G:\TestTask\TestTask\Client\Shared\NavMenu.razor"
+#line 93 "G:\TestTask\TestTask\Client\Shared\NavMenu.razor"
                                                                          );
         }
         return 
@@ -224,7 +223,7 @@ __builder2.AddContent(9, subDivision.Title);
         (__builder2) => {
             __builder2.OpenElement(13, "ul");
 #nullable restore
-#line 96 "G:\TestTask\TestTask\Client\Shared\NavMenu.razor"
+#line 95 "G:\TestTask\TestTask\Client\Shared\NavMenu.razor"
 __builder2.AddContent(14, markup);
 
 #line default
@@ -233,7 +232,7 @@ __builder2.AddContent(14, markup);
             __builder2.CloseElement();
         }
 #nullable restore
-#line 96 "G:\TestTask\TestTask\Client\Shared\NavMenu.razor"
+#line 95 "G:\TestTask\TestTask\Client\Shared\NavMenu.razor"
                                 ;
     }
 
@@ -289,13 +288,13 @@ __builder2.AddContent(14, markup);
         _navigationManager.NavigateTo("divisionInfo/" + division.Id);
     }
 
-    private void SetCurrentDivision(Division division)
+    private async Task SetCurrentDivision(Division division)
     {
         var url = GetDivisionHrefById(division.Id);
         Program.LastPageUrl = url;
 
         Program.AppData.CurrentDivision = division;
-        _currentDivisionId = division.Id;
+        Program.CurrentDivisionId = division.Id;
 
         if (Program.AfterEmployeeInfoPage)
         {

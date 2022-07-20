@@ -6,7 +6,7 @@
   "linkerEnabled": false,
   "resources": {
     "assembly": {
-      "TestTask.Client.dll": "sha256-9WXytDqbzaDqVgWwDNBR8m5+kC1dlo7twJiYXoWYGJA=",
+      "TestTask.Client.dll": "sha256-8FBxqyLyA1FM2bWtUShjRqaOhzshUnQreIwAZKR31HA=",
       "System.Net.Http.Json.dll": "sha256-99dseBOagY3mzu5Y8Eqm8gRI+o8QbbCp7R2Ew9bQ+5E=",
       "System.Buffers.dll": "sha256-ZxXy75PYbzJxNfAc\/SAP1nUYm4gt1jSaOpFnBb9m85M=",
       "mscorlib.dll": "sha256-BaZPMj95+YNe3G4ckTGD6szZFwZeA2MOHn91zTGKDeU=",
@@ -63,7 +63,7 @@
       "Blazored.SessionStorage.dll": "sha256-bMGfld4CY2H49UjCGiz6JUKbEYHqz9eAejy81PaluPo="
     },
     "pdb": {
-      "TestTask.Client.pdb": "sha256-YxG9Zl5gJwe3NfzD8yuKrhEa7H3uvE0KNLFc5g\/jSN4=",
+      "TestTask.Client.pdb": "sha256-JanRgEGLPcBX27dxrLQM7A+ugPe9iKTskCWlcLRTSMc=",
       "TestTask.Shared.pdb": "sha256-tE2hgNzvzeJLPx82YjWPExrmM6r+HavCFdIf1+Uo3t0="
     },
     "runtime": {
