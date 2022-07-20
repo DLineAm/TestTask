@@ -143,7 +143,6 @@ using Newtonsoft.Json;
         };
 
         GetDivisions();
-
     }
 
     private void GetDivisions()
@@ -168,39 +167,40 @@ using Newtonsoft.Json;
 #nullable disable
         (__builder2) => {
             __builder2.OpenElement(0, "li");
-            __builder2.AddMarkupContent(1, "\r\n                          ");
-            __builder2.OpenElement(2, "div");
-            __builder2.AddAttribute(3, "class", "pd1248");
-            __builder2.AddMarkupContent(4, "\r\n                              ");
-            __builder2.OpenElement(5, "a");
-            __builder2.AddAttribute(6, "style", "cursor:" + " pointer;" + " color:" + " #fff;" + "  " + (
+            __builder2.AddAttribute(1, "@key", "subDivision.Id");
+            __builder2.AddMarkupContent(2, "\r\n                          ");
+            __builder2.OpenElement(3, "div");
+            __builder2.AddAttribute(4, "class", "pd1248");
+            __builder2.AddMarkupContent(5, "\r\n                              ");
+            __builder2.OpenElement(6, "a");
+            __builder2.AddAttribute(7, "style", "cursor:" + " pointer;" + " color:" + " #fff;" + "  " + (
 #nullable restore
-#line 88 "G:\TestTask\TestTask\Client\Shared\NavMenu.razor"
+#line 87 "G:\TestTask\TestTask\Client\Shared\NavMenu.razor"
                                                                          _currentDivisionId == subDivision.Id ? "font-weight: 700" : ""
 
 #line default
 #line hidden
 #nullable disable
             ));
-            __builder2.AddAttribute(7, "@onclick", "() => SetCurrentDivision(subDivision)");
+            __builder2.AddAttribute(8, "@onclick", "() => SetCurrentDivision(subDivision)");
 #nullable restore
-#line 88 "G:\TestTask\TestTask\Client\Shared\NavMenu.razor"
-__builder2.AddContent(8, subDivision.Title);
+#line 87 "G:\TestTask\TestTask\Client\Shared\NavMenu.razor"
+__builder2.AddContent(9, subDivision.Title);
 
 #line default
 #line hidden
 #nullable disable
             __builder2.CloseElement();
-            __builder2.AddMarkupContent(9, @"
+            __builder2.AddMarkupContent(10, @"
                               <img src=""css/edit.svg"" style=""cursor: pointer"" @onclick=""() => ChangeDivisionButton_OnClick(subDivision)"" alt>
                               <img src=""css/delete.svg"" style=""cursor: pointer"" @onclick=""() => DeleteDivisionButton_OnClick(subDivision)"" alt>
                           ");
             __builder2.CloseElement();
-            __builder2.AddMarkupContent(10, "\r\n                      ");
+            __builder2.AddMarkupContent(11, "\r\n                      ");
             __builder2.CloseElement();
         }
 #nullable restore
-#line 92 "G:\TestTask\TestTask\Client\Shared\NavMenu.razor"
+#line 91 "G:\TestTask\TestTask\Client\Shared\NavMenu.razor"
                            ;
                           
                           if (subDivision.SubDivisions != null)
@@ -210,10 +210,10 @@ __builder2.AddContent(8, subDivision.Title);
 #line hidden
 #nullable disable
         (__builder2) => {
-            __builder2.AddMarkupContent(11, "<div></div>");
+            __builder2.AddMarkupContent(12, "<div></div>");
         }
 #nullable restore
-#line 95 "G:\TestTask\TestTask\Client\Shared\NavMenu.razor"
+#line 94 "G:\TestTask\TestTask\Client\Shared\NavMenu.razor"
                                                                          );
         }
         return 
@@ -222,10 +222,10 @@ __builder2.AddContent(8, subDivision.Title);
 #line hidden
 #nullable disable
         (__builder2) => {
-            __builder2.OpenElement(12, "ul");
+            __builder2.OpenElement(13, "ul");
 #nullable restore
-#line 97 "G:\TestTask\TestTask\Client\Shared\NavMenu.razor"
-__builder2.AddContent(13, markup);
+#line 96 "G:\TestTask\TestTask\Client\Shared\NavMenu.razor"
+__builder2.AddContent(14, markup);
 
 #line default
 #line hidden
@@ -233,7 +233,7 @@ __builder2.AddContent(13, markup);
             __builder2.CloseElement();
         }
 #nullable restore
-#line 97 "G:\TestTask\TestTask\Client\Shared\NavMenu.razor"
+#line 96 "G:\TestTask\TestTask\Client\Shared\NavMenu.razor"
                                 ;
     }
 

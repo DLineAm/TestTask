@@ -27,7 +27,7 @@ else
         <ul>
             @foreach (var division in _divisions.Where(d => d.DivisionId is null))
             {
-                <li>
+                <li @key="division.Id">
                         <a style="cursor: pointer; color: #fff;  @(_currentDivisionId == division.Id ? "font-weight: 700" : "")" @onclick="() => SetCurrentDivision(division)">@division.Title</a>
                         <img src="css/edit.svg" style="cursor: pointer" @onclick="() => ChangeDivisionButton_OnClick(division)" alt=""/>
                         <img src="css/delete.svg" style="cursor: pointer" @onclick="() => DeleteDivisionButton_OnClick(division)" alt=""/>
@@ -65,7 +65,6 @@ else
         };
 
         GetDivisions();
-
     }
 
     private void GetDivisions()
@@ -83,7 +82,7 @@ else
     {
         foreach (var subDivision in division.SubDivisions)
         {
-            markup += @<li>
+            markup += @<li @key="subDivision.Id">
                           <div class="pd1248">
                               <a style="cursor: pointer; color: #fff;  @(_currentDivisionId == subDivision.Id ? "font-weight: 700" : "")" @onclick="() => SetCurrentDivision(subDivision)">@subDivision.Title</a>
                               <img src="css/edit.svg" style="cursor: pointer" @onclick="() => ChangeDivisionButton_OnClick(subDivision)" alt=""/>

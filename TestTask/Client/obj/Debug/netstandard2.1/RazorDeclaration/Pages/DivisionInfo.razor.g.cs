@@ -161,7 +161,6 @@ using Blazored.SessionStorage;
         }
 
         DivisionId = Program.AppData.CurrentDivisionFromList?.Id ?? _division.DivisionId ?? 0;
-        Debug.WriteLine(DivisionId);
         StateHasChanged();
 
         GetDivisions();

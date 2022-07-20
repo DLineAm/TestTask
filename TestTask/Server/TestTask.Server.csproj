@@ -43,6 +43,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="DAL\Context\Configurations\" />
     <Folder Include="Utils\" />
   </ItemGroup>
 
