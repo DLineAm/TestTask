@@ -125,13 +125,14 @@ using Newtonsoft.Json;
         }
         #pragma warning restore 1998
 #nullable restore
-#line 51 "G:\TestTask\TestTask\Client\Shared\NavMenu.razor"
+#line 52 "G:\TestTask\TestTask\Client\Shared\NavMenu.razor"
        
     private List<Division> _divisions;
     private bool _collapseNavMenu = true;
     private string _modalTitle;
     private string _modalText;
     private bool _modalOpen;
+    private bool _modalConfirmation;
 
     protected override async Task OnInitializedAsync()
     {
@@ -175,7 +176,7 @@ using Newtonsoft.Json;
             __builder2.OpenElement(6, "a");
             __builder2.AddAttribute(7, "style", "cursor:" + " pointer;" + " color:" + " #fff;" + "  " + (
 #nullable restore
-#line 87 "G:\TestTask\TestTask\Client\Shared\NavMenu.razor"
+#line 89 "G:\TestTask\TestTask\Client\Shared\NavMenu.razor"
                                                                          Program.CurrentDivisionId == subDivision.Id ? "font-weight: 700" : ""
 
 #line default
@@ -184,7 +185,7 @@ using Newtonsoft.Json;
             ));
             __builder2.AddAttribute(8, "@onclick", "() => SetCurrentDivision(subDivision)");
 #nullable restore
-#line 87 "G:\TestTask\TestTask\Client\Shared\NavMenu.razor"
+#line 89 "G:\TestTask\TestTask\Client\Shared\NavMenu.razor"
 __builder2.AddContent(9, subDivision.Title);
 
 #line default
@@ -200,7 +201,7 @@ __builder2.AddContent(9, subDivision.Title);
             __builder2.CloseElement();
         }
 #nullable restore
-#line 91 "G:\TestTask\TestTask\Client\Shared\NavMenu.razor"
+#line 93 "G:\TestTask\TestTask\Client\Shared\NavMenu.razor"
                            ;
                           
                           if (subDivision.SubDivisions != null)
@@ -213,7 +214,7 @@ __builder2.AddContent(9, subDivision.Title);
             __builder2.AddMarkupContent(12, "<div></div>");
         }
 #nullable restore
-#line 94 "G:\TestTask\TestTask\Client\Shared\NavMenu.razor"
+#line 96 "G:\TestTask\TestTask\Client\Shared\NavMenu.razor"
                                                                          );
         }
         return 
@@ -224,7 +225,7 @@ __builder2.AddContent(9, subDivision.Title);
         (__builder2) => {
             __builder2.OpenElement(13, "ul");
 #nullable restore
-#line 96 "G:\TestTask\TestTask\Client\Shared\NavMenu.razor"
+#line 98 "G:\TestTask\TestTask\Client\Shared\NavMenu.razor"
 __builder2.AddContent(14, markup);
 
 #line default
@@ -233,7 +234,7 @@ __builder2.AddContent(14, markup);
             __builder2.CloseElement();
         }
 #nullable restore
-#line 96 "G:\TestTask\TestTask\Client\Shared\NavMenu.razor"
+#line 98 "G:\TestTask\TestTask\Client\Shared\NavMenu.razor"
                                 ;
     }
 
@@ -249,6 +250,7 @@ __builder2.AddContent(14, markup);
         _modalTitle = "Подтверждение удаления";
         _modalText = "Вы действительно хотите удалить подразделение?";
         _modalOpen = true;
+        _modalConfirmation = true;
         _stateMachine.SetDeleteState();
     }
 
@@ -272,10 +274,11 @@ __builder2.AddContent(14, markup);
             _modalOpen = true;
             _modalTitle = "Ошибка удаления";
             _modalText = "Не удалось удалить подразделение";
+            _modalConfirmation = false;
             return;
         }
 
-        await Program.AppData.RefreshBaseProperties();
+        await Program.AppData.InitializeBaseProperties();
         GetDivisions();
         if (Program.LastPageUrl == "employees/" + divisionToDelete.Id)
             _navigationManager.NavigateTo("");

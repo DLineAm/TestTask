@@ -45,6 +45,7 @@ else
 {
     <Modal Title="@_modalTitle"
            Text="@_modalText"
+           IsConfirmation="@_modalConfirmation"
            OnClose="Modal_OnClose"></Modal>
 }
 
@@ -54,6 +55,7 @@ else
     private string _modalTitle;
     private string _modalText;
     private bool _modalOpen;
+    private bool _modalConfirmation;
 
     protected override async Task OnInitializedAsync()
     {
@@ -108,6 +110,7 @@ else
         _modalTitle = "Подтверждение удаления";
         _modalText = "Вы действительно хотите удалить подразделение?";
         _modalOpen = true;
+        _modalConfirmation = true;
         _stateMachine.SetDeleteState();
     }
 
@@ -131,10 +134,11 @@ else
             _modalOpen = true;
             _modalTitle = "Ошибка удаления";
             _modalText = "Не удалось удалить подразделение";
+            _modalConfirmation = false;
             return;
         }
 
-        await Program.AppData.RefreshBaseProperties();
+        await Program.AppData.InitializeBaseProperties();
         GetDivisions();
         if (Program.LastPageUrl == "employees/" + divisionToDelete.Id)
             _navigationManager.NavigateTo("");

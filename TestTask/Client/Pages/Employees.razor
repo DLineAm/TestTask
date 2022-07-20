@@ -48,7 +48,8 @@ else
 @if (_modalOpen)
 {
     <Modal Title="@_modalTitle"
-       Text="@_modalText"
+           Text="@_modalText"
+           IsConfirmation="_modalConfirmation"
        OnClose="Modal_OnClose"></Modal>
 }
 
@@ -64,6 +65,7 @@ else
     private List<Employee> _existEmployees;
     private Division _currentDivision;
     private IEnumerable<Division> _divisions;
+    private bool _modalConfirmation;
 
 
     protected override async void OnParametersSet()
@@ -124,6 +126,7 @@ else
             _modalOpen = true;
             _modalTitle = "Ошибка удаления";
             _modalText = "Не удалось удалить сотрудника";
+            _modalConfirmation = true;
             return;
         }
 
@@ -142,6 +145,7 @@ else
         _modalTitle = "Подтверждение удаления";
         _modalText = "Вы действительно хотите удалить сотрудника?";
         _modalOpen = true;
+        _modalConfirmation = true;
         _stateMachine.SetDeleteState();
     }
 

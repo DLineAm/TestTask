@@ -90,11 +90,14 @@ namespace TestTask.Server.Services
             if (division == null)
                 throw new SqlNullValueException();
 
-            if (division.SubDivisions != null)
+            var subDivisions = _unitOfWork.DivisionRepository.Get(filter: d => d.DivisionId == Id);
+
+            if (subDivisions != null)
             {
                 foreach (var subDivision in division.SubDivisions)
                 {
                     subDivision.DivisionId = null;
+                    subDivision.ParentDivision = null;
                 }
             }
 
@@ -111,9 +114,7 @@ namespace TestTask.Server.Services
             }
             _unitOfWork.Save();
 
-            var dbDivision = _unitOfWork.DivisionRepository.Get(division.Id);
-
-            _unitOfWork.DivisionRepository.Delete(dbDivision);
+            _unitOfWork.DivisionRepository.Delete(division);
             foreach (var (id, employee) in newEmployees)
             {
                 var dbEmployee = _unitOfWork.EmployeeRepository.Get(employee.Id);
@@ -130,32 +131,7 @@ namespace TestTask.Server.Services
         public void Change(Division division)
         {
             _unitOfWork.DivisionRepository.Update(division);
-            //var divisionToChange = _unitOfWork.DivisionRepository.Get(division.Id);
-            //if (divisionToChange == null)
-            //    throw new SqlNullValueException();
 
-
-            
-            //divisionToChange.Title = division.Title;
-            //divisionToChange.Description = division.Description;
-            //divisionToChange.DivisionId = division.DivisionId;
-            //divisionToChange.CreateDate = division.CreateDate;
-
-            //var subDivisions = division.SubDivisions;
-
-            //divisionToChange.SubDivisions = new HashSet<Division>();
-
-            //foreach (var subDivision in subDivisions)
-            //{
-            //    var dbSubDivision = _unitOfWork.DivisionRepository.Get(subDivision.Id);
-
-            //    if (dbSubDivision is null)
-            //        continue;
-
-            //    divisionToChange.SubDivisions.Add(dbSubDivision);
-            //}
-
-            //_unitOfWork.DivisionRepository.Update(divisionToChange);
             SaveAndUpdateDivisions();
         }
 

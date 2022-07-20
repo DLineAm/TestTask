@@ -251,7 +251,7 @@ using Blazored.SessionStorage;
             return;
         }
 
-        await Program.AppData.RefreshBaseProperties();
+        await Program.AppData.InitializeBaseProperties();
         _eventAggregator.InvokeDivisionCollectionChanged();
 
         _navigationManager.NavigateTo(Program.LastPageUrl);

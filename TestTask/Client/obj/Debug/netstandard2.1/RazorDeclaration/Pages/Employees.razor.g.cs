@@ -105,7 +105,7 @@ using Blazored.SessionStorage;
         }
         #pragma warning restore 1998
 #nullable restore
-#line 55 "G:\TestTask\TestTask\Client\Pages\Employees.razor"
+#line 56 "G:\TestTask\TestTask\Client\Pages\Employees.razor"
        
     [Parameter]
     public int Id { get; set; }
@@ -118,6 +118,7 @@ using Blazored.SessionStorage;
     private List<Employee> _existEmployees;
     private Division _currentDivision;
     private IEnumerable<Division> _divisions;
+    private bool _modalConfirmation;
 
 
     protected override async void OnParametersSet()
@@ -178,6 +179,7 @@ using Blazored.SessionStorage;
             _modalOpen = true;
             _modalTitle = "Ошибка удаления";
             _modalText = "Не удалось удалить сотрудника";
+            _modalConfirmation = true;
             return;
         }
 
@@ -196,6 +198,7 @@ using Blazored.SessionStorage;
         _modalTitle = "Подтверждение удаления";
         _modalText = "Вы действительно хотите удалить сотрудника?";
         _modalOpen = true;
+        _modalConfirmation = true;
         _stateMachine.SetDeleteState();
     }
 
@@ -228,7 +231,7 @@ using Blazored.SessionStorage;
             __builder2.OpenElement(3, "span");
             __builder2.AddAttribute(4, "style", "font-size: 20px; font-weight: 700");
 #nullable restore
-#line 166 "G:\TestTask\TestTask\Client\Pages\Employees.razor"
+#line 170 "G:\TestTask\TestTask\Client\Pages\Employees.razor"
 __builder2.AddContent(5, employee.FullName);
 
 #line default
@@ -236,7 +239,7 @@ __builder2.AddContent(5, employee.FullName);
 #nullable disable
             __builder2.AddContent(6, " (");
 #nullable restore
-#line 166 "G:\TestTask\TestTask\Client\Pages\Employees.razor"
+#line 170 "G:\TestTask\TestTask\Client\Pages\Employees.razor"
 __builder2.AddContent(7, _divisions.FirstOrDefault(d => d.Id == employee.DivisionId)?.Title);
 
 #line default
@@ -254,7 +257,7 @@ __builder2.AddContent(7, _divisions.FirstOrDefault(d => d.Id == employee.Divisio
             __builder2.AddMarkupContent(11, "\r\n");
         }
 #nullable restore
-#line 172 "G:\TestTask\TestTask\Client\Pages\Employees.razor"
+#line 176 "G:\TestTask\TestTask\Client\Pages\Employees.razor"
     ;
         }
 

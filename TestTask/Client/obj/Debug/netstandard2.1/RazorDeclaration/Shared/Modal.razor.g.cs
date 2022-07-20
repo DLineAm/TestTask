@@ -83,13 +83,16 @@ using TestTask.Client.Shared;
         }
         #pragma warning restore 1998
 #nullable restore
-#line 19 "G:\TestTask\TestTask\Client\Shared\Modal.razor"
+#line 23 "G:\TestTask\TestTask\Client\Shared\Modal.razor"
        
     [Parameter]
     public string Title { get; set; }
  
     [Parameter]
     public string Text { get; set; }
+
+    [Parameter]
+    public bool IsConfirmation { get; set; } = true;
 
     [Parameter]
     public EventCallback<bool> OnClose { get; set; }

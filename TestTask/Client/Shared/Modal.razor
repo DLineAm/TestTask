@@ -10,7 +10,11 @@
                 <p style="color: black">@Text</p>
             </div>
             <div class="modal-footer">
-                <button type="button" class="main--btn inverted" @onclick="@ModalOk">OK</button>
+                @if (IsConfirmation)
+                {
+                    <button type="button" class="main--btn inverted" @onclick="@ModalCancel">Отмена</button>
+                }
+                <button type="button" class="main--btn inverted" style="margin-left: 10px" @onclick="@ModalOk">@(IsConfirmation ? "Да" : "Ок")</button>
             </div>
         </div>
     </div>
@@ -22,6 +26,9 @@
  
     [Parameter]
     public string Text { get; set; }
+
+    [Parameter]
+    public bool IsConfirmation { get; set; } = true;
 
     [Parameter]
     public EventCallback<bool> OnClose { get; set; }

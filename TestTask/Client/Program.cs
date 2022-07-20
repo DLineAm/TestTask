@@ -26,9 +26,7 @@ namespace TestTask.Client
             builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
             builder.Services.AddBlazoredSessionStorage(config =>
             {
-                //config.JsonSerializerOptions.MaxDepth = 1;
                 config.JsonSerializerOptions.WriteIndented = false;
-                //config.JsonSerializerOptions.
             });
             builder.Services.Replace(ServiceDescriptor.Scoped<IJsonSerializer, NewtonSoftJsonSerializer>());
             builder.Services.AddScoped<AppData>();

@@ -41,15 +41,6 @@ namespace TestTask.Client.Services
         public IEnumerable<Division> Divisions { get; set; }
 
         /// <summary>
-        /// Обновление базовых свойств из сервера
-        /// </summary>
-        /// <returns></returns>
-        public async Task RefreshBaseProperties()
-        {
-            Divisions = await _http.GetFromJsonAsync<IEnumerable<Division>>("divisions");
-        }
-
-        /// <summary>
         /// Инициализация базовых свойств
         /// </summary>
         /// <returns></returns>
