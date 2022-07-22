@@ -17,10 +17,10 @@
 
 @code
 {
-    protected override async Task OnInitializedAsync()
-    {
-        await Program.AppData.InitializeBaseProperties();
-        var response = await _http.GetFromJsonAsync<IEnumerable<Division>>("divisions");
-        Program.AppData.Divisions = response;
-    }
+    //protected override async Task OnInitializedAsync()
+    //{
+    //    await Program.AppData.InitializeBaseProperties();
+    //    var response = await _http.GetFromJsonAsync<IEnumerable<Division>>("divisions");
+    //    Program.AppData.Divisions = response;
+    //}
 }

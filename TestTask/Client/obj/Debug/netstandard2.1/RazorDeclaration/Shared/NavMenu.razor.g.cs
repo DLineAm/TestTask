@@ -125,9 +125,9 @@ using Newtonsoft.Json;
         }
         #pragma warning restore 1998
 #nullable restore
-#line 52 "G:\TestTask\TestTask\Client\Shared\NavMenu.razor"
+#line 47 "G:\TestTask\TestTask\Client\Shared\NavMenu.razor"
        
-    private List<Division> _divisions;
+    private Dictionary<int,Division> _divisions;
     private bool _collapseNavMenu = true;
     private string _modalTitle;
     private string _modalText;
@@ -147,8 +147,7 @@ using Newtonsoft.Json;
 
     private async Task GetDivisions()
     {
-        await Program.AppData.InitializeBaseProperties();
-        _divisions = Program.AppData.Divisions.ToList();
+        _divisions = (await Program.AppData.GetDivisionsAsync()).ToDictionary(d => d.Id, d => d);
         StateHasChanged();
     }
 
@@ -159,7 +158,25 @@ using Newtonsoft.Json;
 
     private RenderFragment GetList(Division division, RenderFragment markup)
     {
-        foreach (var subDivision in division.SubDivisions)
+        var subDivisions = _divisions.Where(d => d.Value.DivisionId == division.Id)
+            .ToDictionary(d => d.Key, d => d.Value);
+
+        if (subDivisions.Count() == 0)
+        {
+            return 
+
+#line default
+#line hidden
+#nullable disable
+        (__builder2) => {
+            __builder2.AddMarkupContent(0, "<div></div>");
+        }
+#nullable restore
+#line 84 "G:\TestTask\TestTask\Client\Shared\NavMenu.razor"
+                               ;
+        }
+
+        foreach (var (id, subDivision) in subDivisions)
         {
             markup += 
 
@@ -167,55 +184,53 @@ using Newtonsoft.Json;
 #line hidden
 #nullable disable
         (__builder2) => {
-            __builder2.OpenElement(0, "li");
-            __builder2.AddAttribute(1, "@key", "subDivision.Id");
-            __builder2.AddMarkupContent(2, "\r\n                          ");
-            __builder2.OpenElement(3, "div");
-            __builder2.AddAttribute(4, "class", "pd1248");
-            __builder2.AddMarkupContent(5, "\r\n                              ");
-            __builder2.OpenElement(6, "a");
-            __builder2.AddAttribute(7, "style", "cursor:" + " pointer;" + " color:" + " #fff;" + "  " + (
+            __builder2.OpenElement(1, "li");
+            __builder2.AddAttribute(2, "@key", "id");
+            __builder2.AddMarkupContent(3, "\r\n                          ");
+            __builder2.OpenElement(4, "div");
+            __builder2.AddAttribute(5, "class", "pd1248");
+            __builder2.AddMarkupContent(6, "\r\n                              ");
+            __builder2.OpenElement(7, "a");
+            __builder2.AddAttribute(8, "style", "cursor:" + " pointer;" + " color:" + " #fff;" + "  " + (
 #nullable restore
-#line 89 "G:\TestTask\TestTask\Client\Shared\NavMenu.razor"
-                                                                         Program.CurrentDivisionId == subDivision.Id ? "font-weight: 700" : ""
+#line 91 "G:\TestTask\TestTask\Client\Shared\NavMenu.razor"
+                                                                         Program.CurrentDivisionId == id ? "text-decoration: underline;" : ""
 
 #line default
 #line hidden
 #nullable disable
             ));
-            __builder2.AddAttribute(8, "@onclick", "() => SetCurrentDivision(subDivision)");
+            __builder2.AddAttribute(9, "@onclick", "() => SetCurrentDivision(subDivision)");
 #nullable restore
-#line 89 "G:\TestTask\TestTask\Client\Shared\NavMenu.razor"
-__builder2.AddContent(9, subDivision.Title);
+#line 91 "G:\TestTask\TestTask\Client\Shared\NavMenu.razor"
+__builder2.AddContent(10, subDivision.Title);
 
 #line default
 #line hidden
 #nullable disable
             __builder2.CloseElement();
-            __builder2.AddMarkupContent(10, @"
+            __builder2.AddMarkupContent(11, @"
                               <img src=""css/edit.svg"" style=""cursor: pointer"" @onclick=""() => ChangeDivisionButton_OnClick(subDivision)"" alt>
                               <img src=""css/delete.svg"" style=""cursor: pointer"" @onclick=""() => DeleteDivisionButton_OnClick(subDivision)"" alt>
                           ");
             __builder2.CloseElement();
-            __builder2.AddMarkupContent(11, "\r\n                      ");
+            __builder2.AddMarkupContent(12, "\r\n                      ");
             __builder2.CloseElement();
         }
 #nullable restore
-#line 93 "G:\TestTask\TestTask\Client\Shared\NavMenu.razor"
+#line 95 "G:\TestTask\TestTask\Client\Shared\NavMenu.razor"
                            ;
-                          
-                          if (subDivision.SubDivisions != null)
-                              markup += GetList(subDivision, 
+            markup += GetList(subDivision, 
 
 #line default
 #line hidden
 #nullable disable
         (__builder2) => {
-            __builder2.AddMarkupContent(12, "<div></div>");
+            __builder2.AddMarkupContent(13, "<div></div>");
         }
 #nullable restore
 #line 96 "G:\TestTask\TestTask\Client\Shared\NavMenu.razor"
-                                                                         );
+                                                       );
         }
         return 
 
@@ -223,10 +238,10 @@ __builder2.AddContent(9, subDivision.Title);
 #line hidden
 #nullable disable
         (__builder2) => {
-            __builder2.OpenElement(13, "ul");
+            __builder2.OpenElement(14, "ul");
 #nullable restore
 #line 98 "G:\TestTask\TestTask\Client\Shared\NavMenu.razor"
-__builder2.AddContent(14, markup);
+__builder2.AddContent(15, markup);
 
 #line default
 #line hidden
@@ -279,7 +294,7 @@ __builder2.AddContent(14, markup);
         }
 
         await Program.AppData.InitializeBaseProperties();
-        GetDivisions();
+        await GetDivisions();
         if (Program.LastPageUrl == "employees/" + divisionToDelete.Id)
             _navigationManager.NavigateTo("");
     }
@@ -306,6 +321,13 @@ __builder2.AddContent(14, markup);
             Program.AfterEmployeeInfoPage = false;
         }
         _navigationManager.NavigateTo(url);
+    }
+
+    private IEnumerable<KeyValuePair<int, Division>> GetMainDivisions()
+    {
+        var divisions = _divisions.Where(d => d.Value.DivisionId is null || d.Value.DivisionId == 0);
+        var count = divisions.Count();
+        return divisions;
     }
 
 #line default

@@ -8,6 +8,6 @@
     {
         void Add(T item);
         void Change(T item);
-        void Delete(int Id);
+        void Delete(int id);
     }
 }

@@ -11,7 +11,8 @@
 <h3 class="info__title">Информация о подразделении</h3>
 <button @onclick="GoBack">Назад</button>
 
-<div>
+<EditForm Model="@_division">
+    <div>
     <label for="title">Наименование</label>
     <input id="title" placeholder="Наименование" @bind-value="@_division.Title" @oninput="SaveDivision" />
 </div>
@@ -21,7 +22,7 @@
 </div>
 <div>
     <label for="parent">Родительское подразделение</label>
-    <select id="parent" value="@_division.DivisionId">
+    <select id="parent" @bind="@_division.DivisionId">
         @foreach (var divisionFromData in _divisions)
         {
             <option value="@divisionFromData.Id">@divisionFromData.Title</option>
@@ -45,9 +46,7 @@
         <button @onclick="AddSubDivision" class="main--btn inverted">Добавить подразделение</button>
     </div>
     <div class="subdiv__wrapper">
-        @if (_subDivisionsToAdd != null)
-        {
-            @foreach (var subDivision in _subDivisionsToAdd)
+        @foreach (var subDivision in _subDivisionsToAdd)
             {
                 <div class="subdiv__item">
                     <div>
@@ -58,11 +57,12 @@
                     <button @onclick="() => DeleteSubDivision(subDivision)" class="main--btn inverted">Удалить</button>
                 </div>
             }
-        }
     </div>
 </div>
 
 <button @onclick="async () => await ApplyButton_OnClick()" class="main--btn inverted">Принять</button>
+</EditForm>
+
 
 @code {
     [Parameter]
@@ -72,7 +72,7 @@
     private int? _subDivisionId;
     private List<Division> _divisions;
     private List<Division> _divisionsToAdd;
-    private List<Division> _subDivisionsToAdd = new List<Division>();
+    private List<Division> _subDivisionsToAdd;
     private int _divisionId;
 
     public int DivisionId
@@ -87,21 +87,20 @@
         }
     }
 
-    protected override void OnParametersSet()
+    protected override async Task OnParametersSetAsync()
     {
         _divisions = _divisionsToAdd = _subDivisionsToAdd = new List<Division>();
-        InitializeData();
+        await InitializeData();
         StateHasChanged();
     }
 
-    private void InitializeData()
+    private async Task InitializeData()
     {
         var divisionFromSession = GetDivisionFromSession();
+        _subDivisionsToAdd = new List<Division>();
         if (Program.AppData.CurrentDivision == null && divisionFromSession != null)
         {
             _division = divisionFromSession;
-            GetDivisions();
-            FillSubDivisions();
         }
         else
         {
@@ -111,9 +110,11 @@
             _storageService.SetItem("currentDivision", _division);
         }
 
-        GetDivisions();
+        _division.DivisionId ??= 0;
 
-        if (_stateMachine.CurrentState is StateMachine.State.Change && _division.SubDivisions != null)
+        await GetDivisions();
+
+        if (_stateMachine.CurrentState == StateMachine.State.Add && divisionFromSession != null || _division.SubDivisions.Count > 0)
             FillSubDivisions();
     }
 
@@ -129,9 +130,9 @@
         }
     }
 
-    private void GetDivisions()
+    private async Task GetDivisions()
     {
-        var divisionsList = Program.AppData.Divisions.Where(d => d.Id != _division.Id).ToList();
+        var divisionsList = (await Program.AppData.GetDivisionsAsync()).Where(d => d.Id != _division.Id).ToList();
         divisionsList.ForEach(d =>
         {
             d.ParentDivision = null;

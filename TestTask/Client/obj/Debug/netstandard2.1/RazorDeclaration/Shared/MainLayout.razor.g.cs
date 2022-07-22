@@ -99,12 +99,12 @@ using TestTask.Shared;
 #nullable restore
 #line 19 "G:\TestTask\TestTask\Client\Shared\MainLayout.razor"
  
-    protected override async Task OnInitializedAsync()
-    {
-        await Program.AppData.InitializeBaseProperties();
-        var response = await _http.GetFromJsonAsync<IEnumerable<Division>>("divisions");
-        Program.AppData.Divisions = response;
-    }
+    //protected override async Task OnInitializedAsync()
+    //{
+    //    await Program.AppData.InitializeBaseProperties();
+    //    var response = await _http.GetFromJsonAsync<IEnumerable<Division>>("divisions");
+    //    Program.AppData.Divisions = response;
+    //}
 
 #line default
 #line hidden

@@ -9,12 +9,12 @@ using TestTask.Shared;
 
 namespace TestTask.Server.Utils
 {
-    public class AppData
+    public class DataHelper
     {
         private readonly IHttpContextAccessor _accessor;
         private readonly UnitOfWork _unitOfWork;
 
-        public AppData(IHttpContextAccessor accessor, UnitOfWork unitOfWork)
+        public DataHelper(IHttpContextAccessor accessor, UnitOfWork unitOfWork)
         {
             _accessor = accessor;
             _unitOfWork = unitOfWork;

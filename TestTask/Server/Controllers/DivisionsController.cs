@@ -92,7 +92,5 @@ namespace TestTask.Server.Controllers
             }
 
         }
-
-        
     }
 }

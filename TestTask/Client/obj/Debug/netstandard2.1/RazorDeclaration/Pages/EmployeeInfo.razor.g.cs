@@ -119,7 +119,7 @@ using Newtonsoft.Json;
         }
         #pragma warning restore 1998
 #nullable restore
-#line 58 "G:\TestTask\TestTask\Client\Pages\EmployeeInfo.razor"
+#line 60 "G:\TestTask\TestTask\Client\Pages\EmployeeInfo.razor"
        
     private Employee _employee;
     private IEnumerable<Division> _divisions;
@@ -149,7 +149,7 @@ using Newtonsoft.Json;
         InitializeData();
     }
 
-    private void InitializeData()
+    private async Task InitializeData()
     {
         var divisionFromSession = _storageService.GetItem<Employee>("currentEmployee");
             
@@ -171,7 +171,7 @@ using Newtonsoft.Json;
         }
 
         DivisionId = _employee.DivisionId;
-        _divisions = Program.AppData.Divisions;
+        _divisions = await Program.AppData.GetDivisionsAsync();
     }
 
     private Division GetDivisionFromSession()
@@ -207,7 +207,6 @@ using Newtonsoft.Json;
         _isErrorHidden = true;
 
         _employee.Division = null;
-        _employee.Gender = new Gender();
 
         var response = _stateMachine.CurrentState is StateMachine.State.Change
         ? await PutEmployeeAsync()

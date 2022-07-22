@@ -131,9 +131,9 @@ using Blazored.SessionStorage;
         _existEmployees = new List<Employee>();
 
         _currentDivision = Program.AppData.CurrentDivision 
-                           ?? (Program.AppData.CurrentDivision = Program.AppData.Divisions.FirstOrDefault(d => d.Id == Id));
+                           ?? (Program.AppData.CurrentDivision = (await Program.AppData.GetDivisionsAsync()).FirstOrDefault(d => d.Id == Id));
         Program.AppData.CurrentDivisionFromList = _currentDivision;
-        _divisions = Program.AppData.Divisions;
+        _divisions = await Program.AppData.GetDivisionsAsync();
         _title = _currentDivision?.Title;
         if (_currentDivision.SubDivisions != null && _currentDivision.SubDivisions.Count > 0)
         {

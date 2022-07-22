@@ -64,9 +64,10 @@ namespace TestTask.Shared
         /// Подразделение сотрудника
         /// </summary>
         public Division? Division { get; set; }
+
         /// <summary>
         /// Гендер сотрудника
         /// </summary>
-        public Gender Gender { get; set; }
+        public Gender Gender { get; set; } = Gender.Male;
     }
 }

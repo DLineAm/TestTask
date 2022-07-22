@@ -10,50 +10,52 @@
 @inject ISyncSessionStorageService _storageService
 <h3 class="info__title">Информация о сотруднике</h3>
 <button @onclick="GoBack">Назад</button>
+<EditForm Model="@_employee">
+    <div>
+        <label for="lastname">Фамилия</label>
+        <input id="lastname" placeholder="Фамилия" @bind="@_employee.LastName" @oninput="(e) => { _employee.LastName = (string)e.Value; SaveEmployee(); }"/>
+    </div>
+    <div>
+        <label for="firstname">Имя</label>
+        <input id="firstname" placeholder="Имя" @bind="@_employee.FirstName" @oninput="(e) => { _employee.FirstName = (string)e.Value; SaveEmployee(); }"/>
+    </div>
+    <div>
+        <label for="middlename">Отчество</label>
+        <input id="middlename" placeholder="Отчество" @bind="@_employee.MiddleName" @oninput="(e) => { _employee.MiddleName = (string)e.Value; SaveEmployee(); }"/>
+    </div>
+    <div>
+        <label for="birth">Дата рождения</label>
+        <input id="birth" type="date" placeholder="Выберите дату" @bind="@_employee.DateOfBirth" @oninput="(e) => { _employee.DateOfBirth = DateTime.Parse((string)e.Value); SaveEmployee(); }"/>
+    </div>
+    <div>
+        <label for="gender">Пол</label>
+        <InputSelect id="gender" @bind-Value="_employee.Gender">
+            @foreach (var gender in ((Gender[])Enum.GetValues(typeof(Gender))))
+            {
+                <option value="@gender">@GenderHelper.GetGenderTitle(gender)</option>
+            }
+        </InputSelect>
+    </div>
+    <div>
+        <input type="checkbox" @bind="@_employee.HasDriverLicense"/> Есть водительские права
+    </div>
+    <div>
+        <label for="division">Подразделение</label>
+        <select id="division" @bind="DivisionId"
+                class="custom-select-sm">
+            @foreach (var division in _divisions)
+            {
+                <option value="@division.Id">@division.Title</option>
+            }
+        </select>
+    </div>
+    <div hidden="@_isErrorHidden">
+        @_errorText
+    </div>
 
-<div>
-    <label for="lastname">Фамилия</label>
-    <input id="lastname" placeholder="Фамилия" @bind="@_employee.LastName" @oninput="(e) => { _employee.LastName = (string)e.Value; SaveEmployee(); }"/>
-</div>
-<div>
-    <label for="firstname">Имя</label>
-    <input id="firstname" placeholder="Имя" @bind="@_employee.FirstName" @oninput="(e) => { _employee.FirstName = (string)e.Value; SaveEmployee(); }"/>
-</div>
-<div>
-    <label for="middlename">Отчество</label>
-    <input id="middlename" placeholder="Отчество" @bind="@_employee.MiddleName" @oninput="(e) => { _employee.MiddleName = (string)e.Value; SaveEmployee(); }"/>
-</div>
-<div>
-    <label for="birth">Дата рождения</label>
-    <input id="birth" type="date" placeholder="Выберите дату" @bind="@_employee.DateOfBirth" @oninput="(e) => { _employee.DateOfBirth = DateTime.Parse((string)e.Value); SaveEmployee(); }"/>
-</div>
-<div>
-    <label for="gender">Пол</label>
-    <select id="gender" @bind="_employee.Gender">
-        @foreach (var gender in GenderHelper.GetGenders())
-        {
-            <option value="@gender">@GenderHelper.GetGenderTitle(gender)</option>
-        }
-    </select>
-</div>
-<div>
-    <input type="checkbox" checked="@_employee.HasDriverLicense"/> Есть водительские права
-</div>
-<div>
-    <label for="division">Подразделение</label>
-    <select id="division" @bind="DivisionId"
-            class="custom-select-sm">
-        @foreach (var division in _divisions)
-        {
-            <option value="@division.Id">@division.Title</option>
-        }
-    </select>
-</div>
-<div hidden="@_isErrorHidden">
-    @_errorText
-</div>
+    <button @onclick="async () => await Apply()" class="main--btn inverted">Применить</button>
+</EditForm>
 
-<button @onclick="async () => await Apply()" class="main--btn inverted">Применить</button>
 
 @code {
     private Employee _employee;
@@ -84,7 +86,7 @@
         InitializeData();
     }
 
-    private void InitializeData()
+    private async Task InitializeData()
     {
         var divisionFromSession = _storageService.GetItem<Employee>("currentEmployee");
             
@@ -106,7 +108,7 @@
         }
 
         DivisionId = _employee.DivisionId;
-        _divisions = Program.AppData.Divisions;
+        _divisions = await Program.AppData.GetDivisionsAsync();
     }
 
     private Division GetDivisionFromSession()
@@ -142,7 +144,6 @@
         _isErrorHidden = true;
 
         _employee.Division = null;
-        _employee.Gender = new Gender();
 
         var response = _stateMachine.CurrentState is StateMachine.State.Change
         ? await PutEmployeeAsync()

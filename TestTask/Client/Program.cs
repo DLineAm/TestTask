@@ -35,8 +35,7 @@ namespace TestTask.Client
 
             var host = builder.Build();
             AppData = host.Services.GetService<AppData>();
-            await AppData.InitializeBaseProperties();
-                await host.RunAsync();
+            await host.RunAsync();
         }
     }
 

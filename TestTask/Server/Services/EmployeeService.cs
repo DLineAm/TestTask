@@ -47,7 +47,7 @@ namespace TestTask.Server.Services
         public void Change(Employee employee)
         {
             _unitOfWork.EmployeeRepository.Update(employee);
-            //var employeeToChange = _unitOfWork.EmployeeRepository.Get(employee.Id);
+            //var employeeToChange = _unitOfWork.EmployeeRepository.Get(employee.id);
             //if (employeeToChange == null)
             //    throw new SqlNullValueException();
 
@@ -66,9 +66,9 @@ namespace TestTask.Server.Services
         /// Удаление сотрудника из бд
         /// </summary>
         /// <param name="employee"></param>
-        public void Delete(int Id)
+        public void Delete(int id)
         {
-            var employee = _unitOfWork.EmployeeRepository.Get(Id);
+            var employee = _unitOfWork.EmployeeRepository.Get(id);
             if (employee == null)
                 throw new SqlNullValueException();
 

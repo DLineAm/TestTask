@@ -38,7 +38,21 @@ namespace TestTask.Client.Services
         /// <summary>
         /// Список подразделений
         /// </summary>
-        public IEnumerable<Division> Divisions { get; set; }
+        private IEnumerable<Division> _divisions;
+
+        private async Task<IEnumerable<Division>> GetDivisions()
+        {
+            return await _http.GetFromJsonAsync<IEnumerable<Division>>("divisions");
+        }
+
+        public async Task<IEnumerable<Division>> GetDivisionsAsync(bool forceReload = false)
+        {
+            if (forceReload)
+            {
+                return _divisions = await GetDivisions();
+            }
+            return _divisions ??= await GetDivisions();
+        }
 
         /// <summary>
         /// Инициализация базовых свойств
@@ -46,7 +60,7 @@ namespace TestTask.Client.Services
         /// <returns></returns>
         public async Task InitializeBaseProperties()
         {
-            Divisions = await _http.GetFromJsonAsync<IEnumerable<Division>>("divisions");
+            _divisions = await GetDivisionsAsync(true);
         }
     }
 }

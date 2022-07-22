@@ -16,7 +16,7 @@ namespace TestTask.Server.Services
     {
         private readonly UnitOfWork _unitOfWork;
         private readonly ILogger<DivisionService> _logger;
-        private readonly AppData _appData;
+        private readonly DataHelper _dataHelper;
 
         public DivisionService(UnitOfWork unitOfWork ,IHttpContextAccessor accessor, ILogger<DivisionService> logger)
         {
@@ -24,7 +24,7 @@ namespace TestTask.Server.Services
                 {ReferenceLoopHandling = ReferenceLoopHandling.Ignore};
             _unitOfWork = unitOfWork;
             _logger = logger;
-            _appData = new AppData(accessor, unitOfWork);
+            _dataHelper = new DataHelper(accessor, unitOfWork);
         }
 
         /// <summary>
@@ -33,7 +33,7 @@ namespace TestTask.Server.Services
         /// <returns></returns>
         public IEnumerable<Division> Get()
         {
-            return _appData.GetDivisions();
+            return _dataHelper.GetDivisions();
         }
 
         
@@ -58,7 +58,7 @@ namespace TestTask.Server.Services
         {
             division.Id = 0;
             var subDivisions = division.SubDivisions.ToList();
-            division.SubDivisions = null;
+            division.SubDivisions = new List<Division>();
             var entity = _unitOfWork.DivisionRepository
                 .Add(division).Entity;
 
@@ -83,14 +83,14 @@ namespace TestTask.Server.Services
         /// <summary>
         /// Удаление подразделения из бд
         /// </summary>
-        /// <param name="division"></param>
-        public void Delete(int Id)
+        /// <param name="id"></param>
+        public void Delete(int id)
         {
-            var division = _unitOfWork.DivisionRepository.Get(Id);
+            var division = _unitOfWork.DivisionRepository.Get(id);
             if (division == null)
                 throw new SqlNullValueException();
 
-            var subDivisions = _unitOfWork.DivisionRepository.Get(filter: d => d.DivisionId == Id);
+            var subDivisions = _unitOfWork.DivisionRepository.Get(filter: d => d.DivisionId == id);
 
             if (subDivisions != null)
             {
@@ -101,24 +101,21 @@ namespace TestTask.Server.Services
                 }
             }
 
-            _unitOfWork.Save();
-
             division.DivisionId = null;
             var employees = _unitOfWork.EmployeeRepository.Get()
                 .Select(e => new KeyValuePair<int?,Employee>(e.DivisionId, e));
             var newEmployees = new Dictionary<int?, Employee>();
-            foreach (var (id, employee) in employees)
+            foreach (var (divisionId, employee) in employees)
             {
                 employee.DivisionId = null;
-                newEmployees[id ?? 0] = employee;
+                newEmployees[divisionId ?? 0] = employee;
             }
-            _unitOfWork.Save();
 
             _unitOfWork.DivisionRepository.Delete(division);
-            foreach (var (id, employee) in newEmployees)
+            foreach (var (divisionId, employee) in newEmployees)
             {
                 var dbEmployee = _unitOfWork.EmployeeRepository.Get(employee.Id);
-                dbEmployee.DivisionId = id == 0 ? null : id;
+                dbEmployee.DivisionId = divisionId == 0 ? null : divisionId;
             }
 
             SaveAndUpdateDivisions();
@@ -139,7 +136,7 @@ namespace TestTask.Server.Services
         {
             _unitOfWork.Save();
 
-            _appData.UpdateDivisions();
+            _dataHelper.UpdateDivisions();
         }
     }
 }

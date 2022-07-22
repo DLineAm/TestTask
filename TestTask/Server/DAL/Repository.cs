@@ -110,16 +110,11 @@ namespace TestTask.Server.DAL
         /// <param name="entityToUpdate"></param>
         public void Update(TEntity entityToUpdate)
         {
-            if (!(entityToUpdate is IIdentity identity))
-                throw new InvalidOperationException($"{nameof(entityToUpdate)} must be IIdentity");
-            
-            //AttachEntity(entityToUpdate);
-
-            var dbEntry = _dbSet.Find(identity.Id);
-
-            _context.Entry(dbEntry).CurrentValues.SetValues(entityToUpdate);
-
+            AttachEntity(entityToUpdate);
+            _context.Update(entityToUpdate);
             //_context.Entry(entityToUpdate).State = EntityState.Modified;
+
+            _context.SaveChanges();
         }
 
         private void AttachEntity(TEntity entity)

@@ -121,7 +121,7 @@ using Blazored.SessionStorage;
     private int? _subDivisionId;
     private List<Division> _divisions;
     private List<Division> _divisionsToAdd;
-    private List<Division> _subDivisionsToAdd = new List<Division>();
+    private List<Division> _subDivisionsToAdd;
     private int _divisionId;
 
     public int DivisionId
@@ -136,21 +136,20 @@ using Blazored.SessionStorage;
         }
     }
 
-    protected override void OnParametersSet()
+    protected override async Task OnParametersSetAsync()
     {
         _divisions = _divisionsToAdd = _subDivisionsToAdd = new List<Division>();
-        InitializeData();
+        await InitializeData();
         StateHasChanged();
     }
 
-    private void InitializeData()
+    private async Task InitializeData()
     {
         var divisionFromSession = GetDivisionFromSession();
+        _subDivisionsToAdd = new List<Division>();
         if (Program.AppData.CurrentDivision == null && divisionFromSession != null)
         {
             _division = divisionFromSession;
-            GetDivisions();
-            FillSubDivisions();
         }
         else
         {
@@ -160,9 +159,11 @@ using Blazored.SessionStorage;
             _storageService.SetItem("currentDivision", _division);
         }
 
-        GetDivisions();
+        _division.DivisionId ??= 0;
 
-        if (_stateMachine.CurrentState is StateMachine.State.Change && _division.SubDivisions != null)
+        await GetDivisions();
+
+        if (_stateMachine.CurrentState == StateMachine.State.Add && divisionFromSession != null || _division.SubDivisions.Count > 0)
             FillSubDivisions();
     }
 
@@ -178,9 +179,9 @@ using Blazored.SessionStorage;
         }
     }
 
-    private void GetDivisions()
+    private async Task GetDivisions()
     {
-        var divisionsList = Program.AppData.Divisions.Where(d => d.Id != _division.Id).ToList();
+        var divisionsList = (await Program.AppData.GetDivisionsAsync()).Where(d => d.Id != _division.Id).ToList();
         divisionsList.ForEach(d =>
         {
             d.ParentDivision = null;

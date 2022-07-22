@@ -6,6 +6,7 @@ html, body {
 
 a, .btn-link {
     color: #0366d6;
+    width: 500px;
 }
 
 .btn-primary {
@@ -128,13 +129,13 @@ p .white {
 img {
     width: 30px;
 }
-.main{
-    margin-left: 522px;
-}
+
 .container {
     width: 100%;
     max-width: 100%;
     padding: 0;
+    display: flex;
+    flex-direction: row;
 }
 .content{
     padding: 0 15px;
@@ -142,7 +143,6 @@ img {
 .sidebar {
     height: 100vh;
     width: fit-content;
-    position: fixed;
     background: #59a417;
     color: #000000;
     font-size: 16px;

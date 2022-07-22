@@ -12,8 +12,6 @@
     <a class="sidebar__title" href="">Подразделения</a>
 </div>
 
-
-
 @if (_divisions is null)
 {
     <span style="color: white">Загрузка</span>
@@ -25,17 +23,14 @@ else
     </div>
     <div>
         <ul>
-            @foreach (var division in _divisions.Where(d => d.DivisionId is null))
+            @foreach (var (id, division) in GetMainDivisions())
             {
-                <li @key="division.Id">
-                        <a style="cursor: pointer; color: #fff;  @(Program.CurrentDivisionId == division.Id ? "font-weight: 700" : "")" @onclick="() => SetCurrentDivision(division)">@division.Title</a>
+                <li @key="id">
+                        <a style="cursor: pointer; color: #fff; @(Program.CurrentDivisionId == id ? "text-decoration: underline;" : "")" @onclick="() => SetCurrentDivision(division)">@division.Title</a>
                         <img src="css/edit.svg" style="cursor: pointer" @onclick="() => ChangeDivisionButton_OnClick(division)" alt=""/>
                         <img src="css/delete.svg" style="cursor: pointer" @onclick="() => DeleteDivisionButton_OnClick(division)" alt=""/>
-                        @if (division.SubDivisions != null)
-                        {
-                            @(GetList(division, @<div></div>))
-                        }
-                    </li>
+                        @GetList(division, @<div></div>)
+                </li>
             }
         </ul>
     </div>
@@ -50,7 +45,7 @@ else
 }
 
 @code {
-    private List<Division> _divisions;
+    private Dictionary<int,Division> _divisions;
     private bool _collapseNavMenu = true;
     private string _modalTitle;
     private string _modalText;
@@ -70,8 +65,7 @@ else
 
     private async Task GetDivisions()
     {
-        await Program.AppData.InitializeBaseProperties();
-        _divisions = Program.AppData.Divisions.ToList();
+        _divisions = (await Program.AppData.GetDivisionsAsync()).ToDictionary(d => d.Id, d => d);
         StateHasChanged();
     }
 
@@ -82,18 +76,24 @@ else
 
     private RenderFragment GetList(Division division, RenderFragment markup)
     {
-        foreach (var subDivision in division.SubDivisions)
+        var subDivisions = _divisions.Where(d => d.Value.DivisionId == division.Id)
+            .ToDictionary(d => d.Key, d => d.Value);
+
+        if (subDivisions.Count() == 0)
         {
-            markup += @<li @key="subDivision.Id">
+            return @<div></div>;
+        }
+
+        foreach (var (id, subDivision) in subDivisions)
+        {
+            markup += @<li @key="id">
                           <div class="pd1248">
-                              <a style="cursor: pointer; color: #fff;  @(Program.CurrentDivisionId == subDivision.Id ? "font-weight: 700" : "")" @onclick="() => SetCurrentDivision(subDivision)">@subDivision.Title</a>
+                              <a style="cursor: pointer; color: #fff;  @(Program.CurrentDivisionId == id ? "text-decoration: underline;" : "")" @onclick="() => SetCurrentDivision(subDivision)">@subDivision.Title</a>
                               <img src="css/edit.svg" style="cursor: pointer" @onclick="() => ChangeDivisionButton_OnClick(subDivision)" alt=""/>
                               <img src="css/delete.svg" style="cursor: pointer" @onclick="() => DeleteDivisionButton_OnClick(subDivision)" alt=""/>
                           </div>
                       </li>;
-                          
-                          if (subDivision.SubDivisions != null)
-                              markup += GetList(subDivision, @<div></div>);
+            markup += GetList(subDivision, @<div></div>);
         }
         return @<ul>@markup</ul>;
     }
@@ -139,7 +139,7 @@ else
         }
 
         await Program.AppData.InitializeBaseProperties();
-        GetDivisions();
+        await GetDivisions();
         if (Program.LastPageUrl == "employees/" + divisionToDelete.Id)
             _navigationManager.NavigateTo("");
     }
@@ -167,5 +167,11 @@ else
         }
         _navigationManager.NavigateTo(url);
     }
+
+    private IEnumerable<KeyValuePair<int, Division>> GetMainDivisions()
+    {
+        return _divisions.Where(d => d.Value.DivisionId is null || d.Value.DivisionId == 0);
+    }
 }
+
 
