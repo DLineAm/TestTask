@@ -88,7 +88,7 @@ else
         {
             markup += @<li @key="id">
                           <div class="pd1248">
-                              <a style="cursor: pointer; color: #fff;  @(Program.CurrentDivisionId == id ? "text-decoration: underline;" : "")" @onclick="() => SetCurrentDivision(subDivision)">@subDivision.Title</a>
+                              <a style="cursor: pointer; color: #fff; @(Program.CurrentDivisionId == id ? "text-decoration: underline;" : "")" @onclick="() => SetCurrentDivision(subDivision)">@subDivision.Title</a>
                               <img src="css/edit.svg" style="cursor: pointer" @onclick="() => ChangeDivisionButton_OnClick(subDivision)" alt=""/>
                               <img src="css/delete.svg" style="cursor: pointer" @onclick="() => DeleteDivisionButton_OnClick(subDivision)" alt=""/>
                           </div>

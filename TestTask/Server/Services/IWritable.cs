@@ -6,7 +6,7 @@
     /// <typeparam name="T"></typeparam>
     public interface IWritable<T>
     {
-        void Add(T item);
+        int Add(T item);
         void Change(T item);
         void Delete(int id);
     }

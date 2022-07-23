@@ -1,5 +1,7 @@
 ﻿
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
@@ -13,7 +15,12 @@ namespace TestTask.Client.Services
     /// </summary>
     public class AppData
     {
+        private IEnumerable<Division> _divisions;
         private readonly HttpClient _http;
+        private Employee _currentEmployee;
+        private List<Employee> _employees;
+        private Division _currentDivision;
+        private Division _currentDivisionFromList;
 
         public AppData(HttpClient http)
         {
@@ -23,23 +30,42 @@ namespace TestTask.Client.Services
         /// <summary>
         /// Выбранный сотрудник, используется на странице добавления/изменения сотрудника
         /// </summary>
-        public Employee CurrentEmployee { get; set; }
+        public Employee CurrentEmployee
+        {
+            get => _currentEmployee;
+            set => _currentEmployee = value;
+        }
+
+        /// <summary>
+        /// Список сотрудников
+        /// </summary>
+        public List<Employee> Employees
+        {
+            get => _employees ??= GetEmployees().ToList();
+            set => _employees = value;
+        }
 
         /// <summary>
         /// Выбранное подразделение, используется на странице со списком сотрудников
         /// </summary>
-        public Division CurrentDivision { get; set; }
+        public Division CurrentDivision
+        {
+            get => _currentDivision;
+            set => _currentDivision = value;
+        }
 
         /// <summary>
         /// Выбранное родительское подразделение, исползуется на странице добавления/изменения подразделения
         /// </summary>
-        public Division CurrentDivisionFromList { get; set; }
+        public Division CurrentDivisionFromList
+        {
+            get => _currentDivisionFromList;
+            set => _currentDivisionFromList = value;
+        }
 
         /// <summary>
         /// Список подразделений
         /// </summary>
-        private IEnumerable<Division> _divisions;
-
         private async Task<IEnumerable<Division>> GetDivisions()
         {
             return await _http.GetFromJsonAsync<IEnumerable<Division>>("divisions");
@@ -54,6 +80,18 @@ namespace TestTask.Client.Services
             return _divisions ??= await GetDivisions();
         }
 
+        private IEnumerable<Employee> GetEmployees()
+        {
+            var resultList = new List<Employee>();
+            foreach (var division in _divisions)
+            {
+                var employees = division.Employees;
+                resultList.AddRange(employees);
+            }
+
+            return resultList;
+        }
+
         /// <summary>
         /// Инициализация базовых свойств
         /// </summary>
@@ -61,6 +99,7 @@ namespace TestTask.Client.Services
         public async Task InitializeBaseProperties()
         {
             _divisions = await GetDivisionsAsync(true);
+            Employees = GetEmployees().ToList();
         }
     }
 }

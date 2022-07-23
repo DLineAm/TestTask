@@ -96,6 +96,13 @@ using Blazored.SessionStorage;
 #line default
 #line hidden
 #nullable disable
+#nullable restore
+#line 5 "G:\TestTask\TestTask\Client\Pages\Employees.razor"
+using System.Diagnostics;
+
+#line default
+#line hidden
+#nullable disable
     [Microsoft.AspNetCore.Components.RouteAttribute("/employees/{Id:int}")]
     public partial class Employees : Microsoft.AspNetCore.Components.ComponentBase
     {
@@ -105,7 +112,7 @@ using Blazored.SessionStorage;
         }
         #pragma warning restore 1998
 #nullable restore
-#line 56 "G:\TestTask\TestTask\Client\Pages\Employees.razor"
+#line 57 "G:\TestTask\TestTask\Client\Pages\Employees.razor"
        
     [Parameter]
     public int Id { get; set; }
@@ -135,16 +142,15 @@ using Blazored.SessionStorage;
         Program.AppData.CurrentDivisionFromList = _currentDivision;
         _divisions = await Program.AppData.GetDivisionsAsync();
         _title = _currentDivision?.Title;
-        if (_currentDivision.SubDivisions != null && _currentDivision.SubDivisions.Count > 0)
+        _employees = new List<Employee>();
+        _employees = Program.AppData.Employees.Where(e => e.DivisionId != null && e.DivisionId == _currentDivision.Id).ToList();
+        if (_currentDivision.SubDivisions.Count > 0)
         {
-
             foreach (var subDivision in _currentDivision.SubDivisions)
             {
                 FillEmployeesListFromSubDivisions(subDivision);
             }
         }
-        _employees = new List<Employee>();
-        _employees = await _http.GetFromJsonAsync<List<Employee>>($"employees?divisionId={_currentDivision.Id}");
         StateHasChanged();
     }
 
@@ -183,11 +189,14 @@ using Blazored.SessionStorage;
             return;
         }
 
+        Program.AppData.Employees.Remove(employeeToDelete);
+
         if (employeeToDelete.DivisionId != Id)
         {
             _existEmployees.Remove(employeeToDelete);
             return;
         }
+
         _employees.Remove(employeeToDelete);
     }
 
@@ -231,7 +240,7 @@ using Blazored.SessionStorage;
             __builder2.OpenElement(3, "span");
             __builder2.AddAttribute(4, "style", "font-size: 20px; font-weight: 700");
 #nullable restore
-#line 170 "G:\TestTask\TestTask\Client\Pages\Employees.razor"
+#line 173 "G:\TestTask\TestTask\Client\Pages\Employees.razor"
 __builder2.AddContent(5, employee.FullName);
 
 #line default
@@ -239,7 +248,7 @@ __builder2.AddContent(5, employee.FullName);
 #nullable disable
             __builder2.AddContent(6, " (");
 #nullable restore
-#line 170 "G:\TestTask\TestTask\Client\Pages\Employees.razor"
+#line 173 "G:\TestTask\TestTask\Client\Pages\Employees.razor"
 __builder2.AddContent(7, _divisions.FirstOrDefault(d => d.Id == employee.DivisionId)?.Title);
 
 #line default
@@ -257,7 +266,7 @@ __builder2.AddContent(7, _divisions.FirstOrDefault(d => d.Id == employee.Divisio
             __builder2.AddMarkupContent(11, "\r\n");
         }
 #nullable restore
-#line 176 "G:\TestTask\TestTask\Client\Pages\Employees.razor"
+#line 179 "G:\TestTask\TestTask\Client\Pages\Employees.razor"
     ;
         }
 
@@ -270,11 +279,11 @@ __builder2.AddContent(7, _divisions.FirstOrDefault(d => d.Id == employee.Divisio
     /// <param name="division"></param>
     private void FillEmployeesListFromSubDivisions(Division division)
     {
-        var employeesFromDivision = division.Employees.Where(e => _existEmployees.All(emp => emp.Id != e.Id)).ToList();
+        var employeesFromDivision = Program.AppData.Employees.Where(e => e.DivisionId == division.Id && _existEmployees.All(emp => emp.Id != e.Id)).ToList();
 
         _existEmployees.AddRange(employeesFromDivision);
 
-        if (division.SubDivisions == null || division.SubDivisions.Count == 0) return;
+        if (division.SubDivisions.Count == 0) return;
 
         foreach (var subDivision in division.SubDivisions.ToList())
         {

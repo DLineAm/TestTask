@@ -218,6 +218,24 @@ using Newtonsoft.Json;
             return;
         }
 
+        if (_stateMachine.CurrentState == StateMachine.State.Add)
+        {
+            var id = await response.Content.ReadFromJsonAsync<int>();
+            _employee.Id = id;
+            Program.AppData.Employees.Add(_employee);
+        }
+        else
+        {
+            var employeeFromList = Program.AppData.Employees.FirstOrDefault(e => e.Id == _employee.Id);
+            employeeFromList.FirstName = _employee.FirstName;
+            employeeFromList.MiddleName = _employee.MiddleName;
+            employeeFromList.LastName = _employee.LastName;
+            employeeFromList.Gender = _employee.Gender;
+            employeeFromList.DateOfBirth = _employee.DateOfBirth;
+            employeeFromList.DivisionId = _employee.DivisionId;
+            employeeFromList.HasDriverLicense = _employee.HasDriverLicense;
+        }
+
         Program.AfterEmployeeInfoPage = true;
         _navigationManager.NavigateTo($"employees/{_divisionId}");
     }

@@ -2,6 +2,7 @@
 @using TestTask.Shared
 @using TestTask.Client.Services
 @using Blazored.SessionStorage
+@using System.Diagnostics
 @inject HttpClient _http
 @inject NavigationManager _navigationManager
 @inject StateMachine _stateMachine
@@ -32,7 +33,7 @@ else
         <div>
             <h3>Работники во вложенных подразделениях</h3>
 
-            @if (_currentDivision.SubDivisions != null && _currentDivision.SubDivisions.Count > 0)
+            @if (_currentDivision.SubDivisions.Count > 0)
             {
                 @(GetEmployeesInSubDivisions(@<div></div>))
             }
@@ -82,16 +83,15 @@ else
         Program.AppData.CurrentDivisionFromList = _currentDivision;
         _divisions = await Program.AppData.GetDivisionsAsync();
         _title = _currentDivision?.Title;
-        if (_currentDivision.SubDivisions != null && _currentDivision.SubDivisions.Count > 0)
+        _employees = new List<Employee>();
+        _employees = Program.AppData.Employees.Where(e => e.DivisionId != null && e.DivisionId == _currentDivision.Id).ToList();
+        if (_currentDivision.SubDivisions.Count > 0)
         {
-
             foreach (var subDivision in _currentDivision.SubDivisions)
             {
                 FillEmployeesListFromSubDivisions(subDivision);
             }
         }
-        _employees = new List<Employee>();
-        _employees = await _http.GetFromJsonAsync<List<Employee>>($"employees?divisionId={_currentDivision.Id}");
         StateHasChanged();
     }
 
@@ -130,11 +130,14 @@ else
             return;
         }
 
+        Program.AppData.Employees.Remove(employeeToDelete);
+
         if (employeeToDelete.DivisionId != Id)
         {
             _existEmployees.Remove(employeeToDelete);
             return;
         }
+
         _employees.Remove(employeeToDelete);
     }
 
@@ -185,11 +188,11 @@ else
     /// <param name="division"></param>
     private void FillEmployeesListFromSubDivisions(Division division)
     {
-        var employeesFromDivision = division.Employees.Where(e => _existEmployees.All(emp => emp.Id != e.Id)).ToList();
+        var employeesFromDivision = Program.AppData.Employees.Where(e => e.DivisionId == division.Id && _existEmployees.All(emp => emp.Id != e.Id)).ToList();
 
         _existEmployees.AddRange(employeesFromDivision);
 
-        if (division.SubDivisions == null || division.SubDivisions.Count == 0) return;
+        if (division.SubDivisions.Count == 0) return;
 
         foreach (var subDivision in division.SubDivisions.ToList())
         {

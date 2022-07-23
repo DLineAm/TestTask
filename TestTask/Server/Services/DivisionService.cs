@@ -54,7 +54,7 @@ namespace TestTask.Server.Services
         /// Добавление подразделения в бд
         /// </summary>
         /// <param name="division"></param>
-        public void Add(Division division)
+        public int Add(Division division)
         {
             division.Id = 0;
             var subDivisions = division.SubDivisions.ToList();
@@ -78,6 +78,8 @@ namespace TestTask.Server.Services
             }
 
             SaveAndUpdateDivisions();
+
+            return division.Id;
         }
 
         /// <summary>
@@ -128,6 +130,21 @@ namespace TestTask.Server.Services
         public void Change(Division division)
         {
             _unitOfWork.DivisionRepository.Update(division);
+
+            var subDivisionIds = division.SubDivisions.Select(d => d.Id);
+
+            foreach (var subDivisionId in subDivisionIds)
+            {
+                var subDivision = _unitOfWork.DivisionRepository.Get(subDivisionId);
+
+                if (subDivision == null)
+                {
+                    _logger.LogWarning("One of subdivisions is null");
+                    continue;
+                }
+
+                subDivision.DivisionId = division.Id;
+            }
 
             SaveAndUpdateDivisions();
         }

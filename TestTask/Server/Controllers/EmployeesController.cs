@@ -80,15 +80,15 @@ namespace TestTask.Server.Controllers
         }
 
         [HttpPost]
-        public IActionResult Post([FromBody] Employee employee)
+        public ActionResult<int> Post([FromBody] Employee employee)
         {
             if (employee is null)
                 return BadRequest("Employee cannot be null");
 
             try
             {
-                _employeeService.Add(employee);
-                return Ok();
+                var id = _employeeService.Add(employee);
+                return Ok(id);
             }
             catch (Exception e)
             {

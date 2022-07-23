@@ -191,10 +191,10 @@ using Newtonsoft.Json;
             __builder2.AddAttribute(5, "class", "pd1248");
             __builder2.AddMarkupContent(6, "\r\n                              ");
             __builder2.OpenElement(7, "a");
-            __builder2.AddAttribute(8, "style", "cursor:" + " pointer;" + " color:" + " #fff;" + "  " + (
+            __builder2.AddAttribute(8, "style", "cursor:" + " pointer;" + " color:" + " #fff;" + " " + (
 #nullable restore
 #line 91 "G:\TestTask\TestTask\Client\Shared\NavMenu.razor"
-                                                                         Program.CurrentDivisionId == id ? "text-decoration: underline;" : ""
+                                                                        Program.CurrentDivisionId == id ? "text-decoration: underline;" : ""
 
 #line default
 #line hidden
@@ -325,9 +325,7 @@ __builder2.AddContent(15, markup);
 
     private IEnumerable<KeyValuePair<int, Division>> GetMainDivisions()
     {
-        var divisions = _divisions.Where(d => d.Value.DivisionId is null || d.Value.DivisionId == 0);
-        var count = divisions.Count();
-        return divisions;
+        return _divisions.Where(d => d.Value.DivisionId is null || d.Value.DivisionId == 0);
     }
 
 #line default

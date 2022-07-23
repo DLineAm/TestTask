@@ -148,6 +148,7 @@ img {
     font-size: 16px;
     padding: 8px 16px;
     font-family: inherit;
+    flex-direction: row;
 }
 a.sidebar__title{
     font-size: 32px;

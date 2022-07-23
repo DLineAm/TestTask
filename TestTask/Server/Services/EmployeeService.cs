@@ -80,10 +80,11 @@ namespace TestTask.Server.Services
         /// Добавление сотрудника в бд
         /// </summary>
         /// <param name="employee"></param>
-        public void Add(Employee employee)
+        public int Add(Employee employee)
         {
-            _unitOfWork.EmployeeRepository.Add(employee);
+            var entry = _unitOfWork.EmployeeRepository.Add(employee).Entity;
             _unitOfWork.Save();
+            return entry.Id;
         }
     }
 }
