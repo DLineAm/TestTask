@@ -5,11 +5,6 @@ namespace TestTask.Shared
 {
     public static class GenderHelper
     {
-        public static Gender[] GetGenders()
-        {
-            return new[] {Gender.Male, Gender.Female};
-        }
-
         public static string GetGenderTitle(Gender gender)
         {
             return gender switch

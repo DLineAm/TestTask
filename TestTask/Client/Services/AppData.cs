@@ -80,6 +80,23 @@ namespace TestTask.Client.Services
             return _divisions ??= await GetDivisions();
         }
 
+        public Division GetMainDivision(Division childrenDivision, Division parentDivision)
+        {
+            var subDivisions = _divisions.Where(d => d.DivisionId == parentDivision.Id);
+            foreach (var subDivision in subDivisions)
+            {
+                if (subDivision.Id == childrenDivision.Id)
+                    return childrenDivision;
+                var foundDivision = GetMainDivision(childrenDivision, subDivision);
+                if (foundDivision != null)
+                {
+                    return foundDivision;
+                }
+            }
+
+            return null;
+        }
+
         private IEnumerable<Employee> GetEmployees()
         {
             var resultList = new List<Employee>();

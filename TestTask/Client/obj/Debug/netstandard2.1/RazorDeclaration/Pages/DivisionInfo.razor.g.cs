@@ -112,17 +112,19 @@ using Blazored.SessionStorage;
         }
         #pragma warning restore 1998
 #nullable restore
-#line 67 "G:\TestTask\TestTask\Client\Pages\DivisionInfo.razor"
+#line 72 "G:\TestTask\TestTask\Client\Pages\DivisionInfo.razor"
        
     [Parameter]
     public int Id { get; set; }
 
     private Division _division;
+    private Division _divisionBackup;
     private int? _subDivisionId;
     private List<Division> _divisions;
     private List<Division> _divisionsToAdd;
     private List<Division> _subDivisionsToAdd;
     private int _divisionId;
+    private string _errorText;
 
     public int DivisionId
     {
@@ -159,9 +161,19 @@ using Blazored.SessionStorage;
             _storageService.SetItem("currentDivision", _division);
         }
 
+        _divisionBackup = new Division
+        {
+            Title = _division.Title,
+            CreateDate = _division.CreateDate,
+            Description = _division.Description,
+            DivisionId = _division.DivisionId,
+            SubDivisions = _division.SubDivisions
+        };
+
         await GetDivisions();
 
-        if (_stateMachine.CurrentState == StateMachine.State.Add && divisionFromSession != null || _division.SubDivisions.Count > 0)
+        if (_stateMachine.CurrentState == StateMachine.State.Add && divisionFromSession != null 
+            || _division.SubDivisions.Count > 0)
             FillSubDivisions();
     }
 
@@ -183,11 +195,9 @@ using Blazored.SessionStorage;
         divisionsList.ForEach(d =>
         {
             d.ParentDivision = null;
-            d.Employees = new HashSet<Employee>();
-            d.SubDivisions = new HashSet<Division>();
         });
-        _divisionsToAdd = divisionsList;
-        divisionsList.Insert(0, new Division {Title = "Нет"});
+        divisionsList.Insert(0, new Division {Title = "Нет", DivisionId = -1});
+        _divisionsToAdd = divisionsList.Where(d => d.DivisionId != null && d.DivisionId != 0).ToList();
         _divisions = divisionsList.ToList();
     }
 
@@ -200,7 +210,7 @@ using Blazored.SessionStorage;
 
         foreach (var subDivision in subDivisions)
         {
-            var subDivisionFromList = _divisionsToAdd.FirstOrDefault(d => d.Id == subDivision.Id);
+            var subDivisionFromList = _divisionsToAdd.Where(d => d.Id != _division.DivisionId).FirstOrDefault(d => d.Id == subDivision.Id);
             _divisions.Remove(subDivisionFromList);
             _divisionsToAdd.Remove(subDivisionFromList);
             _subDivisionsToAdd.Add(subDivisionFromList);
@@ -227,17 +237,37 @@ using Blazored.SessionStorage;
         SaveDivision();
     }
 
+    private bool IsAnySubDivision(Division division)
+    {
+        var foundId = Program.AppData.GetMainDivision(division, _division).Id;
+        return foundId == division.Id;
+    }
+
     private async Task ApplyButton_OnClick()
     {
+        _errorText = string.Empty;
+
         if (string.IsNullOrWhiteSpace(_division.Title))
+        {
+            _errorText = "Наименование должно быть заполнено!";
             return;
+        }
+
+        if (IsAnySubDivision(_divisions.FirstOrDefault(d => d.Id == _division.DivisionId)))
+        {
+            _errorText = "Попытка изменить поле родительское подразделение на одно из вложенных подразделений";
+            return;
+        }
 
         if (_division.DivisionId == 0)
         {
             _division.DivisionId = null;
         }
-        _division.ParentDivision = null;
-        _division.Employees = new HashSet<Employee>();
+        if (_subDivisionsToAdd.Any(d => d.Id == _division.DivisionId))
+        {
+            _division = _divisionsToAdd.FirstOrDefault(d => d.Id > _division.DivisionId);
+        }
+
         _division.SubDivisions = _subDivisionsToAdd;
 
         var response = _stateMachine.CurrentState is StateMachine.State.Change
@@ -286,6 +316,11 @@ using Blazored.SessionStorage;
 
     private void GoBack()
     {
+        _division.Title = _divisionBackup.Title;
+        _division.CreateDate = _divisionBackup.CreateDate;
+        _division.Description = _divisionBackup.Description;
+        _division.DivisionId = _divisionBackup.DivisionId;
+        _division.SubDivisions = _divisionBackup.SubDivisions;
         _navigationManager.NavigateTo(Program.LastPageUrl);
     }
 

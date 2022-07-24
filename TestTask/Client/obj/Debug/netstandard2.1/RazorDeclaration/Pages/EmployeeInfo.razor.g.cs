@@ -122,6 +122,7 @@ using Newtonsoft.Json;
 #line 60 "G:\TestTask\TestTask\Client\Pages\EmployeeInfo.razor"
        
     private Employee _employee;
+    private Employee _employeeBackup;
     private IEnumerable<Division> _divisions;
     private bool _isErrorHidden = true;
     private string _errorText;
@@ -169,6 +170,17 @@ using Newtonsoft.Json;
                 : Program.AppData.CurrentEmployee;
             _storageService.SetItem("currentEmployee", _employee);
         }
+
+        _employeeBackup = new Employee
+        {
+            FirstName = _employee.FirstName,
+            LastName = _employee.LastName,
+            MiddleName = _employee.MiddleName,
+            Gender = _employee.Gender,
+            DateOfBirth = _employee.DateOfBirth,
+            HasDriverLicense = _employee.HasDriverLicense,
+            DivisionId = _employee.DivisionId
+        };
 
         DivisionId = _employee.DivisionId;
         _divisions = await Program.AppData.GetDivisionsAsync();
@@ -259,6 +271,14 @@ using Newtonsoft.Json;
 
     private void GoBack()
     {
+        _employee.FirstName = _employeeBackup.FirstName;
+        _employee.FirstName = _employeeBackup.FirstName;
+        _employee.LastName = _employeeBackup.LastName;
+        _employee.MiddleName = _employeeBackup.MiddleName;
+        _employee.Gender = _employeeBackup.Gender;
+        _employee.DateOfBirth = _employeeBackup.DateOfBirth;
+        _employee.HasDriverLicense = _employeeBackup.HasDriverLicense;
+        _employee.DivisionId = _employeeBackup.DivisionId;
         _navigationManager.NavigateTo(Program.LastPageUrl);
     }
 

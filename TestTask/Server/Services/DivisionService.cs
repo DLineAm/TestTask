@@ -113,7 +113,7 @@ namespace TestTask.Server.Services
         {
             _unitOfWork.DivisionRepository.Update(division);
 
-            var subDivisionIds = division.SubDivisions.Select(d => d.Id);
+            var subDivisionIds = division.SubDivisions.Select(d => d.Id).ToList();
 
             foreach (var subDivisionId in subDivisionIds)
             {
@@ -124,7 +124,19 @@ namespace TestTask.Server.Services
                     continue;
                 }
 
+                subDivision.DivisionId = null;
+                subDivision.ParentDivision = null;
+                _unitOfWork.Save();
                 subDivision.DivisionId = division.Id;
+            }
+
+            var subDivisionsFromDb = _unitOfWork.DivisionRepository.Get(d => d.DivisionId == division.Id);
+            foreach (var subDivisionFromDb in subDivisionsFromDb)
+            {
+                if (subDivisionIds.All(id => id != subDivisionFromDb.Id))
+                {
+                    subDivisionFromDb.DivisionId = null;
+                }
             }
 
             _unitOfWork.Save();

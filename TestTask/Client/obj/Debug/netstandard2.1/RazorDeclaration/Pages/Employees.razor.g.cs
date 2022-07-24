@@ -144,7 +144,7 @@ using System.Diagnostics;
         _title = _currentDivision?.Title;
         _employees = new List<Employee>();
         _employees = Program.AppData.Employees.Where(e => e.DivisionId != null && e.DivisionId == _currentDivision.Id).ToList();
-        if (_currentDivision.SubDivisions.Count > 0)
+        if (_currentDivision?.SubDivisions.Count > 0)
         {
             foreach (var subDivision in _currentDivision.SubDivisions)
             {

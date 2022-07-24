@@ -97,7 +97,7 @@ namespace TestTask.Server.DAL.Context
             if (context.Employees.Any())
                 return;
 
-            var genders = GenderHelper.GetGenders();
+            var genders = Enum.GetValues(typeof(Gender)).Cast<Gender>().ToArray();
 
             var employees = new List<Employee>
             {

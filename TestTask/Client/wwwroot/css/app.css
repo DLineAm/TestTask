@@ -216,7 +216,7 @@ a.sidebar__title{
             background: #59a417;
             border-color: transparent;
         }
-.sidebar ul li:last-of-type::after {
+.sidebar ul li:last-of-type::afterafter {
     border: 0
 }
 .sidebar ul li img{
@@ -273,6 +273,7 @@ a.sidebar__title{
     justify-content: flex-start;
     width: 100%;
     flex-wrap: wrap;
+    flex-direction: column;
 }
 .subdiv__item {
     display: flex;
