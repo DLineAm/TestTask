@@ -28,23 +28,11 @@ namespace TestTask.Server.Services
         }
 
         /// <summary>
-        /// Попытка получить сотрудника из бд по идентификатору
-        /// </summary>
-        /// <param name="id"></param>
-        /// <param name="employee"></param>
-        /// <returns></returns>
-        public bool TryGet(int id, out Employee employee)
-        {
-            employee = _unitOfWork.EmployeeRepository.Get(id);
-            return employee != null;
-        }
-
-        /// <summary>
         /// Изменение сотрудника divisionToChange
         /// </summary>
         /// <param name="employee"></param>
         /// <param name="divisionToChange">Сотрудник из бд, которого нужно изменить</param>
-        public void Change(Employee employee)
+        public void Edit(Employee employee)
         {
             _unitOfWork.EmployeeRepository.Update(employee);
             //var employeeToChange = _unitOfWork.EmployeeRepository.Get(employee.id);

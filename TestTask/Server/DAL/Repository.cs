@@ -7,10 +7,12 @@ using System.Linq;
 using System.Linq.Expressions;
 
 using TestTask.Server.DAL.Context;
-using TestTask.Shared;
 
 namespace TestTask.Server.DAL
 {
+    /// <summary>
+    /// Реализация паттерна "Репозиторий" - промежуточный слой между моделью и остальной частью программмы 
+    /// </summary>
     public sealed class Repository<TEntity> where TEntity : class
     {
         private readonly DatabaseContext _context;
@@ -36,7 +38,6 @@ namespace TestTask.Server.DAL
         /// </summary>
         /// <param name="filter">выражение фильтра</param>
         /// <param name="orderBy">функция сортировки</param>
-        /// <returns></returns>
         public IEnumerable<TEntity> Get(
             Expression<Func<TEntity, bool>> filter = null,
             Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null)
@@ -51,7 +52,6 @@ namespace TestTask.Server.DAL
         /// </summary>
         /// <param name="filter">выражение фильтра</param>
         /// <param name="orderBy">функция сортировки</param>
-        /// <returns></returns>
         public IEnumerable<TEntity> GetWithChildren(
             Expression<Func<TEntity, bool>> filter = null,
             Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null)
@@ -61,12 +61,11 @@ namespace TestTask.Server.DAL
             return FilterAndOrderEntities(filter, orderBy, query);
         }
 
-        private static IEnumerable<TEntity> FilterAndOrderEntities(Expression<Func<TEntity, bool>> filter, Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy, IQueryable<TEntity> query)
+        private IEnumerable<TEntity> FilterAndOrderEntities(Expression<Func<TEntity, bool>> filter, Func<IQueryable<TEntity>
+            , IOrderedQueryable<TEntity>> orderBy, IQueryable<TEntity> query)
         {
             if (filter != null)
-            {
                 query = query.Where(filter);
-            }
 
             return orderBy != null
                 ? orderBy(query).ToList()
@@ -76,8 +75,7 @@ namespace TestTask.Server.DAL
         /// <summary>
         /// Получение записи из бд по идентификатору
         /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
+        /// <param name="id">Идентификатор требуемой записи</param>
         public TEntity Get(int id)
         {
             return _dbSet.Find(id);
@@ -86,8 +84,7 @@ namespace TestTask.Server.DAL
         /// <summary>
         /// Добавление записи в бд
         /// </summary>
-        /// <param name="entity"></param>
-        /// <returns></returns>
+        /// <param name="entity">Запись, которую нужно добавить в бд</param>
         public EntityEntry<TEntity> Add(TEntity entity)
         {
             return _dbSet.Add(entity);
@@ -96,7 +93,7 @@ namespace TestTask.Server.DAL
         /// <summary>
         /// Удаление записи из бд
         /// </summary>
-        /// <param name="entityToDelete"></param>
+        /// <param name="entityToDelete">Запись, которую нужно удалить</param>
         public void Delete(TEntity entityToDelete)
         {
             AttachEntity(entityToDelete);
@@ -105,14 +102,22 @@ namespace TestTask.Server.DAL
         }
 
         /// <summary>
+        /// Удаление нескольких записей из бд
+        /// </summary>
+        /// <param name="entitiesToDelete">Записи, которые нужно удалить</param>
+        public void DeleteBulk(IEnumerable<TEntity> entitiesToDelete)
+        {
+            _dbSet.RemoveRange(entitiesToDelete);
+        }
+
+        /// <summary>
         /// Изменение состояния записи из бд в измененное
         /// </summary>
-        /// <param name="entityToUpdate"></param>
+        /// <param name="entityToUpdate">Запись, состояние которой нужно изменить</param>
         public void Update(TEntity entityToUpdate)
         {
             AttachEntity(entityToUpdate);
             _context.Update(entityToUpdate);
-            //_context.Entry(entityToUpdate).State = EntityState.Modified;
 
             _context.SaveChanges();
         }

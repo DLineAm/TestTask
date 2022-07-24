@@ -4,6 +4,9 @@ using TestTask.Shared;
 
 namespace TestTask.Server.DAL.Context.Configurations
 {
+    /// <summary>
+    /// Конфигурация таблицы "Employee"
+    /// </summary>
     public class EmployeeConfiguration : IEntityTypeConfiguration<Employee>
     {
         public void Configure(EntityTypeBuilder<Employee> builder)

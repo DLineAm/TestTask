@@ -154,12 +154,10 @@ using Blazored.SessionStorage;
         else
         {
             _division = _stateMachine.CurrentState is StateMachine.State.Add
-                ? new Division()
+                ? new Division{DivisionId = Program.AppData.CurrentDivisionFromList?.Id ?? 0}
                 : Program.AppData.CurrentDivision;
             _storageService.SetItem("currentDivision", _division);
         }
-
-        _division.DivisionId ??= 0;
 
         await GetDivisions();
 

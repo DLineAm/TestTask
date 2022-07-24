@@ -161,7 +161,7 @@ using Newtonsoft.Json;
         var subDivisions = _divisions.Where(d => d.Value.DivisionId == division.Id)
             .ToDictionary(d => d.Key, d => d.Value);
 
-        if (subDivisions.Count() == 0)
+        if (!subDivisions.Any())
         {
             return 
 
@@ -200,7 +200,7 @@ using Newtonsoft.Json;
 #line hidden
 #nullable disable
             ));
-            __builder2.AddAttribute(9, "@onclick", "() => SetCurrentDivision(subDivision)");
+            __builder2.AddAttribute(9, "@onclick", "async () => await SetCurrentDivision(subDivision)");
 #nullable restore
 #line 91 "G:\TestTask\TestTask\Client\Shared\NavMenu.razor"
 __builder2.AddContent(10, subDivision.Title);
@@ -309,6 +309,8 @@ __builder2.AddContent(15, markup);
 
     private async Task SetCurrentDivision(Division division)
     {
+        _divisions = new Dictionary<int, Division>();
+        _divisions = (await Program.AppData.GetDivisionsAsync()).ToDictionary(d => d.Id, d => d);
         var url = GetDivisionHrefById(division.Id);
         Program.LastPageUrl = url;
 

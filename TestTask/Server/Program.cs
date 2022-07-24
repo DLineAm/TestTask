@@ -28,11 +28,7 @@ namespace TestTask.Server
             try
             {
                 var context = services.GetRequiredService<DatabaseContext>();
-                if (!context.Database.EnsureCreated())
-                {
-                    context.Database.Migrate();
-                    return;
-                }
+                context.Database.Migrate();
 
                 var initializer = services.GetRequiredService<IDataInitializer>();
                 initializer.Initialize(context);

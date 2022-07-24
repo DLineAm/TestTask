@@ -29,7 +29,7 @@ namespace TestTask.Server.DAL.Context
         /// <returns></returns>
         private IEnumerable<Division> InitializeDivisions(DatabaseContext context)
         {
-            if (context.Divisions.Count() > 0)
+            if (context.Divisions.Any())
                 return context.Divisions.ToList();
 
             var mainDivision = new Division { Title = "Председатель комитета", CreateDate = new DateTime(1990, 3, 15) };
@@ -79,7 +79,7 @@ namespace TestTask.Server.DAL.Context
         /// <param name="entity"></param>
         /// <param name="context"></param>
         /// <returns></returns>
-        private static T CreateEntity<T>(T entity, DatabaseContext context) where T : class
+        private T CreateEntity<T>(T entity, DatabaseContext context) where T : class
         {
             var savedEntity = context.Set<T>().Add(entity);
             context.SaveChanges();
@@ -92,11 +92,9 @@ namespace TestTask.Server.DAL.Context
         /// </summary>
         /// <param name="context"></param>
         /// <param name="divisions"></param>
-        /// <param name="genders[0]"></param>
-        /// <param name="genders[1]"></param>
         private void InitializeEmployees(DatabaseContext context, IEnumerable<Division> divisions)
         {
-            if (context.Employees.Count() > 0)
+            if (context.Employees.Any())
                 return;
 
             var genders = GenderHelper.GetGenders();

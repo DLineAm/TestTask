@@ -4,6 +4,9 @@ using TestTask.Shared;
 
 namespace TestTask.Server.DAL.Context
 {
+    /// <summary>
+    /// Контекст для работы с бд
+    /// </summary>
     public class DatabaseContext : DbContext
     {
         public DatabaseContext(DbContextOptions<DatabaseContext> options) : base(options)

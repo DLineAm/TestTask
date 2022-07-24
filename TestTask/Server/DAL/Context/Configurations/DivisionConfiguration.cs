@@ -1,10 +1,13 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+
 using TestTask.Shared;
 
 namespace TestTask.Server.DAL.Context.Configurations
 {
+    /// <summary>
+    /// Конфигурация таблицы "Division"
+    /// </summary>
     public class DivisionConfiguration : IEntityTypeConfiguration<Division>
     {
         public void Configure(EntityTypeBuilder<Division> builder)

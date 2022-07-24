@@ -1,13 +1,12 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using System;
+using Microsoft.AspNetCore.Http;
 
 using Newtonsoft.Json;
 
 using System.Collections.Generic;
-using System.Data.SqlTypes;
 using System.Linq;
 using Microsoft.Extensions.Logging;
 using TestTask.Server.DAL;
-using TestTask.Server.Utils;
 using TestTask.Shared;
 
 namespace TestTask.Server.Services
@@ -16,15 +15,12 @@ namespace TestTask.Server.Services
     {
         private readonly UnitOfWork _unitOfWork;
         private readonly ILogger<DivisionService> _logger;
-        private readonly DataHelper _dataHelper;
 
-        public DivisionService(UnitOfWork unitOfWork ,IHttpContextAccessor accessor, ILogger<DivisionService> logger)
+        public DivisionService(UnitOfWork unitOfWork, IHttpContextAccessor accessor, ILogger<DivisionService> logger)
         {
-            JsonConvert.DefaultSettings = () => new JsonSerializerSettings
-                {ReferenceLoopHandling = ReferenceLoopHandling.Ignore};
+            JsonConvert.DefaultSettings = () => new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore };
             _unitOfWork = unitOfWork;
             _logger = logger;
-            _dataHelper = new DataHelper(accessor, unitOfWork);
         }
 
         /// <summary>
@@ -33,10 +29,8 @@ namespace TestTask.Server.Services
         /// <returns></returns>
         public IEnumerable<Division> Get()
         {
-            return _dataHelper.GetDivisions();
+            return _unitOfWork.DivisionRepository.GetWithChildren();
         }
-
-        
 
         /// <summary>
         /// Попытка получить подразделение из бд по идентификатору
@@ -66,8 +60,7 @@ namespace TestTask.Server.Services
 
             foreach (var subDivision in subDivisions)
             {
-                var dbDivision = _unitOfWork.DivisionRepository
-                    .Get(subDivision.Id);
+                var dbDivision = _unitOfWork.DivisionRepository.Get(subDivision.Id);
                 if (dbDivision is null)
                 {
                     _logger.LogWarning("One of subdivisions is null");
@@ -77,8 +70,7 @@ namespace TestTask.Server.Services
                 dbDivision.DivisionId = entity.Id;
             }
 
-            SaveAndUpdateDivisions();
-
+            _unitOfWork.Save();
             return division.Id;
         }
 
@@ -89,45 +81,35 @@ namespace TestTask.Server.Services
         public void Delete(int id)
         {
             var division = _unitOfWork.DivisionRepository.Get(id);
-            if (division == null)
-                throw new SqlNullValueException();
+            if (division is null)
+                throw new ArgumentException($"Division not found by Id={id}");
 
             var subDivisions = _unitOfWork.DivisionRepository.Get(filter: d => d.DivisionId == id);
-
             if (subDivisions != null)
             {
-                foreach (var subDivision in division.SubDivisions)
+                foreach (var subDivision in subDivisions)
                 {
                     subDivision.DivisionId = null;
                     subDivision.ParentDivision = null;
                 }
             }
 
+            var employeesForDelete = _unitOfWork.EmployeeRepository.Get(x => x.DivisionId == id);
+            if (employeesForDelete.Any())
+                _unitOfWork.EmployeeRepository.DeleteBulk(employeesForDelete);
+
             division.DivisionId = null;
-            var employees = _unitOfWork.EmployeeRepository.Get()
-                .Select(e => new KeyValuePair<int?,Employee>(e.DivisionId, e));
-            var newEmployees = new Dictionary<int?, Employee>();
-            foreach (var (divisionId, employee) in employees)
-            {
-                employee.DivisionId = null;
-                newEmployees[divisionId ?? 0] = employee;
-            }
 
             _unitOfWork.DivisionRepository.Delete(division);
-            foreach (var (divisionId, employee) in newEmployees)
-            {
-                var dbEmployee = _unitOfWork.EmployeeRepository.Get(employee.Id);
-                dbEmployee.DivisionId = divisionId == 0 ? null : divisionId;
-            }
 
-            SaveAndUpdateDivisions();
+            _unitOfWork.Save();
         }
 
         /// <summary>
-        /// Изменение подразделения divisionToChange
+        /// Изменение подразделения
         /// </summary>
-        /// <param name="division"></param>
-        public void Change(Division division)
+        /// <param name="division">Модель подразделения</param>
+        public void Edit(Division division)
         {
             _unitOfWork.DivisionRepository.Update(division);
 
@@ -136,24 +118,16 @@ namespace TestTask.Server.Services
             foreach (var subDivisionId in subDivisionIds)
             {
                 var subDivision = _unitOfWork.DivisionRepository.Get(subDivisionId);
-
-                if (subDivision == null)
+                if (subDivision is null)
                 {
-                    _logger.LogWarning("One of subdivisions is null");
+                    _logger.LogWarning($"One of subdivisions is null by Id={subDivisionId}");
                     continue;
                 }
 
                 subDivision.DivisionId = division.Id;
             }
 
-            SaveAndUpdateDivisions();
-        }
-
-        private void SaveAndUpdateDivisions()
-        {
             _unitOfWork.Save();
-
-            _dataHelper.UpdateDivisions();
         }
     }
 }

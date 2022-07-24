@@ -26,7 +26,7 @@ else
             @foreach (var (id, division) in GetMainDivisions())
             {
                 <li @key="id">
-                        <a style="cursor: pointer; color: #fff; @(Program.CurrentDivisionId == id ? "text-decoration: underline;" : "")" @onclick="() => SetCurrentDivision(division)">@division.Title</a>
+                        <a style="cursor: pointer; color: #fff; @(Program.CurrentDivisionId == id ? "text-decoration: underline;" : "")" @onclick="async () => await SetCurrentDivision(division)">@division.Title</a>
                         <img src="css/edit.svg" style="cursor: pointer" @onclick="() => ChangeDivisionButton_OnClick(division)" alt=""/>
                         <img src="css/delete.svg" style="cursor: pointer" @onclick="() => DeleteDivisionButton_OnClick(division)" alt=""/>
                         @GetList(division, @<div></div>)
@@ -79,7 +79,7 @@ else
         var subDivisions = _divisions.Where(d => d.Value.DivisionId == division.Id)
             .ToDictionary(d => d.Key, d => d.Value);
 
-        if (subDivisions.Count() == 0)
+        if (!subDivisions.Any())
         {
             return @<div></div>;
         }
@@ -88,7 +88,7 @@ else
         {
             markup += @<li @key="id">
                           <div class="pd1248">
-                              <a style="cursor: pointer; color: #fff; @(Program.CurrentDivisionId == id ? "text-decoration: underline;" : "")" @onclick="() => SetCurrentDivision(subDivision)">@subDivision.Title</a>
+                              <a style="cursor: pointer; color: #fff; @(Program.CurrentDivisionId == id ? "text-decoration: underline;" : "")" @onclick="async () => await SetCurrentDivision(subDivision)">@subDivision.Title</a>
                               <img src="css/edit.svg" style="cursor: pointer" @onclick="() => ChangeDivisionButton_OnClick(subDivision)" alt=""/>
                               <img src="css/delete.svg" style="cursor: pointer" @onclick="() => DeleteDivisionButton_OnClick(subDivision)" alt=""/>
                           </div>
@@ -154,6 +154,8 @@ else
 
     private async Task SetCurrentDivision(Division division)
     {
+        _divisions = new Dictionary<int, Division>();
+        _divisions = (await Program.AppData.GetDivisionsAsync()).ToDictionary(d => d.Id, d => d);
         var url = GetDivisionHrefById(division.Id);
         Program.LastPageUrl = url;
 

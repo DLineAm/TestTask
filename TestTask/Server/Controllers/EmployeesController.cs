@@ -24,19 +24,35 @@ namespace TestTask.Server.Controllers
             _divisionService = divisionService;
         }
 
+        /// <summary>
+        /// Получение сотрудников, принадлежащих подразделению
+        /// </summary>
+        /// <param name="divisionId">Идентификатор подразделения, сотрудников которого нужно получить</param>
         [HttpGet]
         public ActionResult<IEnumerable<Employee>> Get(int divisionId)
         {
             _logger.LogInformation($"Processing request in method {nameof(EmployeesController)}.{nameof(Get)}");
-            //
-            if (!_divisionService.TryGet(divisionId, out _))
-                return NotFound();
-            //
-            var employees = _employeeService.GetByDivisionId(divisionId);
 
-            return Ok(employees);
+            try
+            {
+                if (!_divisionService.TryGet(divisionId, out _))
+                    return NotFound();
+
+                var employees = _employeeService.GetByDivisionId(divisionId);
+
+                return Ok(employees);
+            }
+            catch (Exception e)
+            {
+                _logger.LogError($"Exception in {nameof(EmployeesController)}.{nameof(Get)} was thrown: {e.Message}");
+                return BadRequest(e.Message);
+            }
         }
 
+        /// <summary>
+        /// Изменение сотрудника
+        /// </summary>
+        /// <param name="employee">Измененная модель сотрудника</param>
         [HttpPut("change")]
         public IActionResult Put([FromBody] Employee employee)
         {
@@ -44,7 +60,7 @@ namespace TestTask.Server.Controllers
 
             try
             {
-                _employeeService.Change(employee);
+                _employeeService.Edit(employee);
                 return Ok();
             }
             catch (SqlNullValueException)
@@ -58,6 +74,10 @@ namespace TestTask.Server.Controllers
             }
         }
 
+        /// <summary>
+        /// Удаление сотрудника из бд
+        /// </summary>
+        /// <param name="id">Идентификатор сотрудника</param>
         [HttpDelete]
         public IActionResult Delete([FromQuery] int id)
         {
@@ -79,6 +99,10 @@ namespace TestTask.Server.Controllers
             }
         }
 
+        /// <summary>
+        /// Добавление сотрудника в бд
+        /// </summary>
+        /// <param name="employee">Модель сотрудника</param>
         [HttpPost]
         public ActionResult<int> Post([FromBody] Employee employee)
         {
