@@ -146,7 +146,7 @@ img {
     background: #59a417;
     color: #000000;
     font-size: 16px;
-    padding: 8px 16px;
+    padding: 8px 26px;
     font-family: inherit;
     flex-direction: row;
 }
@@ -216,7 +216,7 @@ a.sidebar__title{
             background: #59a417;
             border-color: transparent;
         }
-.sidebar ul li:last-of-type::afterafter {
+.sidebar ul li:last-of-type::after {
     border: 0
 }
 .sidebar ul li img{

@@ -1,6 +1,5 @@
-﻿
-using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Json;
@@ -21,6 +20,8 @@ namespace TestTask.Client.Services
         private List<Employee> _employees;
         private Division _currentDivision;
         private Division _currentDivisionFromList;
+        private Division _divisionBackup;
+        private Employee _employeeBackup;
 
         public AppData(HttpClient http)
         {
@@ -33,7 +34,11 @@ namespace TestTask.Client.Services
         public Employee CurrentEmployee
         {
             get => _currentEmployee;
-            set => _currentEmployee = value;
+            set
+            {
+                _currentEmployee = value;
+                SetEmployeeBackup(_currentEmployee);
+            }
         }
 
         /// <summary>
@@ -51,7 +56,11 @@ namespace TestTask.Client.Services
         public Division CurrentDivision
         {
             get => _currentDivision;
-            set => _currentDivision = value;
+            set
+            {
+                _currentDivision = value;
+                SetDivisionBackup(_currentDivision);
+            }
         }
 
         /// <summary>
@@ -63,14 +72,15 @@ namespace TestTask.Client.Services
             set => _currentDivisionFromList = value;
         }
 
-        /// <summary>
-        /// Список подразделений
-        /// </summary>
+        
         private async Task<IEnumerable<Division>> GetDivisions()
         {
             return await _http.GetFromJsonAsync<IEnumerable<Division>>("divisions");
         }
 
+        /// <summary>
+        /// Получение списка подразделений
+        /// </summary>
         public async Task<IEnumerable<Division>> GetDivisionsAsync(bool forceReload = false)
         {
             if (forceReload)
@@ -80,21 +90,105 @@ namespace TestTask.Client.Services
             return _divisions ??= await GetDivisions();
         }
 
-        public Division GetMainDivision(Division childrenDivision, Division parentDivision)
+        private void SetDivisionBackup(Division division)
         {
-            var subDivisions = _divisions.Where(d => d.DivisionId == parentDivision.Id);
+            if (division == null)
+            {
+                _divisionBackup = null;
+                return;
+            }
+
+            _divisionBackup = new Division
+            {
+                Title = division.Title,
+                CreateDate = division.CreateDate,
+                Description = division.Description,
+                DivisionId = division.DivisionId,
+                Employees = division.Employees,
+                ParentDivision = division.ParentDivision,
+                SubDivisions = division.SubDivisions,
+                Id = division.Id
+            };
+        }
+
+        private void SetEmployeeBackup(Employee employee)
+        {
+            if (employee == null)
+            {
+                _employeeBackup = null;
+                return;
+            }
+
+            _employeeBackup = new Employee
+            {
+                FirstName = employee.FirstName,
+                MiddleName = employee.MiddleName,
+                LastName = employee.LastName,
+                DateOfBirth = employee.DateOfBirth,
+                Gender = employee.Gender,
+                Division = employee.Division,
+                DivisionId = employee.DivisionId,
+                HasDriverLicense = employee.HasDriverLicense,
+                Id = employee.Id
+            };
+        }
+
+        public void RecoverDivision()
+        {
+            if (CurrentDivision == null)
+            {
+                return;
+            }
+
+            CurrentDivision.Title = _divisionBackup.Title;
+            CurrentDivision.CreateDate = _divisionBackup.CreateDate;
+            CurrentDivision.Description = _divisionBackup.Description;
+            CurrentDivision.DivisionId = _divisionBackup.DivisionId;
+            CurrentDivision.Employees = _divisionBackup.Employees;
+            CurrentDivision.ParentDivision = _divisionBackup.ParentDivision;
+            CurrentDivision.SubDivisions = _divisionBackup.SubDivisions;
+        }
+
+        public void RecoverEmployee()
+        {
+            if (CurrentEmployee == null)
+            {
+                return;
+            }
+
+            CurrentEmployee.FirstName = _employeeBackup.FirstName;
+            CurrentEmployee.MiddleName = _employeeBackup.MiddleName;
+            CurrentEmployee.LastName = _employeeBackup.LastName;
+            CurrentEmployee.DateOfBirth = _employeeBackup.DateOfBirth;
+            CurrentEmployee.Gender = _employeeBackup.Gender;
+            CurrentEmployee.Division = _employeeBackup.Division;
+            CurrentEmployee.DivisionId = _employeeBackup.DivisionId;
+            CurrentEmployee.HasDriverLicense = _employeeBackup.HasDriverLicense;
+            CurrentEmployee.Id = _employeeBackup.Id;
+        }
+
+        /// <summary>
+        /// Определяет, является ли подразделение childrenDivision вложенным подразделением родительского подразделения parentDivision или его вложенных подразделений
+        /// </summary>
+        /// <param name="childrenDivision">Подразделение, которое нужно проверить</param>
+        /// <param name="parentDivision">Предполагаемое родительское подразделение</param>
+        /// <returns>True, если parentDivision является родительским подразделением childrenDivision. False, если нет</returns>
+        public bool GetMainDivision(Division childrenDivision, Division parentDivision)
+        {
+            var subDivisions = parentDivision.SubDivisions.ToList();
+            Debug.WriteLine(subDivisions.Count);
             foreach (var subDivision in subDivisions)
             {
                 if (subDivision.Id == childrenDivision.Id)
-                    return childrenDivision;
+                    return true;
                 var foundDivision = GetMainDivision(childrenDivision, subDivision);
-                if (foundDivision != null)
+                if (foundDivision)
                 {
-                    return foundDivision;
+                    return true;
                 }
             }
 
-            return null;
+            return false;
         }
 
         private IEnumerable<Employee> GetEmployees()

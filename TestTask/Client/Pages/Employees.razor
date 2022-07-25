@@ -99,6 +99,7 @@ else
     {
         _stateMachine.SetChangeState();
         Program.AppData.CurrentEmployee = employee;
+        Program.EmployeeInfoPageOpened = true;
         await _storageService.SetItemAsync("employeeId", employee.Id);
         _navigationManager.NavigateTo("employeeInfo");
     }

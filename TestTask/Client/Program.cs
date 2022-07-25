@@ -18,6 +18,9 @@ namespace TestTask.Client
         public static string LastPageUrl = "";
         public static bool AfterEmployeeInfoPage;
         public static int CurrentDivisionId;
+        public static bool DivisionInfoPageOpened;
+        public static bool EmployeeInfoPageOpened;
+
         public static async Task Main(string[] args)
         {
             var builder = WebAssemblyHostBuilder.CreateDefault(args);

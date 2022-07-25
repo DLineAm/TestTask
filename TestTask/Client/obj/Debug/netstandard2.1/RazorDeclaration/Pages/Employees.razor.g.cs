@@ -158,6 +158,7 @@ using System.Diagnostics;
     {
         _stateMachine.SetChangeState();
         Program.AppData.CurrentEmployee = employee;
+        Program.EmployeeInfoPageOpened = true;
         await _storageService.SetItemAsync("employeeId", employee.Id);
         _navigationManager.NavigateTo("employeeInfo");
     }
@@ -240,7 +241,7 @@ using System.Diagnostics;
             __builder2.OpenElement(3, "span");
             __builder2.AddAttribute(4, "style", "font-size: 20px; font-weight: 700");
 #nullable restore
-#line 173 "G:\TestTask\TestTask\Client\Pages\Employees.razor"
+#line 174 "G:\TestTask\TestTask\Client\Pages\Employees.razor"
 __builder2.AddContent(5, employee.FullName);
 
 #line default
@@ -248,7 +249,7 @@ __builder2.AddContent(5, employee.FullName);
 #nullable disable
             __builder2.AddContent(6, " (");
 #nullable restore
-#line 173 "G:\TestTask\TestTask\Client\Pages\Employees.razor"
+#line 174 "G:\TestTask\TestTask\Client\Pages\Employees.razor"
 __builder2.AddContent(7, _divisions.FirstOrDefault(d => d.Id == employee.DivisionId)?.Title);
 
 #line default
@@ -266,7 +267,7 @@ __builder2.AddContent(7, _divisions.FirstOrDefault(d => d.Id == employee.Divisio
             __builder2.AddMarkupContent(11, "\r\n");
         }
 #nullable restore
-#line 179 "G:\TestTask\TestTask\Client\Pages\Employees.razor"
+#line 180 "G:\TestTask\TestTask\Client\Pages\Employees.razor"
     ;
         }
 

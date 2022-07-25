@@ -52,6 +52,7 @@ else
     private bool _modalOpen;
     private bool _modalConfirmation;
 
+
     protected override async Task OnInitializedAsync()
     {
         _eventAggregator.DivisionCollectionChanged += async () =>
@@ -147,7 +148,18 @@ else
     private void ChangeDivisionButton_OnClick(Division division)
     {
         _stateMachine.SetChangeState();
+
+        if (Program.DivisionInfoPageOpened)
+            Program.AppData.RecoverDivision();
+
+        if (Program.EmployeeInfoPageOpened)
+        {
+            Program.AppData.RecoverEmployee();
+            Program.EmployeeInfoPageOpened = false;
+        }
+
         Program.AppData.CurrentDivision = division;
+        Program.DivisionInfoPageOpened = true;
 
         _navigationManager.NavigateTo("divisionInfo/" + division.Id);
     }
@@ -158,6 +170,17 @@ else
         _divisions = (await Program.AppData.GetDivisionsAsync()).ToDictionary(d => d.Id, d => d);
         var url = GetDivisionHrefById(division.Id);
         Program.LastPageUrl = url;
+
+        if (Program.DivisionInfoPageOpened)
+        {
+            Program.AppData.RecoverDivision();
+            Program.DivisionInfoPageOpened = false;
+        }
+        if (Program.EmployeeInfoPageOpened)
+        {
+            Program.AppData.RecoverEmployee();
+            Program.EmployeeInfoPageOpened = false;
+        }
 
         Program.AppData.CurrentDivision = division;
         Program.CurrentDivisionId = division.Id;

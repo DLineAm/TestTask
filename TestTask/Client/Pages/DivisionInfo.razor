@@ -195,8 +195,8 @@
 
     private bool IsAnySubDivision(Division division)
     {
-        var foundId = Program.AppData.GetMainDivision(division, _division).Id;
-        return foundId == division.Id;
+        var result = Program.AppData.GetMainDivision(division, _division);
+        return result;
     }
 
     private async Task ApplyButton_OnClick()

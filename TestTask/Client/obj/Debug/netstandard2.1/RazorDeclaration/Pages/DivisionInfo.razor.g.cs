@@ -239,8 +239,8 @@ using Blazored.SessionStorage;
 
     private bool IsAnySubDivision(Division division)
     {
-        var foundId = Program.AppData.GetMainDivision(division, _division).Id;
-        return foundId == division.Id;
+        var result = Program.AppData.GetMainDivision(division, _division);
+        return result;
     }
 
     private async Task ApplyButton_OnClick()
@@ -255,7 +255,7 @@ using Blazored.SessionStorage;
 
         if (IsAnySubDivision(_divisions.FirstOrDefault(d => d.Id == _division.DivisionId)))
         {
-            _errorText = "Попытка изменить поле родительское подразделение на одно из вложенных подразделений";
+            _errorText = @"Попытка изменить поле ""Родительское подразделение"" на одно из вложенных подразделений";
             return;
         }
 
