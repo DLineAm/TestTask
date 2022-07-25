@@ -1,25 +1,23 @@
 {
   "format": 1,
   "restore": {
-    "G:\\TestTask\\TestTask\\Shared\\TestTask.Shared.csproj": {}
+    "C:\\Users\\MAS_1_7\\Source\\Repos\\TestTask\\TestTask\\Shared\\TestTask.Shared.csproj": {}
   },
   "projects": {
-    "G:\\TestTask\\TestTask\\Shared\\TestTask.Shared.csproj": {
+    "C:\\Users\\MAS_1_7\\Source\\Repos\\TestTask\\TestTask\\Shared\\TestTask.Shared.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "G:\\TestTask\\TestTask\\Shared\\TestTask.Shared.csproj",
+        "projectUniqueName": "C:\\Users\\MAS_1_7\\Source\\Repos\\TestTask\\TestTask\\Shared\\TestTask.Shared.csproj",
         "projectName": "TestTask.Shared",
-        "projectPath": "G:\\TestTask\\TestTask\\Shared\\TestTask.Shared.csproj",
-        "packagesPath": "C:\\Users\\pocht\\.nuget\\packages\\",
-        "outputPath": "G:\\TestTask\\TestTask\\Shared\\obj\\",
+        "projectPath": "C:\\Users\\MAS_1_7\\Source\\Repos\\TestTask\\TestTask\\Shared\\TestTask.Shared.csproj",
+        "packagesPath": "C:\\Users\\MAS_1_7\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\MAS_1_7\\Source\\Repos\\TestTask\\TestTask\\Shared\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
-          "C:\\Program Files (x86)\\DevExpress 21.2\\Components\\Offline Packages",
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
         ],
         "configFilePaths": [
-          "C:\\Users\\pocht\\AppData\\Roaming\\NuGet\\NuGet.Config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\DevExpress 21.2.config",
+          "C:\\Users\\MAS_1_7\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
@@ -27,7 +25,6 @@
           "netstandard2.1"
         ],
         "sources": {
-          "C:\\Program Files (x86)\\DevExpress 21.2\\Components\\System\\Components\\Packages": {},
           "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
           "https://api.nuget.org/v3/index.json": {}
         },
@@ -67,7 +64,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.100\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.200\\RuntimeIdentifierGraph.json"
         }
       }
     }

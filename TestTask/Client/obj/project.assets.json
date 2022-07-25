@@ -1609,26 +1609,23 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\pocht\\.nuget\\packages\\": {},
-    "C:\\Program Files (x86)\\DevExpress 21.2\\Components\\Offline Packages": {},
+    "C:\\Users\\MAS_1_7\\.nuget\\packages\\": {},
     "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "G:\\TestTask\\TestTask\\Client\\TestTask.Client.csproj",
+      "projectUniqueName": "C:\\Users\\MAS_1_7\\Source\\Repos\\TestTask\\TestTask\\Client\\TestTask.Client.csproj",
       "projectName": "TestTask.Client",
-      "projectPath": "G:\\TestTask\\TestTask\\Client\\TestTask.Client.csproj",
-      "packagesPath": "C:\\Users\\pocht\\.nuget\\packages\\",
-      "outputPath": "G:\\TestTask\\TestTask\\Client\\obj\\",
+      "projectPath": "C:\\Users\\MAS_1_7\\Source\\Repos\\TestTask\\TestTask\\Client\\TestTask.Client.csproj",
+      "packagesPath": "C:\\Users\\MAS_1_7\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\MAS_1_7\\Source\\Repos\\TestTask\\TestTask\\Client\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
-        "C:\\Program Files (x86)\\DevExpress 21.2\\Components\\Offline Packages",
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
       ],
       "configFilePaths": [
-        "C:\\Users\\pocht\\AppData\\Roaming\\NuGet\\NuGet.Config",
-        "C:\\Program Files (x86)\\NuGet\\Config\\DevExpress 21.2.config",
+        "C:\\Users\\MAS_1_7\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
@@ -1636,7 +1633,6 @@
         "netstandard2.1"
       ],
       "sources": {
-        "C:\\Program Files (x86)\\DevExpress 21.2\\Components\\System\\Components\\Packages": {},
         "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
         "https://api.nuget.org/v3/index.json": {}
       },
@@ -1644,8 +1640,8 @@
         "netstandard2.1": {
           "targetAlias": "netstandard2.1",
           "projectReferences": {
-            "G:\\TestTask\\TestTask\\Shared\\TestTask.Shared.csproj": {
-              "projectPath": "G:\\TestTask\\TestTask\\Shared\\TestTask.Shared.csproj"
+            "C:\\Users\\MAS_1_7\\Source\\Repos\\TestTask\\TestTask\\Shared\\TestTask.Shared.csproj": {
+              "projectPath": "C:\\Users\\MAS_1_7\\Source\\Repos\\TestTask\\TestTask\\Shared\\TestTask.Shared.csproj"
             }
           }
         }
@@ -1702,7 +1698,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.100\\RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.200\\RuntimeIdentifierGraph.json"
       }
     }
   }

@@ -28,3 +28,13 @@ G:\TestTask\TestTask\Shared\obj\Debug\netstandard2.1\TestTask.Shared.AssemblyInf
 G:\TestTask\TestTask\Shared\obj\Debug\netstandard2.1\TestTask.Shared.csproj.CoreCompileInputs.cache
 G:\TestTask\TestTask\Shared\obj\Debug\netstandard2.1\TestTask.Shared.dll
 G:\TestTask\TestTask\Shared\obj\Debug\netstandard2.1\TestTask.Shared.pdb
+C:\Users\MAS_1_7\Source\Repos\TestTask\TestTask\Shared\bin\Debug\netstandard2.1\TestTask.Shared.deps.json
+C:\Users\MAS_1_7\Source\Repos\TestTask\TestTask\Shared\bin\Debug\netstandard2.1\TestTask.Shared.dll
+C:\Users\MAS_1_7\Source\Repos\TestTask\TestTask\Shared\bin\Debug\netstandard2.1\TestTask.Shared.pdb
+C:\Users\MAS_1_7\Source\Repos\TestTask\TestTask\Shared\obj\Debug\netstandard2.1\TestTask.Shared.csproj.AssemblyReference.cache
+C:\Users\MAS_1_7\Source\Repos\TestTask\TestTask\Shared\obj\Debug\netstandard2.1\TestTask.Shared.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\MAS_1_7\Source\Repos\TestTask\TestTask\Shared\obj\Debug\netstandard2.1\TestTask.Shared.AssemblyInfoInputs.cache
+C:\Users\MAS_1_7\Source\Repos\TestTask\TestTask\Shared\obj\Debug\netstandard2.1\TestTask.Shared.AssemblyInfo.cs
+C:\Users\MAS_1_7\Source\Repos\TestTask\TestTask\Shared\obj\Debug\netstandard2.1\TestTask.Shared.csproj.CoreCompileInputs.cache
+C:\Users\MAS_1_7\Source\Repos\TestTask\TestTask\Shared\obj\Debug\netstandard2.1\TestTask.Shared.dll
+C:\Users\MAS_1_7\Source\Repos\TestTask\TestTask\Shared\obj\Debug\netstandard2.1\TestTask.Shared.pdb

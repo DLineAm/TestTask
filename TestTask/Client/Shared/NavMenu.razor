@@ -96,7 +96,8 @@ else
                       </li>;
             markup += GetList(subDivision, @<div></div>);
         }
-        return @<ul>@markup</ul>;
+        return @<ul>@markup</ul>
+    ;
     }
 
     private void DivisionAddButton_OnClick()
@@ -166,6 +167,7 @@ else
 
     private async Task SetCurrentDivision(Division division)
     {
+        _stateMachine.SetIdleState();
         _divisions = new Dictionary<int, Division>();
         _divisions = (await Program.AppData.GetDivisionsAsync()).ToDictionary(d => d.Id, d => d);
         var url = GetDivisionHrefById(division.Id);

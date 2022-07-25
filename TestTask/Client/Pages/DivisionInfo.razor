@@ -9,7 +9,7 @@
 @inject NavigationManager _navigationManager
 @inject ISyncSessionStorageService _storageService
 <h3 class="info__title">Информация о подразделении</h3>
-<button @onclick="GoBack">Назад</button>
+<button class="main--btn inverted" @onclick="GoBack">Назад</button>
 
 <EditForm Model="@_division">
     <div>
@@ -277,6 +277,7 @@
         _division.Description = _divisionBackup.Description;
         _division.DivisionId = _divisionBackup.DivisionId;
         _division.SubDivisions = _divisionBackup.SubDivisions;
+        _stateMachine.SetIdleState();
         _navigationManager.NavigateTo(Program.LastPageUrl);
     }
 

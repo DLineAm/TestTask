@@ -13,91 +13,91 @@ namespace TestTask.Client.Pages
     using System.Threading.Tasks;
     using Microsoft.AspNetCore.Components;
 #nullable restore
-#line 1 "G:\TestTask\TestTask\Client\_Imports.razor"
+#line 1 "C:\Users\MAS_1_7\Source\Repos\TestTask\TestTask\Client\_Imports.razor"
 using System.Net.Http;
 
 #line default
 #line hidden
 #nullable disable
 #nullable restore
-#line 2 "G:\TestTask\TestTask\Client\_Imports.razor"
+#line 2 "C:\Users\MAS_1_7\Source\Repos\TestTask\TestTask\Client\_Imports.razor"
 using System.Net.Http.Json;
 
 #line default
 #line hidden
 #nullable disable
 #nullable restore
-#line 3 "G:\TestTask\TestTask\Client\_Imports.razor"
+#line 3 "C:\Users\MAS_1_7\Source\Repos\TestTask\TestTask\Client\_Imports.razor"
 using Microsoft.AspNetCore.Components.Forms;
 
 #line default
 #line hidden
 #nullable disable
 #nullable restore
-#line 4 "G:\TestTask\TestTask\Client\_Imports.razor"
+#line 4 "C:\Users\MAS_1_7\Source\Repos\TestTask\TestTask\Client\_Imports.razor"
 using Microsoft.AspNetCore.Components.Routing;
 
 #line default
 #line hidden
 #nullable disable
 #nullable restore
-#line 5 "G:\TestTask\TestTask\Client\_Imports.razor"
+#line 5 "C:\Users\MAS_1_7\Source\Repos\TestTask\TestTask\Client\_Imports.razor"
 using Microsoft.AspNetCore.Components.Web;
 
 #line default
 #line hidden
 #nullable disable
 #nullable restore
-#line 6 "G:\TestTask\TestTask\Client\_Imports.razor"
+#line 6 "C:\Users\MAS_1_7\Source\Repos\TestTask\TestTask\Client\_Imports.razor"
 using Microsoft.AspNetCore.Components.WebAssembly.Http;
 
 #line default
 #line hidden
 #nullable disable
 #nullable restore
-#line 7 "G:\TestTask\TestTask\Client\_Imports.razor"
+#line 7 "C:\Users\MAS_1_7\Source\Repos\TestTask\TestTask\Client\_Imports.razor"
 using Microsoft.JSInterop;
 
 #line default
 #line hidden
 #nullable disable
 #nullable restore
-#line 8 "G:\TestTask\TestTask\Client\_Imports.razor"
+#line 8 "C:\Users\MAS_1_7\Source\Repos\TestTask\TestTask\Client\_Imports.razor"
 using TestTask.Client;
 
 #line default
 #line hidden
 #nullable disable
 #nullable restore
-#line 9 "G:\TestTask\TestTask\Client\_Imports.razor"
+#line 9 "C:\Users\MAS_1_7\Source\Repos\TestTask\TestTask\Client\_Imports.razor"
 using TestTask.Client.Shared;
 
 #line default
 #line hidden
 #nullable disable
 #nullable restore
-#line 2 "G:\TestTask\TestTask\Client\Pages\DivisionInfo.razor"
+#line 2 "C:\Users\MAS_1_7\Source\Repos\TestTask\TestTask\Client\Pages\DivisionInfo.razor"
 using TestTask.Shared;
 
 #line default
 #line hidden
 #nullable disable
 #nullable restore
-#line 3 "G:\TestTask\TestTask\Client\Pages\DivisionInfo.razor"
+#line 3 "C:\Users\MAS_1_7\Source\Repos\TestTask\TestTask\Client\Pages\DivisionInfo.razor"
 using TestTask.Client.Services;
 
 #line default
 #line hidden
 #nullable disable
 #nullable restore
-#line 4 "G:\TestTask\TestTask\Client\Pages\DivisionInfo.razor"
+#line 4 "C:\Users\MAS_1_7\Source\Repos\TestTask\TestTask\Client\Pages\DivisionInfo.razor"
 using System.Diagnostics;
 
 #line default
 #line hidden
 #nullable disable
 #nullable restore
-#line 5 "G:\TestTask\TestTask\Client\Pages\DivisionInfo.razor"
+#line 5 "C:\Users\MAS_1_7\Source\Repos\TestTask\TestTask\Client\Pages\DivisionInfo.razor"
 using Blazored.SessionStorage;
 
 #line default
@@ -112,7 +112,7 @@ using Blazored.SessionStorage;
         }
         #pragma warning restore 1998
 #nullable restore
-#line 72 "G:\TestTask\TestTask\Client\Pages\DivisionInfo.razor"
+#line 72 "C:\Users\MAS_1_7\Source\Repos\TestTask\TestTask\Client\Pages\DivisionInfo.razor"
        
     [Parameter]
     public int Id { get; set; }
@@ -321,6 +321,7 @@ using Blazored.SessionStorage;
         _division.Description = _divisionBackup.Description;
         _division.DivisionId = _divisionBackup.DivisionId;
         _division.SubDivisions = _divisionBackup.SubDivisions;
+        _stateMachine.SetIdleState();
         _navigationManager.NavigateTo(Program.LastPageUrl);
     }
 

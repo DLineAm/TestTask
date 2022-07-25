@@ -9,7 +9,7 @@
 @inject StateMachine _stateMachine
 @inject ISyncSessionStorageService _storageService
 <h3 class="info__title">Информация о сотруднике</h3>
-<button @onclick="GoBack">Назад</button>
+<button @onclick="GoBack" class="main--btn inverted">Назад</button>
 <EditForm Model="@_employee">
     <div>
         <label for="lastname">Фамилия</label>
@@ -58,9 +58,9 @@
 
 
 @code {
-    private Employee _employee;
+    private Employee _employee = new Employee();
     private Employee _employeeBackup;
-    private IEnumerable<Division> _divisions;
+    private IEnumerable<Division> _divisions = new List<Division>();
     private bool _isErrorHidden = true;
     private string _errorText;
     private int? _divisionId;
@@ -77,20 +77,22 @@
         }
     }
 
-    protected override void OnParametersSet()
+    protected override async Task OnParametersSetAsync()
     {
-        InitializeData();
+        await InitializeData();
     }
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
-        InitializeData();
+        await InitializeData();
     }
 
     private async Task InitializeData()
     {
+        _divisions = await Program.AppData.GetDivisionsAsync();
+
         var divisionFromSession = _storageService.GetItem<Employee>("currentEmployee");
-            
+
         if (Program.AppData.CurrentEmployee == null && divisionFromSession != null)
         {
             _employee = divisionFromSession;
@@ -120,7 +122,6 @@
         };
 
         DivisionId = _employee.DivisionId;
-        _divisions = await Program.AppData.GetDivisionsAsync();
     }
 
     private Division GetDivisionFromSession()
@@ -216,6 +217,7 @@
         _employee.DateOfBirth = _employeeBackup.DateOfBirth;
         _employee.HasDriverLicense = _employeeBackup.HasDriverLicense;
         _employee.DivisionId = _employeeBackup.DivisionId;
+        _stateMachine.SetIdleState();
         _navigationManager.NavigateTo(Program.LastPageUrl);
     }
 

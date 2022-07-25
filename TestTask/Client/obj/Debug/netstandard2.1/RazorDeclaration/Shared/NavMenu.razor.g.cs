@@ -13,105 +13,105 @@ namespace TestTask.Client.Shared
     using System.Threading.Tasks;
     using Microsoft.AspNetCore.Components;
 #nullable restore
-#line 1 "G:\TestTask\TestTask\Client\_Imports.razor"
+#line 1 "C:\Users\MAS_1_7\Source\Repos\TestTask\TestTask\Client\_Imports.razor"
 using System.Net.Http;
 
 #line default
 #line hidden
 #nullable disable
 #nullable restore
-#line 2 "G:\TestTask\TestTask\Client\_Imports.razor"
+#line 2 "C:\Users\MAS_1_7\Source\Repos\TestTask\TestTask\Client\_Imports.razor"
 using System.Net.Http.Json;
 
 #line default
 #line hidden
 #nullable disable
 #nullable restore
-#line 3 "G:\TestTask\TestTask\Client\_Imports.razor"
+#line 3 "C:\Users\MAS_1_7\Source\Repos\TestTask\TestTask\Client\_Imports.razor"
 using Microsoft.AspNetCore.Components.Forms;
 
 #line default
 #line hidden
 #nullable disable
 #nullable restore
-#line 4 "G:\TestTask\TestTask\Client\_Imports.razor"
+#line 4 "C:\Users\MAS_1_7\Source\Repos\TestTask\TestTask\Client\_Imports.razor"
 using Microsoft.AspNetCore.Components.Routing;
 
 #line default
 #line hidden
 #nullable disable
 #nullable restore
-#line 5 "G:\TestTask\TestTask\Client\_Imports.razor"
+#line 5 "C:\Users\MAS_1_7\Source\Repos\TestTask\TestTask\Client\_Imports.razor"
 using Microsoft.AspNetCore.Components.Web;
 
 #line default
 #line hidden
 #nullable disable
 #nullable restore
-#line 6 "G:\TestTask\TestTask\Client\_Imports.razor"
+#line 6 "C:\Users\MAS_1_7\Source\Repos\TestTask\TestTask\Client\_Imports.razor"
 using Microsoft.AspNetCore.Components.WebAssembly.Http;
 
 #line default
 #line hidden
 #nullable disable
 #nullable restore
-#line 7 "G:\TestTask\TestTask\Client\_Imports.razor"
+#line 7 "C:\Users\MAS_1_7\Source\Repos\TestTask\TestTask\Client\_Imports.razor"
 using Microsoft.JSInterop;
 
 #line default
 #line hidden
 #nullable disable
 #nullable restore
-#line 8 "G:\TestTask\TestTask\Client\_Imports.razor"
+#line 8 "C:\Users\MAS_1_7\Source\Repos\TestTask\TestTask\Client\_Imports.razor"
 using TestTask.Client;
 
 #line default
 #line hidden
 #nullable disable
 #nullable restore
-#line 9 "G:\TestTask\TestTask\Client\_Imports.razor"
+#line 9 "C:\Users\MAS_1_7\Source\Repos\TestTask\TestTask\Client\_Imports.razor"
 using TestTask.Client.Shared;
 
 #line default
 #line hidden
 #nullable disable
 #nullable restore
-#line 1 "G:\TestTask\TestTask\Client\Shared\NavMenu.razor"
+#line 1 "C:\Users\MAS_1_7\Source\Repos\TestTask\TestTask\Client\Shared\NavMenu.razor"
 using TestTask.Shared;
 
 #line default
 #line hidden
 #nullable disable
 #nullable restore
-#line 2 "G:\TestTask\TestTask\Client\Shared\NavMenu.razor"
+#line 2 "C:\Users\MAS_1_7\Source\Repos\TestTask\TestTask\Client\Shared\NavMenu.razor"
 using System.Net;
 
 #line default
 #line hidden
 #nullable disable
 #nullable restore
-#line 3 "G:\TestTask\TestTask\Client\Shared\NavMenu.razor"
+#line 3 "C:\Users\MAS_1_7\Source\Repos\TestTask\TestTask\Client\Shared\NavMenu.razor"
 using TestTask.Client.Services;
 
 #line default
 #line hidden
 #nullable disable
 #nullable restore
-#line 4 "G:\TestTask\TestTask\Client\Shared\NavMenu.razor"
+#line 4 "C:\Users\MAS_1_7\Source\Repos\TestTask\TestTask\Client\Shared\NavMenu.razor"
 using System.Diagnostics;
 
 #line default
 #line hidden
 #nullable disable
 #nullable restore
-#line 5 "G:\TestTask\TestTask\Client\Shared\NavMenu.razor"
+#line 5 "C:\Users\MAS_1_7\Source\Repos\TestTask\TestTask\Client\Shared\NavMenu.razor"
 using Blazored.SessionStorage;
 
 #line default
 #line hidden
 #nullable disable
 #nullable restore
-#line 6 "G:\TestTask\TestTask\Client\Shared\NavMenu.razor"
+#line 6 "C:\Users\MAS_1_7\Source\Repos\TestTask\TestTask\Client\Shared\NavMenu.razor"
 using Newtonsoft.Json;
 
 #line default
@@ -125,7 +125,7 @@ using Newtonsoft.Json;
         }
         #pragma warning restore 1998
 #nullable restore
-#line 47 "G:\TestTask\TestTask\Client\Shared\NavMenu.razor"
+#line 47 "C:\Users\MAS_1_7\Source\Repos\TestTask\TestTask\Client\Shared\NavMenu.razor"
        
     private Dictionary<int,Division> _divisions;
     private bool _collapseNavMenu = true;
@@ -173,7 +173,7 @@ using Newtonsoft.Json;
             __builder2.AddMarkupContent(0, "<div></div>");
         }
 #nullable restore
-#line 85 "G:\TestTask\TestTask\Client\Shared\NavMenu.razor"
+#line 85 "C:\Users\MAS_1_7\Source\Repos\TestTask\TestTask\Client\Shared\NavMenu.razor"
                                ;
         }
 
@@ -194,7 +194,7 @@ using Newtonsoft.Json;
             __builder2.OpenElement(7, "a");
             __builder2.AddAttribute(8, "style", "cursor:" + " pointer;" + " color:" + " #fff;" + " " + (
 #nullable restore
-#line 92 "G:\TestTask\TestTask\Client\Shared\NavMenu.razor"
+#line 92 "C:\Users\MAS_1_7\Source\Repos\TestTask\TestTask\Client\Shared\NavMenu.razor"
                                                                         Program.CurrentDivisionId == id ? "text-decoration: underline;" : ""
 
 #line default
@@ -203,7 +203,7 @@ using Newtonsoft.Json;
             ));
             __builder2.AddAttribute(9, "@onclick", "async () => await SetCurrentDivision(subDivision)");
 #nullable restore
-#line 92 "G:\TestTask\TestTask\Client\Shared\NavMenu.razor"
+#line 92 "C:\Users\MAS_1_7\Source\Repos\TestTask\TestTask\Client\Shared\NavMenu.razor"
 __builder2.AddContent(10, subDivision.Title);
 
 #line default
@@ -219,7 +219,7 @@ __builder2.AddContent(10, subDivision.Title);
             __builder2.CloseElement();
         }
 #nullable restore
-#line 96 "G:\TestTask\TestTask\Client\Shared\NavMenu.razor"
+#line 96 "C:\Users\MAS_1_7\Source\Repos\TestTask\TestTask\Client\Shared\NavMenu.razor"
                            ;
             markup += GetList(subDivision, 
 
@@ -230,7 +230,7 @@ __builder2.AddContent(10, subDivision.Title);
             __builder2.AddMarkupContent(13, "<div></div>");
         }
 #nullable restore
-#line 97 "G:\TestTask\TestTask\Client\Shared\NavMenu.razor"
+#line 97 "C:\Users\MAS_1_7\Source\Repos\TestTask\TestTask\Client\Shared\NavMenu.razor"
                                                        );
         }
         return 
@@ -241,17 +241,18 @@ __builder2.AddContent(10, subDivision.Title);
         (__builder2) => {
             __builder2.OpenElement(14, "ul");
 #nullable restore
-#line 99 "G:\TestTask\TestTask\Client\Shared\NavMenu.razor"
+#line 99 "C:\Users\MAS_1_7\Source\Repos\TestTask\TestTask\Client\Shared\NavMenu.razor"
 __builder2.AddContent(15, markup);
 
 #line default
 #line hidden
 #nullable disable
             __builder2.CloseElement();
+            __builder2.AddMarkupContent(16, "\r\n");
         }
 #nullable restore
-#line 99 "G:\TestTask\TestTask\Client\Shared\NavMenu.razor"
-                                ;
+#line 100 "C:\Users\MAS_1_7\Source\Repos\TestTask\TestTask\Client\Shared\NavMenu.razor"
+    ;
     }
 
     private void DivisionAddButton_OnClick()
@@ -321,6 +322,7 @@ __builder2.AddContent(15, markup);
 
     private async Task SetCurrentDivision(Division division)
     {
+        _stateMachine.SetIdleState();
         _divisions = new Dictionary<int, Division>();
         _divisions = (await Program.AppData.GetDivisionsAsync()).ToDictionary(d => d.Id, d => d);
         var url = GetDivisionHrefById(division.Id);

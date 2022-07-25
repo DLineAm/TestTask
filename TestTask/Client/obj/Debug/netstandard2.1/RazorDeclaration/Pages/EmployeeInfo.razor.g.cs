@@ -13,98 +13,98 @@ namespace TestTask.Client.Pages
     using System.Threading.Tasks;
     using Microsoft.AspNetCore.Components;
 #nullable restore
-#line 1 "G:\TestTask\TestTask\Client\_Imports.razor"
+#line 1 "C:\Users\MAS_1_7\Source\Repos\TestTask\TestTask\Client\_Imports.razor"
 using System.Net.Http;
 
 #line default
 #line hidden
 #nullable disable
 #nullable restore
-#line 2 "G:\TestTask\TestTask\Client\_Imports.razor"
+#line 2 "C:\Users\MAS_1_7\Source\Repos\TestTask\TestTask\Client\_Imports.razor"
 using System.Net.Http.Json;
 
 #line default
 #line hidden
 #nullable disable
 #nullable restore
-#line 3 "G:\TestTask\TestTask\Client\_Imports.razor"
+#line 3 "C:\Users\MAS_1_7\Source\Repos\TestTask\TestTask\Client\_Imports.razor"
 using Microsoft.AspNetCore.Components.Forms;
 
 #line default
 #line hidden
 #nullable disable
 #nullable restore
-#line 4 "G:\TestTask\TestTask\Client\_Imports.razor"
+#line 4 "C:\Users\MAS_1_7\Source\Repos\TestTask\TestTask\Client\_Imports.razor"
 using Microsoft.AspNetCore.Components.Routing;
 
 #line default
 #line hidden
 #nullable disable
 #nullable restore
-#line 5 "G:\TestTask\TestTask\Client\_Imports.razor"
+#line 5 "C:\Users\MAS_1_7\Source\Repos\TestTask\TestTask\Client\_Imports.razor"
 using Microsoft.AspNetCore.Components.Web;
 
 #line default
 #line hidden
 #nullable disable
 #nullable restore
-#line 6 "G:\TestTask\TestTask\Client\_Imports.razor"
+#line 6 "C:\Users\MAS_1_7\Source\Repos\TestTask\TestTask\Client\_Imports.razor"
 using Microsoft.AspNetCore.Components.WebAssembly.Http;
 
 #line default
 #line hidden
 #nullable disable
 #nullable restore
-#line 7 "G:\TestTask\TestTask\Client\_Imports.razor"
+#line 7 "C:\Users\MAS_1_7\Source\Repos\TestTask\TestTask\Client\_Imports.razor"
 using Microsoft.JSInterop;
 
 #line default
 #line hidden
 #nullable disable
 #nullable restore
-#line 8 "G:\TestTask\TestTask\Client\_Imports.razor"
+#line 8 "C:\Users\MAS_1_7\Source\Repos\TestTask\TestTask\Client\_Imports.razor"
 using TestTask.Client;
 
 #line default
 #line hidden
 #nullable disable
 #nullable restore
-#line 9 "G:\TestTask\TestTask\Client\_Imports.razor"
+#line 9 "C:\Users\MAS_1_7\Source\Repos\TestTask\TestTask\Client\_Imports.razor"
 using TestTask.Client.Shared;
 
 #line default
 #line hidden
 #nullable disable
 #nullable restore
-#line 2 "G:\TestTask\TestTask\Client\Pages\EmployeeInfo.razor"
+#line 2 "C:\Users\MAS_1_7\Source\Repos\TestTask\TestTask\Client\Pages\EmployeeInfo.razor"
 using TestTask.Shared;
 
 #line default
 #line hidden
 #nullable disable
 #nullable restore
-#line 3 "G:\TestTask\TestTask\Client\Pages\EmployeeInfo.razor"
+#line 3 "C:\Users\MAS_1_7\Source\Repos\TestTask\TestTask\Client\Pages\EmployeeInfo.razor"
 using TestTask.Client.Services;
 
 #line default
 #line hidden
 #nullable disable
 #nullable restore
-#line 4 "G:\TestTask\TestTask\Client\Pages\EmployeeInfo.razor"
+#line 4 "C:\Users\MAS_1_7\Source\Repos\TestTask\TestTask\Client\Pages\EmployeeInfo.razor"
 using System.Diagnostics;
 
 #line default
 #line hidden
 #nullable disable
 #nullable restore
-#line 5 "G:\TestTask\TestTask\Client\Pages\EmployeeInfo.razor"
+#line 5 "C:\Users\MAS_1_7\Source\Repos\TestTask\TestTask\Client\Pages\EmployeeInfo.razor"
 using Blazored.SessionStorage;
 
 #line default
 #line hidden
 #nullable disable
 #nullable restore
-#line 6 "G:\TestTask\TestTask\Client\Pages\EmployeeInfo.razor"
+#line 6 "C:\Users\MAS_1_7\Source\Repos\TestTask\TestTask\Client\Pages\EmployeeInfo.razor"
 using Newtonsoft.Json;
 
 #line default
@@ -119,11 +119,11 @@ using Newtonsoft.Json;
         }
         #pragma warning restore 1998
 #nullable restore
-#line 60 "G:\TestTask\TestTask\Client\Pages\EmployeeInfo.razor"
+#line 60 "C:\Users\MAS_1_7\Source\Repos\TestTask\TestTask\Client\Pages\EmployeeInfo.razor"
        
-    private Employee _employee;
+    private Employee _employee = new Employee();
     private Employee _employeeBackup;
-    private IEnumerable<Division> _divisions;
+    private IEnumerable<Division> _divisions = new List<Division>();
     private bool _isErrorHidden = true;
     private string _errorText;
     private int? _divisionId;
@@ -140,20 +140,22 @@ using Newtonsoft.Json;
         }
     }
 
-    protected override void OnParametersSet()
+    protected override async Task OnParametersSetAsync()
     {
-        InitializeData();
+        await InitializeData();
     }
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
-        InitializeData();
+        await InitializeData();
     }
 
     private async Task InitializeData()
     {
+        _divisions = await Program.AppData.GetDivisionsAsync();
+
         var divisionFromSession = _storageService.GetItem<Employee>("currentEmployee");
-            
+
         if (Program.AppData.CurrentEmployee == null && divisionFromSession != null)
         {
             _employee = divisionFromSession;
@@ -183,7 +185,6 @@ using Newtonsoft.Json;
         };
 
         DivisionId = _employee.DivisionId;
-        _divisions = await Program.AppData.GetDivisionsAsync();
     }
 
     private Division GetDivisionFromSession()
@@ -279,6 +280,7 @@ using Newtonsoft.Json;
         _employee.DateOfBirth = _employeeBackup.DateOfBirth;
         _employee.HasDriverLicense = _employeeBackup.HasDriverLicense;
         _employee.DivisionId = _employeeBackup.DivisionId;
+        _stateMachine.SetIdleState();
         _navigationManager.NavigateTo(Program.LastPageUrl);
     }
 
