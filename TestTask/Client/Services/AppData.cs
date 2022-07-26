@@ -19,7 +19,6 @@ namespace TestTask.Client.Services
         private Employee _currentEmployee;
         private List<Employee> _employees;
         private Division _currentDivision;
-        private Division _currentDivisionFromList;
         private Division _divisionBackup;
         private Employee _employeeBackup;
 
@@ -66,13 +65,9 @@ namespace TestTask.Client.Services
         /// <summary>
         /// Выбранное родительское подразделение, исползуется на странице добавления/изменения подразделения
         /// </summary>
-        public Division CurrentDivisionFromList
-        {
-            get => _currentDivisionFromList;
-            set => _currentDivisionFromList = value;
-        }
+        public Division CurrentDivisionFromList { get; set; }
 
-        
+
         private async Task<IEnumerable<Division>> GetDivisions()
         {
             return await _http.GetFromJsonAsync<IEnumerable<Division>>("divisions");
@@ -135,7 +130,7 @@ namespace TestTask.Client.Services
 
         public void RecoverDivision()
         {
-            if (CurrentDivision == null)
+            if (CurrentDivision is null || _divisionBackup is null)
             {
                 return;
             }
@@ -151,7 +146,7 @@ namespace TestTask.Client.Services
 
         public void RecoverEmployee()
         {
-            if (CurrentEmployee == null)
+            if (CurrentEmployee is null || _employeeBackup is null)
             {
                 return;
             }
@@ -165,6 +160,16 @@ namespace TestTask.Client.Services
             CurrentEmployee.DivisionId = _employeeBackup.DivisionId;
             CurrentEmployee.HasDriverLicense = _employeeBackup.HasDriverLicense;
             CurrentEmployee.Id = _employeeBackup.Id;
+        }
+
+        public void ClearEmployeeBackup()
+        {
+            _employeeBackup = null;
+        }
+
+        public void ClearDivisionBackup()
+        {
+            _divisionBackup = null;
         }
 
         /// <summary>

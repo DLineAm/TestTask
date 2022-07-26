@@ -168,6 +168,8 @@
             return;
         }
 
+        Program.AppData.ClearEmployeeBackup();
+
         if (_stateMachine.CurrentState == StateMachine.State.Add)
         {
             var id = await response.Content.ReadFromJsonAsync<int>();

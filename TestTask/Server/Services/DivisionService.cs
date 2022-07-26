@@ -111,9 +111,11 @@ namespace TestTask.Server.Services
         /// <param name="division">Модель подразделения</param>
         public void Edit(Division division)
         {
-            _unitOfWork.DivisionRepository.Update(division);
-
             var subDivisionIds = division.SubDivisions.Select(d => d.Id).ToList();
+
+            division.SubDivisions = new List<Division>();
+
+            _unitOfWork.DivisionRepository.Update(division);
 
             foreach (var subDivisionId in subDivisionIds)
             {

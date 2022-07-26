@@ -236,6 +236,8 @@
             return;
         }
 
+        Program.AppData.ClearDivisionBackup();
+
         await Program.AppData.InitializeBaseProperties();
         _eventAggregator.InvokeDivisionCollectionChanged();
 

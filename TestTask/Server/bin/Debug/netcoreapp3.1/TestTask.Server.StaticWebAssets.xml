@@ -1,4 +1,4 @@
 ﻿<StaticWebAssets Version="1.0">
-  <ContentRoot BasePath="/" Path="C:\Users\MAS_1_7\Source\Repos\TestTask\TestTask\Client\bin\Debug\netstandard2.1\wwwroot\" />
-  <ContentRoot BasePath="/" Path="C:\Users\MAS_1_7\Source\Repos\TestTask\TestTask\Client\wwwroot\" />
+  <ContentRoot BasePath="/" Path="C:\Users\pocht\Desktop\TestTask\TestTask\Client\bin\Debug\netstandard2.1\wwwroot\" />
+  <ContentRoot BasePath="/" Path="C:\Users\pocht\Desktop\TestTask\TestTask\Client\wwwroot\" />
 </StaticWebAssets>

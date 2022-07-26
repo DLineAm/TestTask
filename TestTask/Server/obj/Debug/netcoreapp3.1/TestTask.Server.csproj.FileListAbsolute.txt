@@ -161,7 +161,6 @@ C:\Users\pocht\Desktop\TestTask\TestTask\Server\bin\Debug\netcoreapp3.1\TestTask
 C:\Users\pocht\Desktop\TestTask\TestTask\Server\bin\Debug\netcoreapp3.1\TestTask.Server.dll
 C:\Users\pocht\Desktop\TestTask\TestTask\Server\bin\Debug\netcoreapp3.1\TestTask.Server.pdb
 C:\Users\pocht\Desktop\TestTask\TestTask\Server\bin\Debug\netcoreapp3.1\TestTask.Server.Views.dll
-C:\Users\pocht\Desktop\TestTask\TestTask\Server\bin\Debug\netcoreapp3.1\TestTask.Server.Views.pdb
 C:\Users\pocht\Desktop\TestTask\TestTask\Server\bin\Debug\netcoreapp3.1\Microsoft.AspNetCore.Authorization.dll
 C:\Users\pocht\Desktop\TestTask\TestTask\Server\bin\Debug\netcoreapp3.1\Microsoft.AspNetCore.Components.dll
 C:\Users\pocht\Desktop\TestTask\TestTask\Server\bin\Debug\netcoreapp3.1\Microsoft.AspNetCore.Components.Forms.dll
@@ -196,18 +195,9 @@ C:\Users\pocht\Desktop\TestTask\TestTask\Server\obj\Debug\netcoreapp3.1\TestTask
 C:\Users\pocht\Desktop\TestTask\TestTask\Server\obj\Debug\netcoreapp3.1\TestTask.Server.AssemblyInfo.cs
 C:\Users\pocht\Desktop\TestTask\TestTask\Server\obj\Debug\netcoreapp3.1\TestTask.Server.csproj.CoreCompileInputs.cache
 C:\Users\pocht\Desktop\TestTask\TestTask\Server\obj\Debug\netcoreapp3.1\TestTask.Server.MvcApplicationPartsAssemblyInfo.cache
-C:\Users\pocht\Desktop\TestTask\TestTask\Server\obj\Debug\netcoreapp3.1\TestTask.Server.RazorAssemblyInfo.cache
-C:\Users\pocht\Desktop\TestTask\TestTask\Server\obj\Debug\netcoreapp3.1\TestTask.Server.RazorAssemblyInfo.cs
 C:\Users\pocht\Desktop\TestTask\TestTask\Server\obj\Debug\netcoreapp3.1\staticwebassets\TestTask.Server.StaticWebAssets.Manifest.cache
 C:\Users\pocht\Desktop\TestTask\TestTask\Server\obj\Debug\netcoreapp3.1\staticwebassets\TestTask.Server.StaticWebAssets.xml
-C:\Users\pocht\Desktop\TestTask\TestTask\Server\obj\Debug\netcoreapp3.1\TestTask.Server.TagHelpers.input.cache
-C:\Users\pocht\Desktop\TestTask\TestTask\Server\obj\Debug\netcoreapp3.1\TestTask.Server.TagHelpers.output.cache
-C:\Users\pocht\Desktop\TestTask\TestTask\Server\obj\Debug\netcoreapp3.1\TestTask.Server.RazorCoreGenerate.cache
-C:\Users\pocht\Desktop\TestTask\TestTask\Server\obj\Debug\netcoreapp3.1\Razor\Pages\Error.cshtml.g.cs
-C:\Users\pocht\Desktop\TestTask\TestTask\Server\obj\Debug\netcoreapp3.1\Razor\Pages\Shared\_Layout.cshtml.g.cs
 C:\Users\pocht\Desktop\TestTask\TestTask\Server\obj\Debug\netcoreapp3.1\TestTask.Server.RazorTargetAssemblyInfo.cache
-C:\Users\pocht\Desktop\TestTask\TestTask\Server\obj\Debug\netcoreapp3.1\TestTask.Server.RazorTargetAssemblyInfo.cs
-C:\Users\pocht\Desktop\TestTask\TestTask\Server\obj\Debug\netcoreapp3.1\TestTask.Server.Views.pdb
 C:\Users\pocht\Desktop\TestTask\TestTask\Server\obj\Debug\netcoreapp3.1\TestTask.Server.csproj.CopyComplete
 C:\Users\pocht\Desktop\TestTask\TestTask\Server\obj\Debug\netcoreapp3.1\TestTask.Server.dll
 C:\Users\pocht\Desktop\TestTask\TestTask\Server\obj\Debug\netcoreapp3.1\TestTask.Server.pdb
@@ -1299,3 +1289,5 @@ C:\Users\MAS_1_7\Source\Repos\TestTask\TestTask\Server\obj\Debug\netcoreapp3.1\T
 C:\Users\MAS_1_7\Source\Repos\TestTask\TestTask\Server\obj\Debug\netcoreapp3.1\TestTask.Server.dll
 C:\Users\MAS_1_7\Source\Repos\TestTask\TestTask\Server\obj\Debug\netcoreapp3.1\TestTask.Server.pdb
 C:\Users\MAS_1_7\Source\Repos\TestTask\TestTask\Server\obj\Debug\netcoreapp3.1\TestTask.Server.genruntimeconfig.cache
+C:\Users\pocht\Desktop\TestTask\TestTask\Server\bin\Debug\netcoreapp3.1\Blazored.LocalStorage.dll
+C:\Users\pocht\Desktop\TestTask\TestTask\Server\bin\Debug\netcoreapp3.1\Blazored.SessionStorage.dll
