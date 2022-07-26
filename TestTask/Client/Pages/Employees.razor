@@ -157,6 +157,7 @@ else
     {
         _stateMachine.SetAddState();
         await _storageService.SetItemAsync<Employee>("currentEmployee", null);
+        Program.AppData.ClearEmployeeBackup();
         _navigationManager.NavigateTo("employeeInfo");
     }
 

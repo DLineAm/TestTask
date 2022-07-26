@@ -8,6 +8,7 @@
 @inject StateMachine _stateMachine
 @inject NavigationManager _navigationManager
 @inject EventAggregator _eventAggregator
+@inject ISyncSessionStorageService _storageService
 <div>
     <a class="sidebar__title" href="">Подразделения</a>
 </div>
@@ -103,6 +104,7 @@ else
     private void DivisionAddButton_OnClick()
     {
         _stateMachine.SetAddState();
+        Program.AppData.ClearDivisionBackup();
         _navigationManager.NavigateTo("divisionInfo/0");
     }
 
@@ -142,6 +144,9 @@ else
 
         await Program.AppData.InitializeBaseProperties();
         await GetDivisions();
+        var divisionFromSession = _storageService.GetItem<Division>("currentDivision");
+        if (divisionFromSession != null && divisionFromSession.Id == divisionToDelete.Id)
+            _storageService.Clear();
         if (Program.LastPageUrl == "employees/" + divisionToDelete.Id)
             _navigationManager.NavigateTo("");
     }

@@ -49,14 +49,17 @@
         <div class="subdiv__wrapper">
             @foreach (var subDivision in _subDivisionsToAdd)
             {
-                <div class="subdiv__item">
-                    <div>
-                        <span>@subDivision.Title</span>
-                        <span>@subDivision.CreateDate.ToShortDateString()</span>
-                    </div>
+                @if (subDivision != null)
+                {
+                    <div class="subdiv__item">
+                        <div>
+                            <span>@subDivision.Title</span>
+                            <span>@subDivision.CreateDate.ToShortDateString()</span>
+                        </div>
 
-                    <button @onclick="() => DeleteSubDivision(subDivision)" class="main--btn inverted">Удалить</button>
-                </div>
+                        <button @onclick="() => DeleteSubDivision(subDivision)" class="main--btn inverted">Удалить</button>
+                    </div>
+                }
             }
         </div>
     </div>
@@ -105,6 +108,7 @@
 
     private async Task InitializeData()
     {
+        _division = null;
         var divisionFromSession = GetDivisionFromSession();
         _subDivisionsToAdd = new List<Division>();
         if (Program.AppData.CurrentDivision == null && divisionFromSession != null)

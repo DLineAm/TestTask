@@ -125,7 +125,7 @@ using Newtonsoft.Json;
         }
         #pragma warning restore 1998
 #nullable restore
-#line 47 "C:\Users\pocht\Desktop\TestTask\TestTask\Client\Shared\NavMenu.razor"
+#line 48 "C:\Users\pocht\Desktop\TestTask\TestTask\Client\Shared\NavMenu.razor"
        
     private Dictionary<int,Division> _divisions;
     private bool _collapseNavMenu = true;
@@ -173,7 +173,7 @@ using Newtonsoft.Json;
             __builder2.AddMarkupContent(0, "<div></div>");
         }
 #nullable restore
-#line 85 "C:\Users\pocht\Desktop\TestTask\TestTask\Client\Shared\NavMenu.razor"
+#line 86 "C:\Users\pocht\Desktop\TestTask\TestTask\Client\Shared\NavMenu.razor"
                                ;
         }
 
@@ -194,7 +194,7 @@ using Newtonsoft.Json;
             __builder2.OpenElement(7, "a");
             __builder2.AddAttribute(8, "style", "cursor:" + " pointer;" + " color:" + " #fff;" + " " + (
 #nullable restore
-#line 92 "C:\Users\pocht\Desktop\TestTask\TestTask\Client\Shared\NavMenu.razor"
+#line 93 "C:\Users\pocht\Desktop\TestTask\TestTask\Client\Shared\NavMenu.razor"
                                                                         Program.CurrentDivisionId == id ? "text-decoration: underline;" : ""
 
 #line default
@@ -203,7 +203,7 @@ using Newtonsoft.Json;
             ));
             __builder2.AddAttribute(9, "@onclick", "async () => await SetCurrentDivision(subDivision)");
 #nullable restore
-#line 92 "C:\Users\pocht\Desktop\TestTask\TestTask\Client\Shared\NavMenu.razor"
+#line 93 "C:\Users\pocht\Desktop\TestTask\TestTask\Client\Shared\NavMenu.razor"
 __builder2.AddContent(10, subDivision.Title);
 
 #line default
@@ -219,7 +219,7 @@ __builder2.AddContent(10, subDivision.Title);
             __builder2.CloseElement();
         }
 #nullable restore
-#line 96 "C:\Users\pocht\Desktop\TestTask\TestTask\Client\Shared\NavMenu.razor"
+#line 97 "C:\Users\pocht\Desktop\TestTask\TestTask\Client\Shared\NavMenu.razor"
                            ;
             markup += GetList(subDivision, 
 
@@ -230,7 +230,7 @@ __builder2.AddContent(10, subDivision.Title);
             __builder2.AddMarkupContent(13, "<div></div>");
         }
 #nullable restore
-#line 97 "C:\Users\pocht\Desktop\TestTask\TestTask\Client\Shared\NavMenu.razor"
+#line 98 "C:\Users\pocht\Desktop\TestTask\TestTask\Client\Shared\NavMenu.razor"
                                                        );
         }
         return 
@@ -241,7 +241,7 @@ __builder2.AddContent(10, subDivision.Title);
         (__builder2) => {
             __builder2.OpenElement(14, "ul");
 #nullable restore
-#line 99 "C:\Users\pocht\Desktop\TestTask\TestTask\Client\Shared\NavMenu.razor"
+#line 100 "C:\Users\pocht\Desktop\TestTask\TestTask\Client\Shared\NavMenu.razor"
 __builder2.AddContent(15, markup);
 
 #line default
@@ -251,13 +251,14 @@ __builder2.AddContent(15, markup);
             __builder2.AddMarkupContent(16, "\r\n");
         }
 #nullable restore
-#line 100 "C:\Users\pocht\Desktop\TestTask\TestTask\Client\Shared\NavMenu.razor"
+#line 101 "C:\Users\pocht\Desktop\TestTask\TestTask\Client\Shared\NavMenu.razor"
     ;
     }
 
     private void DivisionAddButton_OnClick()
     {
         _stateMachine.SetAddState();
+        Program.AppData.ClearDivisionBackup();
         _navigationManager.NavigateTo("divisionInfo/0");
     }
 
@@ -297,6 +298,11 @@ __builder2.AddContent(15, markup);
 
         await Program.AppData.InitializeBaseProperties();
         await GetDivisions();
+        var divisionFromSession = _storageService.GetItem<Division>("currentDivision");
+        if (divisionFromSession != null && divisionFromSession.Id == divisionToDelete.Id)
+        {
+            _storageService.Clear();
+        }
         if (Program.LastPageUrl == "employees/" + divisionToDelete.Id)
             _navigationManager.NavigateTo("");
     }
@@ -358,6 +364,7 @@ __builder2.AddContent(15, markup);
 #line default
 #line hidden
 #nullable disable
+        [global::Microsoft.AspNetCore.Components.InjectAttribute] private ISyncSessionStorageService _storageService { get; set; }
         [global::Microsoft.AspNetCore.Components.InjectAttribute] private EventAggregator _eventAggregator { get; set; }
         [global::Microsoft.AspNetCore.Components.InjectAttribute] private NavigationManager _navigationManager { get; set; }
         [global::Microsoft.AspNetCore.Components.InjectAttribute] private StateMachine _stateMachine { get; set; }

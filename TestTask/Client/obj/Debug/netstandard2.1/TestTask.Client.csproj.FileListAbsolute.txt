@@ -1534,6 +1534,6 @@ C:\Users\pocht\Desktop\TestTask\TestTask\Client\obj\Debug\netstandard2.1\compres
 C:\Users\pocht\Desktop\TestTask\TestTask\Client\obj\Debug\netstandard2.1\compressed\_framework\_bin\Blazored.SessionStorage.dll.br
 C:\Users\pocht\Desktop\TestTask\TestTask\Client\obj\Debug\netstandard2.1\integrity\OGGuD0qoekOAW5Ra3tdm1xwheAMGbkrxz-Xd734wY9k=.hash
 C:\Users\pocht\Desktop\TestTask\TestTask\Client\obj\Debug\netstandard2.1\integrity\XH-2sbz6fIu1g7Azb5z4ajuAaVYAaHt1fOJKLWpuPHI=.hash
-C:\Users\pocht\Desktop\TestTask\TestTask\Client\obj\Debug\netstandard2.1\integrity\eYKW5LJ2vqNwWkqZzDw9rB_H7qVVzYUUolE_hnpNrNM=.hash
-C:\Users\pocht\Desktop\TestTask\TestTask\Client\obj\Debug\netstandard2.1\integrity\Q19pbsTP0J3Df1xm6fGyQLMZPQx2z1NuAB6MAGl-wS4=.hash
-C:\Users\pocht\Desktop\TestTask\TestTask\Client\obj\Debug\netstandard2.1\integrity\bu89RycGeRuBOy2qCiZCt1MYdrnWDYlydPWnkHMWpuo=.hash
+C:\Users\pocht\Desktop\TestTask\TestTask\Client\obj\Debug\netstandard2.1\integrity\2epUofvVogpS9Yv0Nqg7bzd743WD27BuzvTXDUZP7mo=.hash
+C:\Users\pocht\Desktop\TestTask\TestTask\Client\obj\Debug\netstandard2.1\integrity\sT71R7Q_C_Q1bPy2uDitDTkc1nEG77lUo4uE1uh7Cuc=.hash
+C:\Users\pocht\Desktop\TestTask\TestTask\Client\obj\Debug\netstandard2.1\integrity\Xdvi6CjifeXTgizPch44k_e23SnY-yDU213jdeCoN_Y=.hash

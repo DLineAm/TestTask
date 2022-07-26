@@ -119,7 +119,7 @@ using TestTask.Client.Utils;
         }
         #pragma warning restore 1998
 #nullable restore
-#line 73 "C:\Users\pocht\Desktop\TestTask\TestTask\Client\Pages\DivisionInfo.razor"
+#line 76 "C:\Users\pocht\Desktop\TestTask\TestTask\Client\Pages\DivisionInfo.razor"
        
     [Parameter]
     public int Id { get; set; }
@@ -155,6 +155,7 @@ using TestTask.Client.Utils;
 
     private async Task InitializeData()
     {
+        _division = null;
         var divisionFromSession = GetDivisionFromSession();
         _subDivisionsToAdd = new List<Division>();
         if (Program.AppData.CurrentDivision == null && divisionFromSession != null)
