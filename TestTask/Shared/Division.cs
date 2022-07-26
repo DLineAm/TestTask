@@ -10,6 +10,22 @@ namespace TestTask.Shared
     /// </summary>
     public class Division : IIdentity
     {
+        public Division()
+        {
+            
+        }
+
+        public Division(Division division)
+        {
+            Title = division.Title;
+            CreateDate = division.CreateDate;
+            Description = division.Description;
+            DivisionId = division.DivisionId;
+            Employees = division.Employees;
+            ParentDivision = division.ParentDivision;
+            SubDivisions = division.SubDivisions;
+            Id = division.Id;
+        }
         /// <summary>
         /// Идентификатор подразделения
         /// </summary>

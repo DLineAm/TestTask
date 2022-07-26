@@ -103,6 +103,13 @@ using Blazored.SessionStorage;
 #line default
 #line hidden
 #nullable disable
+#nullable restore
+#line 6 "C:\Users\pocht\Desktop\TestTask\TestTask\Client\Pages\DivisionInfo.razor"
+using TestTask.Client.Utils;
+
+#line default
+#line hidden
+#nullable disable
     [Microsoft.AspNetCore.Components.RouteAttribute("/divisionInfo/{Id:int}")]
     public partial class DivisionInfo : Microsoft.AspNetCore.Components.ComponentBase
     {
@@ -112,7 +119,7 @@ using Blazored.SessionStorage;
         }
         #pragma warning restore 1998
 #nullable restore
-#line 72 "C:\Users\pocht\Desktop\TestTask\TestTask\Client\Pages\DivisionInfo.razor"
+#line 73 "C:\Users\pocht\Desktop\TestTask\TestTask\Client\Pages\DivisionInfo.razor"
        
     [Parameter]
     public int Id { get; set; }
@@ -140,6 +147,7 @@ using Blazored.SessionStorage;
 
     protected override async Task OnParametersSetAsync()
     {
+        _errorText = string.Empty;
         _divisions = _divisionsToAdd = _subDivisionsToAdd = new List<Division>();
         await InitializeData();
         StateHasChanged();
@@ -156,23 +164,16 @@ using Blazored.SessionStorage;
         else
         {
             _division = _stateMachine.CurrentState is StateMachine.State.Add
-                ? new Division{DivisionId = Program.AppData.CurrentDivisionFromList?.Id ?? 0}
+                ? new Division { DivisionId = Program.AppData.CurrentDivisionFromList?.Id ?? 0 }
                 : Program.AppData.CurrentDivision;
             _storageService.SetItem("currentDivision", _division);
         }
 
-        _divisionBackup = new Division
-        {
-            Title = _division.Title,
-            CreateDate = _division.CreateDate,
-            Description = _division.Description,
-            DivisionId = _division.DivisionId,
-            SubDivisions = _division.SubDivisions
-        };
+        _divisionBackup = new Division(_division);
 
         await GetDivisions();
 
-        if (_stateMachine.CurrentState == StateMachine.State.Add && divisionFromSession != null 
+        if (_stateMachine.CurrentState == StateMachine.State.Add && divisionFromSession != null
             || _division.SubDivisions.Count > 0)
             FillSubDivisions();
     }
@@ -196,7 +197,7 @@ using Blazored.SessionStorage;
         {
             d.ParentDivision = null;
         });
-        divisionsList.Insert(0, new Division {Title = "Нет", DivisionId = -1});
+        divisionsList.Insert(0, new Division { Title = "Нет", DivisionId = -1 });
         _divisionsToAdd = divisionsList.Where(d => d.DivisionId != null && d.DivisionId != 0).ToList();
         _divisions = divisionsList.ToList();
     }
@@ -231,7 +232,10 @@ using Blazored.SessionStorage;
         _divisionsToAdd.Remove(divisionToAdd);
         _subDivisionsToAdd.Add(divisionToAdd);
 
-        _division.SubDivisions = _subDivisionsToAdd;
+        _division.SubDivisions.Add(divisionToAdd);
+
+        if (_division.DivisionId == _subDivisionId)
+            _division.DivisionId = 0;
 
         _subDivisionId = null;
         SaveDivision();
@@ -253,22 +257,50 @@ using Blazored.SessionStorage;
             return;
         }
 
-        if (IsAnySubDivision(_divisions.FirstOrDefault(d => d.Id == _division.DivisionId)))
+        var childrenDivision = _divisions.FirstOrDefault(d => d.Id == _division.DivisionId);
+
+        if (childrenDivision != null 
+            && (_divisionBackup.DivisionId is 0 || _divisionBackup.DivisionId is null) 
+            && IsAnySubDivision(childrenDivision))
         {
             _errorText = @"Попытка изменить поле ""Родительское подразделение"" на одно из вложенных подразделений";
             return;
         }
 
-        if (_division.DivisionId == 0)
+        _division.SubDivisions = _subDivisionsToAdd;
+
+
+        var divisions = new List<Division> { _division};
+        if (_division.DivisionId != 0)
         {
-            _division.DivisionId = null;
+            var parentDivision = _divisions.FirstOrDefault(d => d.Id == _division.DivisionId);
+            if (parentDivision != null)
+                divisions.Add(parentDivision);
         }
-        if (_subDivisionsToAdd.Any(d => d.Id == _division.DivisionId))
+        var subdivisions = _division.SubDivisions.Select(d =>
         {
-            _division = _divisionsToAdd.FirstOrDefault(d => d.Id > _division.DivisionId);
+            var division = new Division(d)
+                {
+                    DivisionId = _division.Id
+                };
+
+            return division;
+        });
+        divisions.AddRange(subdivisions);
+
+        if (TreeHelper.IsLoop(divisions))
+        {
+            _errorText = @"Попытка создать цикл из родительского подразделения и вложенных подразделений";
+            return;
         }
 
-        _division.SubDivisions = _subDivisionsToAdd;
+        if (_division.DivisionId == 0)
+            _division.DivisionId = null;
+
+        _division.ParentDivision = null;
+
+        if (_subDivisionsToAdd.Any(d => d.Id == _division.DivisionId))
+            _division = _divisionsToAdd.FirstOrDefault(d => d.Id > _division.DivisionId);
 
         var response = _stateMachine.CurrentState is StateMachine.State.Change
             ? await PutDivisionAsync()

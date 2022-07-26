@@ -128,6 +128,9 @@ namespace TestTask.Client.Services
             };
         }
 
+        /// <summary>
+        /// Замена текущего подразделения резервной копией
+        /// </summary>
         public void RecoverDivision()
         {
             if (CurrentDivision is null || _divisionBackup is null)
@@ -144,6 +147,9 @@ namespace TestTask.Client.Services
             CurrentDivision.SubDivisions = _divisionBackup.SubDivisions;
         }
 
+        /// <summary>
+        /// Замена текущего сотрудника резервной копией
+        /// </summary>
         public void RecoverEmployee()
         {
             if (CurrentEmployee is null || _employeeBackup is null)
@@ -162,11 +168,17 @@ namespace TestTask.Client.Services
             CurrentEmployee.Id = _employeeBackup.Id;
         }
 
+        /// <summary>
+        /// Очистка резервной копии сотрудника
+        /// </summary>
         public void ClearEmployeeBackup()
         {
             _employeeBackup = null;
         }
 
+        /// <summary>
+        /// Очистка резервной копии подразделения
+        /// </summary>
         public void ClearDivisionBackup()
         {
             _divisionBackup = null;
