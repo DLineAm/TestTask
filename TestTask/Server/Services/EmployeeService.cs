@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
-using System.Data.SqlTypes;
 
 using TestTask.Server.DAL;
+using TestTask.Server.Utils;
 using TestTask.Shared;
 
 namespace TestTask.Server.Services
@@ -11,15 +11,15 @@ namespace TestTask.Server.Services
     /// </summary>
     public class EmployeeService : IEmployeeService
     {
-        private readonly UnitOfWork _unitOfWork;
+        private readonly DataServiceCollection _serviceCollection;
 
         /// <summary>
         /// Конструктор сервиса сотрудников
         /// </summary>
-        /// <param name="unitOfWork">Класс, хранящий все репозитории с целью гарантии использования одного контекста</param>
-        public EmployeeService(UnitOfWork unitOfWork)
+        /// <param name="serviceCollection">Класс, хранящий сервисы по работе с хранилищем</param>
+        public EmployeeService(DataServiceCollection serviceCollection)
         {
-            _unitOfWork = unitOfWork;
+            _serviceCollection = serviceCollection;
         }
 
         /// <summary>
@@ -28,8 +28,7 @@ namespace TestTask.Server.Services
         /// <param name="divisionId">Идентификатор подразделения, по которому нужно получить сотрудников</param>
         public IEnumerable<Employee> GetByDivisionId(int divisionId)
         {
-            return _unitOfWork.EmployeeRepository
-                    .GetWithChildren(e => e.DivisionId == divisionId);
+            return _serviceCollection.Employees.GetByDivisionId(divisionId);
         }
 
         /// <summary>
@@ -38,9 +37,7 @@ namespace TestTask.Server.Services
         /// <param name="employee">Сотрудник, которого нужно изменить</param>
         public void Edit(Employee employee)
         {
-            _unitOfWork.EmployeeRepository.Update(employee);
-
-            _unitOfWork.Save();
+            _serviceCollection.Employees.SaveAndUpdate(employee);
         }
 
         /// <summary>
@@ -49,10 +46,7 @@ namespace TestTask.Server.Services
         /// <param name="id">Идентификатор, по которому нужно удалить сотрудника</param>
         public void Delete(int id)
         {
-            var employee = _unitOfWork.EmployeeRepository.Get(id);
-
-            _unitOfWork.EmployeeRepository.Delete(employee);
-            _unitOfWork.Save();
+            _serviceCollection.Employees.Delete(id);
         }
 
         /// <summary>
@@ -61,9 +55,7 @@ namespace TestTask.Server.Services
         /// <param name="employee">Сотрудник, которого нужно добавить</param>
         public int Add(Employee employee)
         {
-            var entry = _unitOfWork.EmployeeRepository.Add(employee).Entity;
-            _unitOfWork.Save();
-            return entry.Id;
+            return _serviceCollection.Employees.Add(employee);
         }
     }
 }

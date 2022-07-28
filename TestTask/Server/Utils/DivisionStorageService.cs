@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Linq.Expressions;
 
 using TestTask.Server.DAL;
@@ -10,7 +11,7 @@ namespace TestTask.Server.Utils
     /// <summary>
     /// Сервис по работе с хранилищем подразделений
     /// </summary>
-    public class DivisionStorageService : IStorageService<Division>
+    public class DivisionStorageService : IDivisionStorageService
     {
         private readonly UnitOfWork _unitOfWork;
         private readonly Cache _cache;
@@ -19,7 +20,7 @@ namespace TestTask.Server.Utils
         /// Конструктор сервиса по работе с хранилищем подразделений
         /// </summary>
         /// <param name="unitOfWork">Класс, хранящий все репозитории с целью гарантии использования одного контекста</param>
-        /// <param name="cache">Класс, имеющий хранилища списков записей</param>
+        /// <param name="cache">Класс, имеющий хранилища списков подразделений</param>
         public DivisionStorageService(UnitOfWork unitOfWork, Cache cache)
         {
             _unitOfWork = unitOfWork;
@@ -81,16 +82,6 @@ namespace TestTask.Server.Utils
         }
 
         /// <summary>
-        /// Обновление подразделения из хранилища записью entity
-        /// </summary>
-        /// <param name="division">Обновленное подразделение, которое нужно заменить в хранилище</param>
-        public void Update(Division division)
-        {
-            if (_cache.DivisionStorage.Any())
-                _cache.DivisionStorage.Replace(division);
-        }
-
-        /// <summary>
         /// Созранение и обновление подразделения из хранилища записью entity
         /// </summary>
         /// <param name="division">Обновленное подразделение, которое нужно сохранить и заменить в хранилище</param>
@@ -99,8 +90,36 @@ namespace TestTask.Server.Utils
             _unitOfWork.DivisionRepository.Update(division);
             _unitOfWork.Save();
 
-            if (_cache.DivisionStorage.Any())
-                _cache.DivisionStorage.Replace(division);
+            if (!_cache.DivisionStorage.Any()) return;
+
+            _cache.DivisionStorage.Replace(division);
+
+            if (division.DivisionId != null)
+            {
+                var parentDivision = _cache.DivisionStorage.Get((int)division.DivisionId);
+                parentDivision.SubDivisions.Add(division);
+                _cache.DivisionStorage.Replace(parentDivision);
+            }
+
+            var subDivisions = _cache.DivisionStorage.GetAll(d => d.DivisionId == division.Id);
+
+            foreach (var subDivision in subDivisions)
+            {
+                if (division.SubDivisions.All(d => d.Id != subDivision.Id))
+                {
+                    subDivision.DivisionId = null;
+                    subDivision.ParentDivision = null;
+                    _cache.DivisionStorage.Replace(subDivision);
+                }
+            }
+
+            foreach (var subDivision in division.SubDivisions)
+            {
+                subDivision.Id = division.Id;
+                subDivision.ParentDivision = division;
+                _cache.DivisionStorage.Replace(subDivision);
+            }
+
 
         }
 

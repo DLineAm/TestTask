@@ -96,13 +96,6 @@ using Blazored.SessionStorage;
 #line default
 #line hidden
 #nullable disable
-#nullable restore
-#line 5 "C:\Users\pocht\Desktop\TestTask\TestTask\Client\Pages\Employees.razor"
-using System.Diagnostics;
-
-#line default
-#line hidden
-#nullable disable
     [Microsoft.AspNetCore.Components.RouteAttribute("/employees/{Id:int}")]
     public partial class Employees : Microsoft.AspNetCore.Components.ComponentBase
     {
@@ -112,7 +105,7 @@ using System.Diagnostics;
         }
         #pragma warning restore 1998
 #nullable restore
-#line 57 "C:\Users\pocht\Desktop\TestTask\TestTask\Client\Pages\Employees.razor"
+#line 56 "C:\Users\pocht\Desktop\TestTask\TestTask\Client\Pages\Employees.razor"
        
     [Parameter]
     public int Id { get; set; }
@@ -190,15 +183,17 @@ using System.Diagnostics;
             return;
         }
 
-        Program.AppData.Employees.Remove(employeeToDelete);
+        var employeeFromList = Program.AppData.Employees.FirstOrDefault(e => e.Id == employeeToDelete.Id);
 
-        if (employeeToDelete.DivisionId != Id)
+        Program.AppData.Employees.Remove(employeeFromList);
+
+        if (employeeFromList.DivisionId != Id)
         {
-            _existEmployees.Remove(employeeToDelete);
+            _existEmployees.Remove(employeeFromList);
             return;
         }
 
-        _employees.Remove(employeeToDelete);
+        _employees.Remove(employeeFromList);
     }
 
     private async Task DeleteButton_OnClick(Employee employee)
@@ -241,7 +236,7 @@ using System.Diagnostics;
             __builder2.OpenElement(3, "span");
             __builder2.AddAttribute(4, "style", "font-size: 20px; font-weight: 700");
 #nullable restore
-#line 174 "C:\Users\pocht\Desktop\TestTask\TestTask\Client\Pages\Employees.razor"
+#line 175 "C:\Users\pocht\Desktop\TestTask\TestTask\Client\Pages\Employees.razor"
 __builder2.AddContent(5, employee.FullName);
 
 #line default
@@ -249,7 +244,7 @@ __builder2.AddContent(5, employee.FullName);
 #nullable disable
             __builder2.AddContent(6, " (");
 #nullable restore
-#line 174 "C:\Users\pocht\Desktop\TestTask\TestTask\Client\Pages\Employees.razor"
+#line 175 "C:\Users\pocht\Desktop\TestTask\TestTask\Client\Pages\Employees.razor"
 __builder2.AddContent(7, _divisions.FirstOrDefault(d => d.Id == employee.DivisionId)?.Title);
 
 #line default
@@ -267,7 +262,7 @@ __builder2.AddContent(7, _divisions.FirstOrDefault(d => d.Id == employee.Divisio
             __builder2.AddMarkupContent(11, "\r\n");
         }
 #nullable restore
-#line 180 "C:\Users\pocht\Desktop\TestTask\TestTask\Client\Pages\Employees.razor"
+#line 181 "C:\Users\pocht\Desktop\TestTask\TestTask\Client\Pages\Employees.razor"
     ;
         }
 

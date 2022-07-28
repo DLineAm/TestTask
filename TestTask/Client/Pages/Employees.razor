@@ -2,7 +2,6 @@
 @using TestTask.Shared
 @using TestTask.Client.Services
 @using Blazored.SessionStorage
-@using System.Diagnostics
 @inject HttpClient _http
 @inject NavigationManager _navigationManager
 @inject StateMachine _stateMachine
@@ -131,15 +130,17 @@ else
             return;
         }
 
-        Program.AppData.Employees.Remove(employeeToDelete);
+        var employeeFromList = Program.AppData.Employees.FirstOrDefault(e => e.Id == employeeToDelete.Id);
 
-        if (employeeToDelete.DivisionId != Id)
+        Program.AppData.Employees.Remove(employeeFromList);
+
+        if (employeeFromList.DivisionId != Id)
         {
-            _existEmployees.Remove(employeeToDelete);
+            _existEmployees.Remove(employeeFromList);
             return;
         }
 
-        _employees.Remove(employeeToDelete);
+        _employees.Remove(employeeFromList);
     }
 
     private async Task DeleteButton_OnClick(Employee employee)

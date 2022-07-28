@@ -6,7 +6,9 @@ using Microsoft.Extensions.Hosting;
 using System;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage;
+using TestTask.Server.DAL;
 using TestTask.Server.DAL.Context;
+using TestTask.Server.Utils;
 
 namespace TestTask.Server
 {
@@ -17,7 +19,27 @@ namespace TestTask.Server
         {
             var host = CreateHostBuilder(args).Build();
             ConfigureDatabase(host);
+            FillCache(host);
             host.Run();
+        }
+
+        private static void FillCache(IHost host)
+        {
+            using var scope = host.Services.CreateScope();
+
+            var services = scope.ServiceProvider;
+
+            using var unitOfWork = services.GetRequiredService<UnitOfWork>();
+
+            var cache = services.GetRequiredService<Cache>();
+
+            var divisions = unitOfWork.DivisionRepository.GetWithChildren();
+
+            cache.DivisionStorage.Fill(divisions);
+
+            var employees = unitOfWork.EmployeeRepository.GetWithChildren();
+
+            cache.EmployeeStorage.Fill(employees);
         }
 
         private static void ConfigureDatabase(IHost host)
