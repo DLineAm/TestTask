@@ -1,90 +1,99 @@
-﻿using System;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.Extensions.Logging;
 
-using Newtonsoft.Json;
-
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.Extensions.Logging;
+
 using TestTask.Server.DAL;
+using TestTask.Server.Utils;
 using TestTask.Shared;
 
 namespace TestTask.Server.Services
 {
+    /// <summary>
+    /// Сервис подразделений
+    /// </summary>
     public class DivisionService : IDivisionService
     {
         private readonly UnitOfWork _unitOfWork;
         private readonly ILogger<DivisionService> _logger;
+        private readonly DataServiceCollection _serviceCollection;
 
-        public DivisionService(UnitOfWork unitOfWork, IHttpContextAccessor accessor, ILogger<DivisionService> logger)
+        /// <summary>
+        /// Конструктор сервиса сотрудников
+        /// </summary>
+        /// <param name="unitOfWork">Класс, хранящий все репозитории с целью гарантии использования одного контекста</param>
+        /// <param name="logger">Логгер</param>
+        public DivisionService(UnitOfWork unitOfWork, ILogger<DivisionService> logger, DataServiceCollection serviceCollection)
         {
-            JsonConvert.DefaultSettings = () => new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore };
             _unitOfWork = unitOfWork;
             _logger = logger;
+            _serviceCollection = serviceCollection;
         }
 
         /// <summary>
-        /// Получение списка подразделений по идентификатору
+        /// Получение списка подразделений
         /// </summary>
         /// <returns></returns>
         public IEnumerable<Division> Get()
         {
-            return _unitOfWork.DivisionRepository.GetWithChildren();
+            return _serviceCollection.Divisions.GetAll();
         }
 
         /// <summary>
         /// Попытка получить подразделение из бд по идентификатору
         /// </summary>
-        /// <param name="id"></param>
-        /// <param name="division"></param>
-        /// <returns></returns>
+        /// <param name="id">Идентификатор подразделения</param>
+        /// <param name="division">Найденное подразделение</param>
+        /// <returns>True, если запись подразделение найдено. False, если нет</returns>
         public bool TryGet(int id, out Division division)
         {
-            division = _unitOfWork.DivisionRepository.Get(id);
+            division = _serviceCollection.Divisions.Get(id);
             return division != null;
         }
 
         /// <summary>
         /// Добавление подразделения в бд
         /// </summary>
-        /// <param name="division"></param>
+        /// <param name="division">Подразделение, которое нужно добавить</param>
         public int Add(Division division)
         {
-            division.Id = 0;
+            if (division.Id != 0)
+                throw new ArgumentException("Division Id is not 0");
+
             var subDivisions = division.SubDivisions.ToList();
             division.SubDivisions = new List<Division>();
-            var entity = _unitOfWork.DivisionRepository
-                .Add(division).Entity;
 
-            _unitOfWork.Save();
+            var id = _serviceCollection.Divisions.Add(division);
 
             foreach (var subDivision in subDivisions)
             {
-                var dbDivision = _unitOfWork.DivisionRepository.Get(subDivision.Id);
+                var dbDivision = _serviceCollection.Divisions.Get(subDivision.Id);
+
                 if (dbDivision is null)
                 {
                     _logger.LogWarning("One of subdivisions is null");
                     continue;
                 }
 
-                dbDivision.DivisionId = entity.Id;
+                dbDivision.DivisionId = id;
+
+                _serviceCollection.Divisions.SaveAndUpdate(dbDivision);
             }
 
-            _unitOfWork.Save();
-            return division.Id;
+            _serviceCollection.Divisions.SaveAndUpdate(division);
+            return id;
         }
 
         /// <summary>
         /// Удаление подразделения из бд
         /// </summary>
-        /// <param name="id"></param>
+        /// <param name="id">Идентификатор подразделения, которое нужно удалить</param>
         public void Delete(int id)
         {
-            var division = _unitOfWork.DivisionRepository.Get(id);
-            if (division is null)
-                throw new ArgumentException($"Division not found by Id={id}");
+            var division = _serviceCollection.Divisions.Get(id, true);
 
-            var subDivisions = _unitOfWork.DivisionRepository.Get(filter: d => d.DivisionId == id);
+            var subDivisions = _serviceCollection.Divisions.GetAll(d => d.DivisionId == id, true);
             if (subDivisions != null)
             {
                 foreach (var subDivision in subDivisions)
@@ -96,13 +105,22 @@ namespace TestTask.Server.Services
 
             var employeesForDelete = _unitOfWork.EmployeeRepository.Get(x => x.DivisionId == id);
             if (employeesForDelete.Any())
+            {
                 _unitOfWork.EmployeeRepository.DeleteBulk(employeesForDelete);
+                _unitOfWork.Save();
+            }
 
             division.DivisionId = null;
+            _serviceCollection.Divisions.SaveAndUpdate(division);
+            _serviceCollection.Divisions.Delete(division.Id);
 
-            _unitOfWork.DivisionRepository.Delete(division);
 
-            _unitOfWork.Save();
+            if (subDivisions == null) return;
+
+            foreach (var subDivision in subDivisions)
+            {
+                _serviceCollection.Divisions.SaveAndUpdate(subDivision);
+            }
         }
 
         /// <summary>
@@ -115,33 +133,34 @@ namespace TestTask.Server.Services
 
             division.SubDivisions = new List<Division>();
 
-            _unitOfWork.DivisionRepository.Update(division);
+            _serviceCollection.Divisions.SaveAndUpdate(division);
 
             foreach (var subDivisionId in subDivisionIds)
             {
-                var subDivision = _unitOfWork.DivisionRepository.Get(subDivisionId);
+                var subDivision = _serviceCollection.Divisions.Get(subDivisionId);
                 if (subDivision is null)
                 {
                     _logger.LogWarning($"One of subdivisions is null by Id={subDivisionId}");
                     continue;
                 }
 
-                subDivision.DivisionId = null;
-                subDivision.ParentDivision = null;
-                _unitOfWork.Save();
                 subDivision.DivisionId = division.Id;
+                subDivision.ParentDivision = null;
+
+                _serviceCollection.Divisions.SaveAndUpdate(subDivision);
             }
 
-            var subDivisionsFromDb = _unitOfWork.DivisionRepository.Get(d => d.DivisionId == division.Id);
+            var subDivisionsFromDb = _serviceCollection.Divisions.GetAll(d => d.DivisionId == division.Id, true);
             foreach (var subDivisionFromDb in subDivisionsFromDb)
             {
                 if (subDivisionIds.All(id => id != subDivisionFromDb.Id))
                 {
                     subDivisionFromDb.DivisionId = null;
+                    _serviceCollection.Divisions.SaveAndUpdate(subDivisionFromDb);
                 }
             }
 
-            _unitOfWork.Save();
+            _serviceCollection.Divisions.Save();
         }
     }
 }

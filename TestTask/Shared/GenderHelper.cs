@@ -1,18 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace TestTask.Shared
 {
+    /// <summary>
+    /// Класс-помощник для перечисления Gender
+    /// </summary>
     public static class GenderHelper
     {
+        /// <summary>
+        /// Получает наименование гендера
+        /// </summary>
+        /// <param name="gender">Гендер, наименование которого нужно получить</param>
         public static string GetGenderTitle(Gender gender)
         {
-            return gender switch
-            {
-                Gender.Male => "М",
-                Gender.Female => "Ж",
-                _ => throw new ArgumentOutOfRangeException(nameof(gender), gender, null)
-            };
+            return gender.GetAttribute<DisplayAttribute>().Name;
         }
     }
 }

@@ -1532,8 +1532,8 @@ C:\Users\pocht\Desktop\TestTask\TestTask\Client\obj\Debug\netstandard2.1\integri
 C:\Users\pocht\Desktop\TestTask\TestTask\Client\obj\Debug\netstandard2.1\integrity\bMGfld4CY2H49UjCGiz6JUKbEYHqz9eAejy81PaluPo=.hash
 C:\Users\pocht\Desktop\TestTask\TestTask\Client\obj\Debug\netstandard2.1\compressed\_framework\_bin\Blazored.SessionStorage.dll.gz
 C:\Users\pocht\Desktop\TestTask\TestTask\Client\obj\Debug\netstandard2.1\compressed\_framework\_bin\Blazored.SessionStorage.dll.br
-C:\Users\pocht\Desktop\TestTask\TestTask\Client\obj\Debug\netstandard2.1\integrity\OGGuD0qoekOAW5Ra3tdm1xwheAMGbkrxz-Xd734wY9k=.hash
-C:\Users\pocht\Desktop\TestTask\TestTask\Client\obj\Debug\netstandard2.1\integrity\XH-2sbz6fIu1g7Azb5z4ajuAaVYAaHt1fOJKLWpuPHI=.hash
-C:\Users\pocht\Desktop\TestTask\TestTask\Client\obj\Debug\netstandard2.1\integrity\2epUofvVogpS9Yv0Nqg7bzd743WD27BuzvTXDUZP7mo=.hash
-C:\Users\pocht\Desktop\TestTask\TestTask\Client\obj\Debug\netstandard2.1\integrity\sT71R7Q_C_Q1bPy2uDitDTkc1nEG77lUo4uE1uh7Cuc=.hash
-C:\Users\pocht\Desktop\TestTask\TestTask\Client\obj\Debug\netstandard2.1\integrity\Xdvi6CjifeXTgizPch44k_e23SnY-yDU213jdeCoN_Y=.hash
+C:\Users\pocht\Desktop\TestTask\TestTask\Client\obj\Debug\netstandard2.1\integrity\EABxE25RKicmb1XvbEHT6A9IMBZhQ1THf6M1ryy58bE=.hash
+C:\Users\pocht\Desktop\TestTask\TestTask\Client\obj\Debug\netstandard2.1\integrity\ln1IMWmZMKcF-Jo5H7v3EP-3WRLkj2zLbCqmugwj5GQ=.hash
+C:\Users\pocht\Desktop\TestTask\TestTask\Client\obj\Debug\netstandard2.1\integrity\LYPZtLNNZHtM3Jh2r3YUh0-Ahthwy4GUyD2uJNXmBy8=.hash
+C:\Users\pocht\Desktop\TestTask\TestTask\Client\obj\Debug\netstandard2.1\integrity\1Y6LJECLz97xOpVpBRgSUKI1ps7paDXu9XCYR_SEg-E=.hash
+C:\Users\pocht\Desktop\TestTask\TestTask\Client\obj\Debug\netstandard2.1\integrity\AaMlunsC_6jAMPtqVZASArqg7dIym-58XhFtyw_hOVE=.hash

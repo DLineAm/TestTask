@@ -119,7 +119,7 @@ using TestTask.Client.Utils;
         }
         #pragma warning restore 1998
 #nullable restore
-#line 73 "C:\Users\pocht\Desktop\TestTask\TestTask\Client\Pages\DivisionInfo.razor"
+#line 76 "C:\Users\pocht\Desktop\TestTask\TestTask\Client\Pages\DivisionInfo.razor"
        
     [Parameter]
     public int Id { get; set; }
@@ -155,17 +155,18 @@ using TestTask.Client.Utils;
 
     private async Task InitializeData()
     {
+        _division = null;
         var divisionFromSession = GetDivisionFromSession();
         _subDivisionsToAdd = new List<Division>();
-        if (Program.AppData.CurrentDivision == null && divisionFromSession != null)
+        if (Program.AppData.SelectedDivision == null && divisionFromSession != null)
         {
             _division = divisionFromSession;
         }
         else
         {
             _division = _stateMachine.CurrentState is StateMachine.State.Add
-                ? new Division { DivisionId = Program.AppData.CurrentDivisionFromList?.Id ?? 0 }
-                : Program.AppData.CurrentDivision;
+                ? new Division { DivisionId = Program.AppData.SelectedDivisionFromList?.Id ?? 0 }
+                : Program.AppData.SelectedDivision;
             _storageService.SetItem("currentDivision", _division);
         }
 
@@ -241,10 +242,15 @@ using TestTask.Client.Utils;
         SaveDivision();
     }
 
-    private bool IsAnySubDivision(Division division)
+    private bool IsAnySubDivision(IEnumerable<Division> divisions)
     {
-        var result = Program.AppData.GetMainDivision(division, _division);
-        return result;
+        foreach (var division in divisions)
+        {
+            return division.HasParent(_division) 
+                   || IsAnySubDivision(division.SubDivisions);
+        }
+
+        return false;
     }
 
     private async Task ApplyButton_OnClick()
@@ -261,9 +267,9 @@ using TestTask.Client.Utils;
 
         if (childrenDivision != null 
             && (_divisionBackup.DivisionId is 0 || _divisionBackup.DivisionId is null) 
-            && IsAnySubDivision(childrenDivision))
+            && IsAnySubDivision(_subDivisionsToAdd))
         {
-            _errorText = @"Попытка изменить поле ""Родительское подразделение"" на одно из вложенных подразделений";
+            _errorText = @"Попытка изменить поле корневого подразделения ""Родительское подразделение"" на одно из вложенных подразделений";
             return;
         }
 
@@ -277,6 +283,7 @@ using TestTask.Client.Utils;
             if (parentDivision != null)
                 divisions.Add(parentDivision);
         }
+
         var subdivisions = _division.SubDivisions.Select(d =>
         {
             var division = new Division(d)
@@ -286,6 +293,7 @@ using TestTask.Client.Utils;
 
             return division;
         });
+
         divisions.AddRange(subdivisions);
 
         if (TreeHelper.IsLoop(divisions))
@@ -355,7 +363,7 @@ using TestTask.Client.Utils;
         _division.Description = _divisionBackup.Description;
         _division.DivisionId = _divisionBackup.DivisionId;
         _division.SubDivisions = _divisionBackup.SubDivisions;
-        _stateMachine.SetIdleState();
+        _stateMachine.SetState(StateMachine.State.Idle);
         _navigationManager.NavigateTo(Program.LastPageUrl);
     }
 

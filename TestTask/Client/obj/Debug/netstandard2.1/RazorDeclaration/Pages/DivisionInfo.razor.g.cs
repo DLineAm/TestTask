@@ -158,16 +158,16 @@ using TestTask.Client.Utils;
         _division = null;
         var divisionFromSession = GetDivisionFromSession();
         _subDivisionsToAdd = new List<Division>();
-        if (Program.AppData.CurrentDivision == null && divisionFromSession != null)
+        if (!Program.AppData.SelectedDivision.CheckInitialize() && divisionFromSession != null)
         {
             _division = divisionFromSession;
         }
         else
         {
             _division = _stateMachine.CurrentState is StateMachine.State.Add
-                ? new Division { DivisionId = Program.AppData.CurrentDivisionFromList?.Id ?? 0 }
-                : Program.AppData.CurrentDivision;
-            _storageService.SetItem("currentDivision", _division);
+                ? new Division { DivisionId = Program.AppData.SelectedDivisionFromList?.Id ?? 0 }
+                : Program.AppData.SelectedDivision;
+            SaveDivision();
         }
 
         _divisionBackup = new Division(_division);
@@ -242,10 +242,15 @@ using TestTask.Client.Utils;
         SaveDivision();
     }
 
-    private bool IsAnySubDivision(Division division)
+    private bool IsAnySubDivision(IEnumerable<Division> divisions)
     {
-        var result = Program.AppData.GetMainDivision(division, _division);
-        return result;
+        foreach (var division in divisions)
+        {
+            return division.HasParent(_division) 
+                   || IsAnySubDivision(division.SubDivisions);
+        }
+
+        return false;
     }
 
     private async Task ApplyButton_OnClick()
@@ -262,7 +267,7 @@ using TestTask.Client.Utils;
 
         if (childrenDivision != null 
             && (_divisionBackup.DivisionId is 0 || _divisionBackup.DivisionId is null) 
-            && IsAnySubDivision(childrenDivision))
+            && IsAnySubDivision(_subDivisionsToAdd))
         {
             _errorText = @"Попытка изменить поле корневого подразделения ""Родительское подразделение"" на одно из вложенных подразделений";
             return;
@@ -315,8 +320,6 @@ using TestTask.Client.Utils;
             return;
         }
 
-        Program.AppData.ClearDivisionBackup();
-
         await Program.AppData.InitializeBaseProperties();
         _eventAggregator.InvokeDivisionCollectionChanged();
 
@@ -358,7 +361,7 @@ using TestTask.Client.Utils;
         _division.Description = _divisionBackup.Description;
         _division.DivisionId = _divisionBackup.DivisionId;
         _division.SubDivisions = _divisionBackup.SubDivisions;
-        _stateMachine.SetIdleState();
+        _stateMachine.SetState(StateMachine.State.Idle);
         _navigationManager.NavigateTo(Program.LastPageUrl);
     }
 

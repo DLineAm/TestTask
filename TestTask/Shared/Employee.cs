@@ -8,6 +8,8 @@ namespace TestTask.Shared
     /// </summary>
     public class Employee : IIdentity
     {
+        private readonly bool _isInitialized;
+
         public Employee(string firstName, string middleName, string lastName, Division division,Gender gender ,DateTime dateOfBirth, bool hasDriverLicense = false)
         {
             FirstName = firstName;
@@ -19,8 +21,32 @@ namespace TestTask.Shared
             DateOfBirth = dateOfBirth;
         }
 
+        public Employee(Employee? employee)
+        {
+            if (employee == null)
+            {
+                return;
+            }
+
+            FirstName = employee.FirstName;
+            MiddleName = employee.MiddleName;
+            LastName = employee.LastName;
+            DateOfBirth = employee.DateOfBirth;
+            Gender = employee.Gender;
+            Division = employee.Division;
+            DivisionId = employee.DivisionId;
+            HasDriverLicense = employee.HasDriverLicense;
+            Id = employee.Id;
+            _isInitialized = true;
+        }
+
         public Employee()
         {
+        }
+
+        public bool CheckInitialize()
+        {
+            return _isInitialized;
         }
 
         /// <summary>
@@ -58,6 +84,9 @@ namespace TestTask.Shared
         /// </summary>
         public int? DivisionId { get; set; }
 
+        /// <summary>
+        /// ФИО сотрудника
+        /// </summary>
         public string FullName => LastName + " " + FirstName + " " + MiddleName; 
 
         /// <summary>

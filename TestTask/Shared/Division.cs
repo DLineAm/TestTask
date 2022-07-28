@@ -10,13 +10,20 @@ namespace TestTask.Shared
     /// </summary>
     public class Division : IIdentity
     {
+        private readonly bool _isInitialized;
+
         public Division()
         {
             
         }
 
-        public Division(Division division)
+        public Division(Division? division)
         {
+            if (division == null)
+            {
+                return;
+            }
+
             Title = division.Title;
             CreateDate = division.CreateDate;
             Description = division.Description;
@@ -25,7 +32,14 @@ namespace TestTask.Shared
             ParentDivision = division.ParentDivision;
             SubDivisions = division.SubDivisions;
             Id = division.Id;
+            _isInitialized = true;
         }
+
+        public bool CheckInitialize()
+        {
+            return _isInitialized;
+        }
+
         /// <summary>
         /// Идентификатор подразделения
         /// </summary>
@@ -64,5 +78,16 @@ namespace TestTask.Shared
         /// Дети подразделения
         /// </summary>
         public ICollection<Division> SubDivisions { get; set; } = new List<Division>();
+
+
+        /// <summary>
+        /// Проверяет, является ли подразделение division родительским
+        /// </summary>
+        /// <param name="division"></param>
+        /// <returns>True, если подразделение division является родительким. False, если нет</returns>
+        public bool HasParent(Division division)
+        {
+            return division.Id == DivisionId || ParentDivision?.HasParent(division) != null;
+        }
     }
 }

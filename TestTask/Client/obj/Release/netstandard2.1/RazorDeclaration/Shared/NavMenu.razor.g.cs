@@ -125,7 +125,7 @@ using Newtonsoft.Json;
         }
         #pragma warning restore 1998
 #nullable restore
-#line 47 "C:\Users\pocht\Desktop\TestTask\TestTask\Client\Shared\NavMenu.razor"
+#line 48 "C:\Users\pocht\Desktop\TestTask\TestTask\Client\Shared\NavMenu.razor"
        
     private Dictionary<int,Division> _divisions;
     private bool _collapseNavMenu = true;
@@ -173,7 +173,7 @@ using Newtonsoft.Json;
             __builder2.AddMarkupContent(0, "<div></div>");
         }
 #nullable restore
-#line 85 "C:\Users\pocht\Desktop\TestTask\TestTask\Client\Shared\NavMenu.razor"
+#line 86 "C:\Users\pocht\Desktop\TestTask\TestTask\Client\Shared\NavMenu.razor"
                                ;
         }
 
@@ -194,7 +194,7 @@ using Newtonsoft.Json;
             __builder2.OpenElement(7, "a");
             __builder2.AddAttribute(8, "style", "cursor:" + " pointer;" + " color:" + " #fff;" + " " + (
 #nullable restore
-#line 92 "C:\Users\pocht\Desktop\TestTask\TestTask\Client\Shared\NavMenu.razor"
+#line 93 "C:\Users\pocht\Desktop\TestTask\TestTask\Client\Shared\NavMenu.razor"
                                                                         Program.CurrentDivisionId == id ? "text-decoration: underline;" : ""
 
 #line default
@@ -203,7 +203,7 @@ using Newtonsoft.Json;
             ));
             __builder2.AddAttribute(9, "@onclick", "async () => await SetCurrentDivision(subDivision)");
 #nullable restore
-#line 92 "C:\Users\pocht\Desktop\TestTask\TestTask\Client\Shared\NavMenu.razor"
+#line 93 "C:\Users\pocht\Desktop\TestTask\TestTask\Client\Shared\NavMenu.razor"
 __builder2.AddContent(10, subDivision.Title);
 
 #line default
@@ -219,7 +219,7 @@ __builder2.AddContent(10, subDivision.Title);
             __builder2.CloseElement();
         }
 #nullable restore
-#line 96 "C:\Users\pocht\Desktop\TestTask\TestTask\Client\Shared\NavMenu.razor"
+#line 97 "C:\Users\pocht\Desktop\TestTask\TestTask\Client\Shared\NavMenu.razor"
                            ;
             markup += GetList(subDivision, 
 
@@ -230,7 +230,7 @@ __builder2.AddContent(10, subDivision.Title);
             __builder2.AddMarkupContent(13, "<div></div>");
         }
 #nullable restore
-#line 97 "C:\Users\pocht\Desktop\TestTask\TestTask\Client\Shared\NavMenu.razor"
+#line 98 "C:\Users\pocht\Desktop\TestTask\TestTask\Client\Shared\NavMenu.razor"
                                                        );
         }
         return 
@@ -241,7 +241,7 @@ __builder2.AddContent(10, subDivision.Title);
         (__builder2) => {
             __builder2.OpenElement(14, "ul");
 #nullable restore
-#line 99 "C:\Users\pocht\Desktop\TestTask\TestTask\Client\Shared\NavMenu.razor"
+#line 100 "C:\Users\pocht\Desktop\TestTask\TestTask\Client\Shared\NavMenu.razor"
 __builder2.AddContent(15, markup);
 
 #line default
@@ -251,24 +251,25 @@ __builder2.AddContent(15, markup);
             __builder2.AddMarkupContent(16, "\r\n");
         }
 #nullable restore
-#line 100 "C:\Users\pocht\Desktop\TestTask\TestTask\Client\Shared\NavMenu.razor"
+#line 101 "C:\Users\pocht\Desktop\TestTask\TestTask\Client\Shared\NavMenu.razor"
     ;
     }
 
     private void DivisionAddButton_OnClick()
     {
-        _stateMachine.SetAddState();
+        _stateMachine.SetState(StateMachine.State.Add);
+        Program.AppData.ClearDivisionBackup();
         _navigationManager.NavigateTo("divisionInfo/0");
     }
 
     private void DeleteDivisionButton_OnClick(Division division)
     {
-        Program.AppData.CurrentDivision = division;
+        Program.AppData.SelectedDivision = division;
         _modalTitle = "Подтверждение удаления";
         _modalText = "Вы действительно хотите удалить подразделение?";
         _modalOpen = true;
         _modalConfirmation = true;
-        _stateMachine.SetDeleteState();
+        _stateMachine.SetState(StateMachine.State.Delete);
     }
 
     private async Task Modal_OnClose(bool success)
@@ -277,8 +278,8 @@ __builder2.AddContent(15, markup);
         if (_stateMachine.CurrentState != StateMachine.State.Delete)
             return;
 
-        var divisionToDelete = Program.AppData.CurrentDivision;
-        Program.AppData.CurrentDivision = null;
+        var divisionToDelete = Program.AppData.SelectedDivision;
+        Program.AppData.SelectedDivision = null;
 
         if (!success)
             return;
@@ -287,7 +288,7 @@ __builder2.AddContent(15, markup);
 
         if (!response.IsSuccessStatusCode)
         {
-            _stateMachine.SetIdleState();
+            _stateMachine.SetState(StateMachine.State.Idle);
             _modalOpen = true;
             _modalTitle = "Ошибка удаления";
             _modalText = "Не удалось удалить подразделение";
@@ -297,13 +298,17 @@ __builder2.AddContent(15, markup);
 
         await Program.AppData.InitializeBaseProperties();
         await GetDivisions();
+        var divisionFromSession = _storageService.GetItem<Division>("currentDivision");
+        if (divisionFromSession != null && divisionFromSession.Id == divisionToDelete.Id)
+            _storageService.Clear();
         if (Program.LastPageUrl == "employees/" + divisionToDelete.Id)
             _navigationManager.NavigateTo("");
     }
 
     private void ChangeDivisionButton_OnClick(Division division)
     {
-        _stateMachine.SetChangeState();
+        _stateMachine.SetState(StateMachine.State.Change);
+
 
         if (Program.DivisionInfoPageOpened)
             Program.AppData.RecoverDivision();
@@ -314,7 +319,7 @@ __builder2.AddContent(15, markup);
             Program.EmployeeInfoPageOpened = false;
         }
 
-        Program.AppData.CurrentDivision = division;
+        Program.AppData.SelectedDivision = division;
         Program.DivisionInfoPageOpened = true;
 
         _navigationManager.NavigateTo("divisionInfo/" + division.Id);
@@ -322,7 +327,7 @@ __builder2.AddContent(15, markup);
 
     private async Task SetCurrentDivision(Division division)
     {
-        _stateMachine.SetIdleState();
+        _stateMachine.SetState(StateMachine.State.Idle);
         _divisions = new Dictionary<int, Division>();
         _divisions = (await Program.AppData.GetDivisionsAsync()).ToDictionary(d => d.Id, d => d);
         var url = GetDivisionHrefById(division.Id);
@@ -339,7 +344,7 @@ __builder2.AddContent(15, markup);
             Program.EmployeeInfoPageOpened = false;
         }
 
-        Program.AppData.CurrentDivision = division;
+        Program.AppData.SelectedDivision = division;
         Program.CurrentDivisionId = division.Id;
 
         if (Program.AfterEmployeeInfoPage)
@@ -358,6 +363,7 @@ __builder2.AddContent(15, markup);
 #line default
 #line hidden
 #nullable disable
+        [global::Microsoft.AspNetCore.Components.InjectAttribute] private ISyncSessionStorageService _storageService { get; set; }
         [global::Microsoft.AspNetCore.Components.InjectAttribute] private EventAggregator _eventAggregator { get; set; }
         [global::Microsoft.AspNetCore.Components.InjectAttribute] private NavigationManager _navigationManager { get; set; }
         [global::Microsoft.AspNetCore.Components.InjectAttribute] private StateMachine _stateMachine { get; set; }

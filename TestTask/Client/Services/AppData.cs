@@ -16,11 +16,11 @@ namespace TestTask.Client.Services
     {
         private IEnumerable<Division> _divisions;
         private readonly HttpClient _http;
-        private Employee _currentEmployee;
+        private Employee _selectedEmployee;
         private List<Employee> _employees;
-        private Division _currentDivision;
-        private Division _divisionBackup;
-        private Employee _employeeBackup;
+        private Division _selectedDivision;
+        private Division _divisionOrigin;
+        private Employee _employeeOrigin;
 
         public AppData(HttpClient http)
         {
@@ -30,14 +30,10 @@ namespace TestTask.Client.Services
         /// <summary>
         /// Выбранный сотрудник, используется на странице добавления/изменения сотрудника
         /// </summary>
-        public Employee CurrentEmployee
+        public Employee SelectedEmployee
         {
-            get => _currentEmployee;
-            set
-            {
-                _currentEmployee = value;
-                SetEmployeeBackup(_currentEmployee);
-            }
+            get => new Employee(_selectedEmployee);
+            set => _selectedEmployee = value;
         }
 
         /// <summary>
@@ -52,20 +48,16 @@ namespace TestTask.Client.Services
         /// <summary>
         /// Выбранное подразделение, используется на странице со списком сотрудников
         /// </summary>
-        public Division CurrentDivision
+        public Division SelectedDivision
         {
-            get => _currentDivision;
-            set
-            {
-                _currentDivision = value;
-                SetDivisionBackup(_currentDivision);
-            }
+            get => new Division(_selectedDivision);
+            set => _selectedDivision = value;
         }
 
         /// <summary>
         /// Выбранное родительское подразделение, исползуется на странице добавления/изменения подразделения
         /// </summary>
-        public Division CurrentDivisionFromList { get; set; }
+        public Division SelectedDivisionFromList { get; set; }
 
 
         private async Task<IEnumerable<Division>> GetDivisions()
@@ -76,136 +68,11 @@ namespace TestTask.Client.Services
         /// <summary>
         /// Получение списка подразделений
         /// </summary>
-        public async Task<IEnumerable<Division>> GetDivisionsAsync(bool forceReload = false)
+        public async Task<IEnumerable<Division>> GetDivisionsAsync(bool isForceReload = false)
         {
-            if (forceReload)
-            {
-                return _divisions = await GetDivisions();
-            }
-            return _divisions ??= await GetDivisions();
-        }
-
-        private void SetDivisionBackup(Division division)
-        {
-            if (division == null)
-            {
-                _divisionBackup = null;
-                return;
-            }
-
-            _divisionBackup = new Division
-            {
-                Title = division.Title,
-                CreateDate = division.CreateDate,
-                Description = division.Description,
-                DivisionId = division.DivisionId,
-                Employees = division.Employees,
-                ParentDivision = division.ParentDivision,
-                SubDivisions = division.SubDivisions,
-                Id = division.Id
-            };
-        }
-
-        private void SetEmployeeBackup(Employee employee)
-        {
-            if (employee == null)
-            {
-                _employeeBackup = null;
-                return;
-            }
-
-            _employeeBackup = new Employee
-            {
-                FirstName = employee.FirstName,
-                MiddleName = employee.MiddleName,
-                LastName = employee.LastName,
-                DateOfBirth = employee.DateOfBirth,
-                Gender = employee.Gender,
-                Division = employee.Division,
-                DivisionId = employee.DivisionId,
-                HasDriverLicense = employee.HasDriverLicense,
-                Id = employee.Id
-            };
-        }
-
-        /// <summary>
-        /// Замена текущего подразделения резервной копией
-        /// </summary>
-        public void RecoverDivision()
-        {
-            if (CurrentDivision is null || _divisionBackup is null)
-            {
-                return;
-            }
-
-            CurrentDivision.Title = _divisionBackup.Title;
-            CurrentDivision.CreateDate = _divisionBackup.CreateDate;
-            CurrentDivision.Description = _divisionBackup.Description;
-            CurrentDivision.DivisionId = _divisionBackup.DivisionId;
-            CurrentDivision.Employees = _divisionBackup.Employees;
-            CurrentDivision.ParentDivision = _divisionBackup.ParentDivision;
-            CurrentDivision.SubDivisions = _divisionBackup.SubDivisions;
-        }
-
-        /// <summary>
-        /// Замена текущего сотрудника резервной копией
-        /// </summary>
-        public void RecoverEmployee()
-        {
-            if (CurrentEmployee is null || _employeeBackup is null)
-            {
-                return;
-            }
-
-            CurrentEmployee.FirstName = _employeeBackup.FirstName;
-            CurrentEmployee.MiddleName = _employeeBackup.MiddleName;
-            CurrentEmployee.LastName = _employeeBackup.LastName;
-            CurrentEmployee.DateOfBirth = _employeeBackup.DateOfBirth;
-            CurrentEmployee.Gender = _employeeBackup.Gender;
-            CurrentEmployee.Division = _employeeBackup.Division;
-            CurrentEmployee.DivisionId = _employeeBackup.DivisionId;
-            CurrentEmployee.HasDriverLicense = _employeeBackup.HasDriverLicense;
-            CurrentEmployee.Id = _employeeBackup.Id;
-        }
-
-        /// <summary>
-        /// Очистка резервной копии сотрудника
-        /// </summary>
-        public void ClearEmployeeBackup()
-        {
-            _employeeBackup = null;
-        }
-
-        /// <summary>
-        /// Очистка резервной копии подразделения
-        /// </summary>
-        public void ClearDivisionBackup()
-        {
-            _divisionBackup = null;
-        }
-
-        /// <summary>
-        /// Определяет, является ли подразделение childrenDivision вложенным подразделением родительского подразделения parentDivision или его вложенных подразделений
-        /// </summary>
-        /// <param name="childrenDivision">Подразделение, которое нужно проверить</param>
-        /// <param name="parentDivision">Предполагаемое родительское подразделение</param>
-        /// <returns>True, если parentDivision является родительским подразделением childrenDivision. False, если нет</returns>
-        public bool GetMainDivision(Division childrenDivision, Division parentDivision)
-        {
-            var subDivisions = parentDivision.SubDivisions.ToList();
-            Debug.WriteLine(subDivisions.Count);
-            foreach (var subDivision in subDivisions)
-            {
-                if (subDivision.Id == childrenDivision.Id)
-                    return true;
-                var foundDivision = GetMainDivision(childrenDivision, subDivision);
-                if (foundDivision)
-                {
-                    return true;
-                }
-            }
-
-            return false;
+            return _divisions is null || isForceReload
+                ? _divisions = await GetDivisions()
+                : _divisions;
         }
 
         private IEnumerable<Employee> GetEmployees()

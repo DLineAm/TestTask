@@ -2593,7 +2593,8 @@
       },
       "TestTask.Shared/1.0.0": {
         "dependencies": {
-          "Newtonsoft.Json": "13.0.1"
+          "Newtonsoft.Json": "13.0.1",
+          "System.ComponentModel.Annotations": "5.0.0"
         },
         "runtime": {
           "TestTask.Shared.dll": {}

@@ -24,31 +24,11 @@ namespace TestTask.Client.Services
 
         public State CurrentState { get; private set; }
 
-        public event Action<State> StateChanged; 
+        public event Action<State> StateChanged;
 
-        public void SetIdleState()
+        public void SetState(State state)
         {
-            CurrentState = State.Idle;
-            SaveStateToSession();
-            StateChanged?.Invoke(CurrentState);
-        }
-
-        public void SetAddState()
-        {
-            CurrentState = State.Add;
-            SaveStateToSession();
-            StateChanged?.Invoke(CurrentState);
-        }
-
-        public void SetChangeState()
-        {
-            CurrentState = State.Change;
-            SaveStateToSession();
-            StateChanged?.Invoke(CurrentState);
-        }
-        public void SetDeleteState()
-        {
-            CurrentState = State.Delete;
+            CurrentState = state;
             SaveStateToSession();
             StateChanged?.Invoke(CurrentState);
         }

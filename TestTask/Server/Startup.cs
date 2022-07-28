@@ -12,6 +12,8 @@ using Newtonsoft.Json;
 using TestTask.Server.DAL;
 using TestTask.Server.DAL.Context;
 using TestTask.Server.Services;
+using TestTask.Server.Utils;
+using TestTask.Shared;
 
 namespace TestTask.Server
 {
@@ -22,7 +24,7 @@ namespace TestTask.Server
             Configuration = configuration;
         }
 
-        public IConfiguration Configuration { get; }
+        private IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
@@ -35,7 +37,6 @@ namespace TestTask.Server
                 });
 
             services.AddRazorPages();
-            services.AddSession();
 
             services.AddDbContext<DatabaseContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("TestDB")).EnableSensitiveDataLogging());
@@ -45,6 +46,11 @@ namespace TestTask.Server
             services.AddTransient<IDivisionService, DivisionService>();
             services.AddTransient<IEmployeeService, EmployeeService>();
             services.AddTransient<IDataInitializer, DatabaseInitializer>();
+            services.AddSingleton<IStorage<Division>, CacheStorage<Division>>();
+            services.AddSingleton<IStorage<Employee>, CacheStorage<Employee>>();
+            services.AddSingleton<Cache>();
+            services.AddScoped<IStorageService<Division>, DivisionStorageService>();
+            services.AddScoped<DataServiceCollection>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -61,7 +67,6 @@ namespace TestTask.Server
             app.UseStaticFiles();
 
             app.UseRouting();
-            app.UseSession();
 
             app.UseEndpoints(endpoints =>
             {

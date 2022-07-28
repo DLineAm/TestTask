@@ -7,13 +7,14 @@ using System.Linq;
 using System.Linq.Expressions;
 
 using TestTask.Server.DAL.Context;
+using TestTask.Server.Utils;
 
 namespace TestTask.Server.DAL
 {
     /// <summary>
     /// Реализация паттерна "Репозиторий" - промежуточный слой между моделью и остальной частью программмы 
     /// </summary>
-    public sealed class Repository<TEntity> where TEntity : class
+    public sealed class Repository<TEntity> where TEntity : class, new()
     {
         private readonly DatabaseContext _context;
         private readonly DbSet<TEntity> _dbSet;
@@ -78,7 +79,13 @@ namespace TestTask.Server.DAL
         /// <param name="id">Идентификатор требуемой записи</param>
         public TEntity Get(int id)
         {
-            return _dbSet.Find(id);
+            var entity = _dbSet.Find(id);
+            if (entity == null)
+            {
+                throw new ArgumentException($"{typeof(TEntity).Name} not found by Id={id}");
+            }
+
+            return entity;
         }
 
         /// <summary>

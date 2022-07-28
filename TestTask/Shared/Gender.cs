@@ -1,7 +1,15 @@
-﻿namespace TestTask.Shared
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace TestTask.Shared
 {
+    /// <summary>
+    /// Перечисление гендеров
+    /// </summary>
     public enum Gender
     {
-        Male, Female
+        [Display(Name = "М")]
+        Male,
+        [Display(Name = "Ж")]
+        Female
     }
 }

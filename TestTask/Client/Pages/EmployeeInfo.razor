@@ -30,7 +30,7 @@
     <div>
         <label for="gender">Пол</label>
         <InputSelect id="gender" @bind-Value="_employee.Gender">
-            @foreach (var gender in ((Gender[])Enum.GetValues(typeof(Gender))))
+            @foreach (var gender in Enum.GetValues(typeof(Gender)).Cast<Gender>())
             {
                 <option value="@gender">@GenderHelper.GetGenderTitle(gender)</option>
             }
@@ -93,7 +93,7 @@
 
         var divisionFromSession = _storageService.GetItem<Employee>("currentEmployee");
 
-        if (Program.AppData.CurrentEmployee == null && divisionFromSession != null)
+        if (!Program.AppData.SelectedEmployee.CheckInitialize() && divisionFromSession != null)
         {
             _employee = divisionFromSession;
         }
@@ -104,9 +104,9 @@
                 ? new Employee
                 {
                     DateOfBirth = DateTime.Now - TimeSpan.FromDays(365 * 18 + 1),
-                    DivisionId = Program.AppData.CurrentDivision?.Id ?? currentDivision?.Id
+                    DivisionId = Program.AppData.SelectedDivision?.Id ?? currentDivision?.Id
                 }
-                : Program.AppData.CurrentEmployee;
+                : Program.AppData.SelectedEmployee;
             _storageService.SetItem("currentEmployee", _employee);
         }
 
@@ -168,8 +168,6 @@
             return;
         }
 
-        Program.AppData.ClearEmployeeBackup();
-
         if (_stateMachine.CurrentState == StateMachine.State.Add)
         {
             var id = await response.Content.ReadFromJsonAsync<int>();
@@ -219,7 +217,7 @@
         _employee.DateOfBirth = _employeeBackup.DateOfBirth;
         _employee.HasDriverLicense = _employeeBackup.HasDriverLicense;
         _employee.DivisionId = _employeeBackup.DivisionId;
-        _stateMachine.SetIdleState();
+        _stateMachine.SetState(StateMachine.State.Idle);
         _navigationManager.NavigateTo(Program.LastPageUrl);
     }
 

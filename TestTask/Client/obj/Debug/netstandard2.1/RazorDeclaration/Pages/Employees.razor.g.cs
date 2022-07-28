@@ -137,9 +137,9 @@ using System.Diagnostics;
     {
         _existEmployees = new List<Employee>();
 
-        _currentDivision = Program.AppData.CurrentDivision 
-                           ?? (Program.AppData.CurrentDivision = (await Program.AppData.GetDivisionsAsync()).FirstOrDefault(d => d.Id == Id));
-        Program.AppData.CurrentDivisionFromList = _currentDivision;
+        _currentDivision = Program.AppData.SelectedDivision 
+                           ?? (Program.AppData.SelectedDivision = (await Program.AppData.GetDivisionsAsync()).FirstOrDefault(d => d.Id == Id));
+        Program.AppData.SelectedDivisionFromList = _currentDivision;
         _divisions = await Program.AppData.GetDivisionsAsync();
         _title = _currentDivision?.Title;
         _employees = new List<Employee>();
@@ -156,8 +156,8 @@ using System.Diagnostics;
 
     private async Task EmployeeChangeButton_OnClick(Employee employee)
     {
-        _stateMachine.SetChangeState();
-        Program.AppData.CurrentEmployee = employee;
+        _stateMachine.SetState(StateMachine.State.Change);
+        Program.AppData.SelectedEmployee = employee;
         Program.EmployeeInfoPageOpened = true;
         await _storageService.SetItemAsync("employeeId", employee.Id);
         _navigationManager.NavigateTo("employeeInfo");
@@ -170,8 +170,8 @@ using System.Diagnostics;
         {
             return;
         }
-        var employeeToDelete = Program.AppData.CurrentEmployee;
-        Program.AppData.CurrentEmployee = null;
+        var employeeToDelete = Program.AppData.SelectedEmployee;
+        Program.AppData.SelectedEmployee = null;
 
         if (!success)
         {
@@ -182,7 +182,7 @@ using System.Diagnostics;
 
         if (!response.IsSuccessStatusCode)
         {
-            _stateMachine.SetIdleState();
+            _stateMachine.SetState(StateMachine.State.Idle);
             _modalOpen = true;
             _modalTitle = "Ошибка удаления";
             _modalText = "Не удалось удалить сотрудника";
@@ -203,20 +203,19 @@ using System.Diagnostics;
 
     private async Task DeleteButton_OnClick(Employee employee)
     {
-        Program.AppData.CurrentEmployee = employee;
+        Program.AppData.SelectedEmployee = employee;
         await _storageService.SetItemAsync("currentEmployee", employee);
         _modalTitle = "Подтверждение удаления";
         _modalText = "Вы действительно хотите удалить сотрудника?";
         _modalOpen = true;
         _modalConfirmation = true;
-        _stateMachine.SetDeleteState();
+        _stateMachine.SetState(StateMachine.State.Delete);
     }
 
     private async Task EmployeeAddButton_OnClick()
     {
-        _stateMachine.SetAddState();
+        _stateMachine.SetState(StateMachine.State.Add);
         await _storageService.SetItemAsync<Employee>("currentEmployee", null);
-        Program.AppData.ClearEmployeeBackup();
         _navigationManager.NavigateTo("employeeInfo");
     }
 
@@ -242,7 +241,7 @@ using System.Diagnostics;
             __builder2.OpenElement(3, "span");
             __builder2.AddAttribute(4, "style", "font-size: 20px; font-weight: 700");
 #nullable restore
-#line 175 "C:\Users\pocht\Desktop\TestTask\TestTask\Client\Pages\Employees.razor"
+#line 174 "C:\Users\pocht\Desktop\TestTask\TestTask\Client\Pages\Employees.razor"
 __builder2.AddContent(5, employee.FullName);
 
 #line default
@@ -250,7 +249,7 @@ __builder2.AddContent(5, employee.FullName);
 #nullable disable
             __builder2.AddContent(6, " (");
 #nullable restore
-#line 175 "C:\Users\pocht\Desktop\TestTask\TestTask\Client\Pages\Employees.razor"
+#line 174 "C:\Users\pocht\Desktop\TestTask\TestTask\Client\Pages\Employees.razor"
 __builder2.AddContent(7, _divisions.FirstOrDefault(d => d.Id == employee.DivisionId)?.Title);
 
 #line default
@@ -268,7 +267,7 @@ __builder2.AddContent(7, _divisions.FirstOrDefault(d => d.Id == employee.Divisio
             __builder2.AddMarkupContent(11, "\r\n");
         }
 #nullable restore
-#line 181 "C:\Users\pocht\Desktop\TestTask\TestTask\Client\Pages\Employees.razor"
+#line 180 "C:\Users\pocht\Desktop\TestTask\TestTask\Client\Pages\Employees.razor"
     ;
         }
 

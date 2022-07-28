@@ -1,15 +1,22 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Data.SqlTypes;
+
 using TestTask.Server.DAL;
 using TestTask.Shared;
 
 namespace TestTask.Server.Services
 {
+    /// <summary>
+    /// Сервис сотрудников
+    /// </summary>
     public class EmployeeService : IEmployeeService
     {
         private readonly UnitOfWork _unitOfWork;
 
+        /// <summary>
+        /// Конструктор сервиса сотрудников
+        /// </summary>
+        /// <param name="unitOfWork">Класс, хранящий все репозитории с целью гарантии использования одного контекста</param>
         public EmployeeService(UnitOfWork unitOfWork)
         {
             _unitOfWork = unitOfWork;
@@ -18,9 +25,7 @@ namespace TestTask.Server.Services
         /// <summary>
         /// Получение списка сотрудников по идентификатору
         /// </summary>
-        /// <param name="param"></param>
-        /// <returns></returns>
-        /// <exception cref="InvalidOperationException"></exception>
+        /// <param name="divisionId">Идентификатор подразделения, по которому нужно получить сотрудников</param>
         public IEnumerable<Employee> GetByDivisionId(int divisionId)
         {
             return _unitOfWork.EmployeeRepository
@@ -28,24 +33,12 @@ namespace TestTask.Server.Services
         }
 
         /// <summary>
-        /// Изменение сотрудника divisionToChange
+        /// Изменение сотрудника
         /// </summary>
-        /// <param name="employee"></param>
-        /// <param name="divisionToChange">Сотрудник из бд, которого нужно изменить</param>
+        /// <param name="employee">Сотрудник, которого нужно изменить</param>
         public void Edit(Employee employee)
         {
             _unitOfWork.EmployeeRepository.Update(employee);
-            //var employeeToChange = _unitOfWork.EmployeeRepository.Get(employee.id);
-            //if (employeeToChange == null)
-            //    throw new SqlNullValueException();
-
-            //employeeToChange.FirstName = employee.FirstName;
-            //employeeToChange.LastName = employee.LastName;
-            //employeeToChange.MiddleName = employee.MiddleName;
-            //employeeToChange.Gender = employee.Gender;
-            //employeeToChange.DateOfBirth = employee.DateOfBirth;
-            //employeeToChange.HasDriverLicense = employee.HasDriverLicense;
-            //employeeToChange.DivisionId = employee.DivisionId;
 
             _unitOfWork.Save();
         }
@@ -53,12 +46,10 @@ namespace TestTask.Server.Services
         /// <summary>
         /// Удаление сотрудника из бд
         /// </summary>
-        /// <param name="employee"></param>
+        /// <param name="id">Идентификатор, по которому нужно удалить сотрудника</param>
         public void Delete(int id)
         {
             var employee = _unitOfWork.EmployeeRepository.Get(id);
-            if (employee == null)
-                throw new SqlNullValueException();
 
             _unitOfWork.EmployeeRepository.Delete(employee);
             _unitOfWork.Save();
@@ -67,7 +58,7 @@ namespace TestTask.Server.Services
         /// <summary>
         /// Добавление сотрудника в бд
         /// </summary>
-        /// <param name="employee"></param>
+        /// <param name="employee">Сотрудник, которого нужно добавить</param>
         public int Add(Employee employee)
         {
             var entry = _unitOfWork.EmployeeRepository.Add(employee).Entity;

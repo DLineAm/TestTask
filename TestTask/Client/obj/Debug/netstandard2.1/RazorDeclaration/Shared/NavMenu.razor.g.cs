@@ -257,19 +257,18 @@ __builder2.AddContent(15, markup);
 
     private void DivisionAddButton_OnClick()
     {
-        _stateMachine.SetAddState();
-        Program.AppData.ClearDivisionBackup();
+        _stateMachine.SetState(StateMachine.State.Add);
         _navigationManager.NavigateTo("divisionInfo/0");
     }
 
     private void DeleteDivisionButton_OnClick(Division division)
     {
-        Program.AppData.CurrentDivision = division;
+        Program.AppData.SelectedDivision = division;
         _modalTitle = "Подтверждение удаления";
         _modalText = "Вы действительно хотите удалить подразделение?";
         _modalOpen = true;
         _modalConfirmation = true;
-        _stateMachine.SetDeleteState();
+        _stateMachine.SetState(StateMachine.State.Delete);
     }
 
     private async Task Modal_OnClose(bool success)
@@ -278,8 +277,8 @@ __builder2.AddContent(15, markup);
         if (_stateMachine.CurrentState != StateMachine.State.Delete)
             return;
 
-        var divisionToDelete = Program.AppData.CurrentDivision;
-        Program.AppData.CurrentDivision = null;
+        var divisionToDelete = Program.AppData.SelectedDivision;
+        Program.AppData.SelectedDivision = null;
 
         if (!success)
             return;
@@ -288,7 +287,7 @@ __builder2.AddContent(15, markup);
 
         if (!response.IsSuccessStatusCode)
         {
-            _stateMachine.SetIdleState();
+            _stateMachine.SetState(StateMachine.State.Idle);
             _modalOpen = true;
             _modalTitle = "Ошибка удаления";
             _modalText = "Не удалось удалить подразделение";
@@ -300,27 +299,16 @@ __builder2.AddContent(15, markup);
         await GetDivisions();
         var divisionFromSession = _storageService.GetItem<Division>("currentDivision");
         if (divisionFromSession != null && divisionFromSession.Id == divisionToDelete.Id)
-        {
             _storageService.Clear();
-        }
         if (Program.LastPageUrl == "employees/" + divisionToDelete.Id)
             _navigationManager.NavigateTo("");
     }
 
     private void ChangeDivisionButton_OnClick(Division division)
     {
-        _stateMachine.SetChangeState();
+        _stateMachine.SetState(StateMachine.State.Change);
 
-        if (Program.DivisionInfoPageOpened)
-            Program.AppData.RecoverDivision();
-
-        if (Program.EmployeeInfoPageOpened)
-        {
-            Program.AppData.RecoverEmployee();
-            Program.EmployeeInfoPageOpened = false;
-        }
-
-        Program.AppData.CurrentDivision = division;
+        Program.AppData.SelectedDivision = division;
         Program.DivisionInfoPageOpened = true;
 
         _navigationManager.NavigateTo("divisionInfo/" + division.Id);
@@ -328,24 +316,13 @@ __builder2.AddContent(15, markup);
 
     private async Task SetCurrentDivision(Division division)
     {
-        _stateMachine.SetIdleState();
+        _stateMachine.SetState(StateMachine.State.Idle);
         _divisions = new Dictionary<int, Division>();
         _divisions = (await Program.AppData.GetDivisionsAsync()).ToDictionary(d => d.Id, d => d);
         var url = GetDivisionHrefById(division.Id);
         Program.LastPageUrl = url;
 
-        if (Program.DivisionInfoPageOpened)
-        {
-            Program.AppData.RecoverDivision();
-            Program.DivisionInfoPageOpened = false;
-        }
-        if (Program.EmployeeInfoPageOpened)
-        {
-            Program.AppData.RecoverEmployee();
-            Program.EmployeeInfoPageOpened = false;
-        }
-
-        Program.AppData.CurrentDivision = division;
+        Program.AppData.SelectedDivision = division;
         Program.CurrentDivisionId = division.Id;
 
         if (Program.AfterEmployeeInfoPage)

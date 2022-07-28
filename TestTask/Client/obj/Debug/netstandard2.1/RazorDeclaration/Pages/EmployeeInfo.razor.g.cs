@@ -156,7 +156,7 @@ using Newtonsoft.Json;
 
         var divisionFromSession = _storageService.GetItem<Employee>("currentEmployee");
 
-        if (Program.AppData.CurrentEmployee == null && divisionFromSession != null)
+        if (!Program.AppData.SelectedEmployee.CheckInitialize() && divisionFromSession != null)
         {
             _employee = divisionFromSession;
         }
@@ -167,9 +167,9 @@ using Newtonsoft.Json;
                 ? new Employee
                 {
                     DateOfBirth = DateTime.Now - TimeSpan.FromDays(365 * 18 + 1),
-                    DivisionId = Program.AppData.CurrentDivision?.Id ?? currentDivision?.Id
+                    DivisionId = Program.AppData.SelectedDivision?.Id ?? currentDivision?.Id
                 }
-                : Program.AppData.CurrentEmployee;
+                : Program.AppData.SelectedEmployee;
             _storageService.SetItem("currentEmployee", _employee);
         }
 
@@ -231,8 +231,6 @@ using Newtonsoft.Json;
             return;
         }
 
-        Program.AppData.ClearEmployeeBackup();
-
         if (_stateMachine.CurrentState == StateMachine.State.Add)
         {
             var id = await response.Content.ReadFromJsonAsync<int>();
@@ -282,7 +280,7 @@ using Newtonsoft.Json;
         _employee.DateOfBirth = _employeeBackup.DateOfBirth;
         _employee.HasDriverLicense = _employeeBackup.HasDriverLicense;
         _employee.DivisionId = _employeeBackup.DivisionId;
-        _stateMachine.SetIdleState();
+        _stateMachine.SetState(StateMachine.State.Idle);
         _navigationManager.NavigateTo(Program.LastPageUrl);
     }
 

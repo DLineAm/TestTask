@@ -6,7 +6,7 @@
   "linkerEnabled": false,
   "resources": {
     "assembly": {
-      "TestTask.Client.dll": "sha256-2epUofvVogpS9Yv0Nqg7bzd743WD27BuzvTXDUZP7mo=",
+      "TestTask.Client.dll": "sha256-EABxE25RKicmb1XvbEHT6A9IMBZhQ1THf6M1ryy58bE=",
       "System.Net.Http.Json.dll": "sha256-99dseBOagY3mzu5Y8Eqm8gRI+o8QbbCp7R2Ew9bQ+5E=",
       "System.Buffers.dll": "sha256-ZxXy75PYbzJxNfAc\/SAP1nUYm4gt1jSaOpFnBb9m85M=",
       "mscorlib.dll": "sha256-BaZPMj95+YNe3G4ckTGD6szZFwZeA2MOHn91zTGKDeU=",
@@ -45,7 +45,7 @@
       "System.ComponentModel.DataAnnotations.dll": "sha256-LIfCYwg+PHltTK4z3EnbSkA7m2cn8JS4jHVthdKrDF8=",
       "Microsoft.AspNetCore.Components.dll": "sha256-xCWT+yJdttcPshhrsg20ryKTmo4J9CwnPKadM4l2tTs=",
       "Microsoft.Extensions.Logging.Abstractions.dll": "sha256-nXCKZ3lsqnepGJm08nR9d17aKVnlGpqQHHexvRCuj6M=",
-      "TestTask.Shared.dll": "sha256-OGGuD0qoekOAW5Ra3tdm1xwheAMGbkrxz\/Xd734wY9k=",
+      "TestTask.Shared.dll": "sha256-ln1IMWmZMKcF\/Jo5H7v3EP\/3WRLkj2zLbCqmugwj5GQ=",
       "Microsoft.AspNetCore.Components.WebAssembly.dll": "sha256-FJ+rEgcx6ljTxwbRXZSUGfrDKpVvOxHCSfNxbnXNn3M=",
       "Microsoft.Extensions.DependencyInjection.dll": "sha256-uffETcY3l8U2ggeV5T7MA+TqbPIIXyT1XOWxKAaC7A4=",
       "Microsoft.Extensions.Primitives.dll": "sha256-0IMatcYwuTLhZHDhLyWXBM9eIQJ1LHq6AmAhegebo\/g=",
@@ -63,8 +63,8 @@
       "Blazored.SessionStorage.dll": "sha256-bMGfld4CY2H49UjCGiz6JUKbEYHqz9eAejy81PaluPo="
     },
     "pdb": {
-      "TestTask.Client.pdb": "sha256-sT71R7Q+C+Q1bPy2uDitDTkc1nEG77lUo4uE1uh7Cuc=",
-      "TestTask.Shared.pdb": "sha256-XH\/2sbz6fIu1g7Azb5z4ajuAaVYAaHt1fOJKLWpuPHI="
+      "TestTask.Client.pdb": "sha256-LYPZtLNNZHtM3Jh2r3YUh0\/Ahthwy4GUyD2uJNXmBy8=",
+      "TestTask.Shared.pdb": "sha256-1Y6LJECLz97xOpVpBRgSUKI1ps7paDXu9XCYR+SEg\/E="
     },
     "runtime": {
       "dotnet.3.2.0.js": "sha256-mPoqx7XczFHBWk3gRNn0hc9ekG1OvkKY4XiKRY5Mj5U=",
