@@ -41,7 +41,7 @@ namespace TestTask.Server.Services
         }
 
         /// <summary>
-        /// Попытка получить подразделение из бд по идентификатору
+        /// Попытка получить подразделение по идентификатору
         /// </summary>
         /// <param name="id">Идентификатор подразделения</param>
         /// <param name="division">Найденное подразделение</param>
@@ -53,7 +53,7 @@ namespace TestTask.Server.Services
         }
 
         /// <summary>
-        /// Добавление подразделения в бд
+        /// Добавление подразделения
         /// </summary>
         /// <param name="division">Подразделение, которое нужно добавить</param>
         public int Add(Division division)
@@ -86,7 +86,7 @@ namespace TestTask.Server.Services
         }
 
         /// <summary>
-        /// Удаление подразделения из бд
+        /// Удаление подразделения
         /// </summary>
         /// <param name="id">Идентификатор подразделения, которое нужно удалить</param>
         public void Delete(int id)

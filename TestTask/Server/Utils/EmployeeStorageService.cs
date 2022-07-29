@@ -24,6 +24,11 @@ namespace TestTask.Server.Utils
             _cache = cache;
         }
 
+        /// <summary>
+        /// Получение списка сотрудников по идентификатору подразделения
+        /// </summary>
+        /// <param name="divisionId">Идентификатор подразделения</param>
+        /// <param name="forceFromDb">Получить список сотрудников принудительно из бд</param>
         public IEnumerable<Employee> GetByDivisionId(int divisionId, bool forceFromDb = false)
         {
             if (_cache.EmployeeStorage.Any() && !forceFromDb)
@@ -36,6 +41,11 @@ namespace TestTask.Server.Utils
             return employees;
         }
 
+        /// <summary>
+        /// Добавление сотрудника в хранилище
+        /// </summary>
+        /// <param name="employee">Сотрудник, которого нкжно добавить в хранилище</param>
+        /// <returns>Идентификатор добавленного сотрудника</returns>
         public int Add(Employee employee)
         {
             var entry = _unitOfWork.EmployeeRepository.Add(employee).Entity;
@@ -46,6 +56,10 @@ namespace TestTask.Server.Utils
             return entry.Id;
         }
 
+        /// <summary>
+        /// Сохранение и обновление сотрудника в хранилище
+        /// </summary>
+        /// <param name="employee">Сотрудник, которого нужно сохранить и обновить в хранилище</param>
         public void SaveAndUpdate(Employee employee)
         {
             _unitOfWork.EmployeeRepository.Update(employee);
@@ -55,6 +69,10 @@ namespace TestTask.Server.Utils
             _cache.EmployeeStorage.Replace(employee);
         }
 
+        /// <summary>
+        /// Удаление сотрудника из хранилища по идентификатору
+        /// </summary>
+        /// <param name="id">Идентификатор сотрудника, которого нужно удалить из бд</param>
         public void Delete(int id)
         {
             var employee = _unitOfWork.EmployeeRepository.Get(id);

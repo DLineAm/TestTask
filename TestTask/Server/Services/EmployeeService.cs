@@ -41,7 +41,7 @@ namespace TestTask.Server.Services
         }
 
         /// <summary>
-        /// Удаление сотрудника из бд
+        /// Удаление сотрудника
         /// </summary>
         /// <param name="id">Идентификатор, по которому нужно удалить сотрудника</param>
         public void Delete(int id)
@@ -50,7 +50,7 @@ namespace TestTask.Server.Services
         }
 
         /// <summary>
-        /// Добавление сотрудника в бд
+        /// Добавление сотрудника
         /// </summary>
         /// <param name="employee">Сотрудник, которого нужно добавить</param>
         public int Add(Employee employee)

@@ -9,6 +9,11 @@ namespace TestTask.Shared
     /// </summary>
     public static class Extensions
     {
+        /// <summary>
+        /// Получает атрибут перечисления
+        /// </summary>
+        /// <typeparam name="TAttribute">Тип атрибута</typeparam>
+        /// <param name="value">Перечисление, атрибут которого нужно найти</param>
         public static TAttribute GetAttribute<TAttribute>(this Enum value)
             where TAttribute : Attribute
         {

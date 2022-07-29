@@ -1,6 +1,9 @@
 {
   "ExpandedNodes": [
-    ""
+    "",
+    "\\TestTask",
+    "\\TestTask\\Server",
+    "\\TestTask\\Server\\DAL"
   ],
   "SelectedNode": "\\TestTask.sln",
   "PreviewInSolutionExplorer": false

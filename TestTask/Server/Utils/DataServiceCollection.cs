@@ -1,6 +1,4 @@
-﻿using TestTask.Shared;
-
-namespace TestTask.Server.Utils
+﻿namespace TestTask.Server.Utils
 {
     /// <summary>
     /// Класс, хранящий сервисы по работе с хранилищем

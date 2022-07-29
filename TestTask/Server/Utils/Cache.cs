@@ -7,6 +7,14 @@ namespace TestTask.Server.Utils
     /// </summary>
     public class Cache
     {
+        /// <summary>
+        /// Конструктор, принимающий хранилища в качестве параметров
+        /// </summary>
+        public Cache(IStorage<Division> divisionStorage, IStorage<Employee> employeeStorage)
+        {
+            DivisionStorage = divisionStorage;
+            EmployeeStorage = employeeStorage;
+        }
 
         /// <summary>
         /// Хранилище списка подразделений
@@ -18,13 +26,5 @@ namespace TestTask.Server.Utils
         /// </summary>
         public IStorage<Employee> EmployeeStorage { get; set; }
 
-        /// <summary>
-        /// Конструктор, принимающий хранилища в качестве параметров
-        /// </summary>
-        public Cache(IStorage<Division> divisionStorage, IStorage<Employee> employeeStorage)
-        {
-            DivisionStorage = divisionStorage;
-            EmployeeStorage = employeeStorage;
-        }
     }
 }

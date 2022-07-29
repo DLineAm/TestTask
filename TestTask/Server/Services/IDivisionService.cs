@@ -34,7 +34,7 @@ namespace TestTask.Server.Services
         void Edit(Division division);
 
         /// <summary>
-        /// Удаление подразделения из бд
+        /// Удаление подразделения
         /// </summary>
         /// <param name="id">Идентификатор подразделения, которое нужно удалить</param>
         void Delete(int id);
