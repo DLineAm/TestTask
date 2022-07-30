@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using TestTask.Shared;
 
-namespace TestTask.Server.Utils
+namespace TestTask.Server.Storage
 {
     /// <summary>
     /// Интерфейс, представляющий сервис по работе с данными
@@ -12,8 +12,7 @@ namespace TestTask.Server.Utils
         /// Получение списка сотрудников
         /// </summary>
         /// <param name="divisionId">Идентификатор подразделения, по которому нужно найти сотрудников</param>
-        /// <param name="forceFromDb">Принудительно искать данные в бд</param>
-        IEnumerable<Employee> GetByDivisionId(int divisionId, bool forceFromDb = false);
+        IEnumerable<Employee> GetByDivisionId(int divisionId);
 
         /// <summary>
         /// Добавление сотрудника в хранилище
@@ -33,5 +32,10 @@ namespace TestTask.Server.Utils
         /// </summary>
         /// <param name="id">Идентификатор сотрудника, которого нужно удалить</param>
         void Delete(int id);
+
+        /// <summary>
+        /// Заполняет кэш списком сотрудников
+        /// </summary>
+        void FillCache();
     }
 }

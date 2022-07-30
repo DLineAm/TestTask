@@ -7,7 +7,6 @@ using System.Linq;
 using System.Linq.Expressions;
 
 using TestTask.Server.DAL.Context;
-using TestTask.Server.Utils;
 
 namespace TestTask.Server.DAL
 {
@@ -103,6 +102,19 @@ namespace TestTask.Server.DAL
         /// <param name="entityToDelete">Запись, которую нужно удалить</param>
         public void Delete(TEntity entityToDelete)
         {
+            AttachEntity(entityToDelete);
+
+            _dbSet.Remove(entityToDelete);
+        }
+
+        /// <summary>
+        /// Удаление записи из бд
+        /// </summary>
+        /// <param name="entityId">Идентификатор записи, которую нужно удалить</param>
+        public void Delete(int entityId)
+        {
+            var entityToDelete = _dbSet.Find(entityId);
+
             AttachEntity(entityToDelete);
 
             _dbSet.Remove(entityToDelete);

@@ -1,6 +1,6 @@
 ﻿using TestTask.Shared;
 
-namespace TestTask.Server.Utils
+namespace TestTask.Server.Storage
 {
     /// <summary>
     /// Класс, имеющий хранилища списков записей
@@ -19,12 +19,12 @@ namespace TestTask.Server.Utils
         /// <summary>
         /// Хранилище списка подразделений
         /// </summary>
-        public IStorage<Division> DivisionStorage { get; set; }
+        public IStorage<Division> DivisionStorage { get; }
 
         /// <summary>
         /// Хранилище списка работников
         /// </summary>
-        public IStorage<Employee> EmployeeStorage { get; set; }
+        public IStorage<Employee> EmployeeStorage { get; }
 
     }
 }

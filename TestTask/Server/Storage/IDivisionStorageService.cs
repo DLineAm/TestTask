@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq.Expressions;
 using TestTask.Shared;
 
-namespace TestTask.Server.Utils
+namespace TestTask.Server.Storage
 {
     /// <summary>
     /// Интерфейс, представляющий сервис по работе с данными
@@ -47,5 +47,10 @@ namespace TestTask.Server.Utils
         /// </summary>
         /// <param name="id">Идентификатор подразделения, которое нужно удалить</param>
         void Delete(int id);
+
+        /// <summary>
+        /// Заполнение кэша списком подразделений
+        /// </summary>
+        void FillCache();
     }
 }

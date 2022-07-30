@@ -8,9 +8,12 @@ namespace TestTask.Shared
     /// </summary>
     public class Employee : IIdentity
     {
-        private readonly bool _isInitialized;
+        private readonly bool _isCopied;
 
-        public Employee(string firstName, string middleName, string lastName, Division division,Gender gender ,DateTime dateOfBirth, bool hasDriverLicense = false)
+        /// <summary>
+        /// Конструктор, принимающий все параметры, необходимые для свойств модели сотрудника
+        /// </summary>
+        public Employee(string firstName, string middleName, string lastName, Division division, Gender gender ,DateTime dateOfBirth, bool hasDriverLicense = false)
         {
             FirstName = firstName;
             MiddleName = middleName;
@@ -21,6 +24,9 @@ namespace TestTask.Shared
             DateOfBirth = dateOfBirth;
         }
 
+        /// <summary>
+        /// Конструктор, принимающий сотрудника для копирования данных со свойств этого сотрудника
+        /// </summary>
         public Employee(Employee? employee)
         {
             if (employee == null)
@@ -37,16 +43,20 @@ namespace TestTask.Shared
             DivisionId = employee.DivisionId;
             HasDriverLicense = employee.HasDriverLicense;
             Id = employee.Id;
-            _isInitialized = true;
+            _isCopied = true;
         }
 
         public Employee()
         {
         }
 
-        public bool CheckInitialize()
+        /// <summary>
+        /// Получает информацию о том, были ли скопированы данные со свойств другого подразделения
+        /// </summary>
+        /// <returns>True, если данные были скопированы. False, если нет</returns>
+        public bool CheckCopied()
         {
-            return _isInitialized;
+            return _isCopied;
         }
 
         /// <summary>

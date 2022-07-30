@@ -1,9 +1,8 @@
 ﻿using System.Collections.Generic;
-
 using TestTask.Server.DAL;
 using TestTask.Shared;
 
-namespace TestTask.Server.Utils
+namespace TestTask.Server.Storage
 {
     /// <summary>
     /// Сервис по работе с хранилищем сотрудников
@@ -28,17 +27,26 @@ namespace TestTask.Server.Utils
         /// Получение списка сотрудников по идентификатору подразделения
         /// </summary>
         /// <param name="divisionId">Идентификатор подразделения</param>
-        /// <param name="forceFromDb">Получить список сотрудников принудительно из бд</param>
-        public IEnumerable<Employee> GetByDivisionId(int divisionId, bool forceFromDb = false)
+        public IEnumerable<Employee> GetByDivisionId(int divisionId)
         {
-            if (_cache.EmployeeStorage.Any() && !forceFromDb)
-                return _cache.EmployeeStorage.GetAll();
+            if (_cache.EmployeeStorage.Any())
+                return _cache.EmployeeStorage.GetAll(e => e.DivisionId == divisionId);
 
             var employees = _unitOfWork.EmployeeRepository.GetWithChildren(e => e.DivisionId == divisionId);
 
             _cache.EmployeeStorage.Fill(employees);
 
             return employees;
+        }
+
+        /// <summary>
+        /// Заполнение хранилища списком сотрудников
+        /// </summary>
+        public void FillCache()
+        {
+            var employees = _unitOfWork.EmployeeRepository.GetWithChildren();
+
+            _cache.EmployeeStorage.Fill(employees);
         }
 
         /// <summary>

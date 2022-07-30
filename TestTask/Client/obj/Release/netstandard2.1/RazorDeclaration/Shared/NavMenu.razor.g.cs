@@ -148,6 +148,7 @@ using Newtonsoft.Json;
 
     private async Task GetDivisions()
     {
+        _divisions = new Dictionary<int, Division>();
         _divisions = (await Program.AppData.GetDivisionsAsync()).ToDictionary(d => d.Id, d => d);
         StateHasChanged();
     }
@@ -173,7 +174,7 @@ using Newtonsoft.Json;
             __builder2.AddMarkupContent(0, "<div></div>");
         }
 #nullable restore
-#line 86 "C:\Users\pocht\Desktop\TestTask\TestTask\Client\Shared\NavMenu.razor"
+#line 87 "C:\Users\pocht\Desktop\TestTask\TestTask\Client\Shared\NavMenu.razor"
                                ;
         }
 
@@ -194,7 +195,7 @@ using Newtonsoft.Json;
             __builder2.OpenElement(7, "a");
             __builder2.AddAttribute(8, "style", "cursor:" + " pointer;" + " color:" + " #fff;" + " " + (
 #nullable restore
-#line 93 "C:\Users\pocht\Desktop\TestTask\TestTask\Client\Shared\NavMenu.razor"
+#line 94 "C:\Users\pocht\Desktop\TestTask\TestTask\Client\Shared\NavMenu.razor"
                                                                         Program.CurrentDivisionId == id ? "text-decoration: underline;" : ""
 
 #line default
@@ -203,7 +204,7 @@ using Newtonsoft.Json;
             ));
             __builder2.AddAttribute(9, "@onclick", "async () => await SetCurrentDivision(subDivision)");
 #nullable restore
-#line 93 "C:\Users\pocht\Desktop\TestTask\TestTask\Client\Shared\NavMenu.razor"
+#line 94 "C:\Users\pocht\Desktop\TestTask\TestTask\Client\Shared\NavMenu.razor"
 __builder2.AddContent(10, subDivision.Title);
 
 #line default
@@ -219,7 +220,7 @@ __builder2.AddContent(10, subDivision.Title);
             __builder2.CloseElement();
         }
 #nullable restore
-#line 97 "C:\Users\pocht\Desktop\TestTask\TestTask\Client\Shared\NavMenu.razor"
+#line 98 "C:\Users\pocht\Desktop\TestTask\TestTask\Client\Shared\NavMenu.razor"
                            ;
             markup += GetList(subDivision, 
 
@@ -230,7 +231,7 @@ __builder2.AddContent(10, subDivision.Title);
             __builder2.AddMarkupContent(13, "<div></div>");
         }
 #nullable restore
-#line 98 "C:\Users\pocht\Desktop\TestTask\TestTask\Client\Shared\NavMenu.razor"
+#line 99 "C:\Users\pocht\Desktop\TestTask\TestTask\Client\Shared\NavMenu.razor"
                                                        );
         }
         return 
@@ -241,7 +242,7 @@ __builder2.AddContent(10, subDivision.Title);
         (__builder2) => {
             __builder2.OpenElement(14, "ul");
 #nullable restore
-#line 100 "C:\Users\pocht\Desktop\TestTask\TestTask\Client\Shared\NavMenu.razor"
+#line 101 "C:\Users\pocht\Desktop\TestTask\TestTask\Client\Shared\NavMenu.razor"
 __builder2.AddContent(15, markup);
 
 #line default
@@ -251,14 +252,13 @@ __builder2.AddContent(15, markup);
             __builder2.AddMarkupContent(16, "\r\n");
         }
 #nullable restore
-#line 101 "C:\Users\pocht\Desktop\TestTask\TestTask\Client\Shared\NavMenu.razor"
+#line 102 "C:\Users\pocht\Desktop\TestTask\TestTask\Client\Shared\NavMenu.razor"
     ;
     }
 
     private void DivisionAddButton_OnClick()
     {
         _stateMachine.SetState(StateMachine.State.Add);
-        Program.AppData.ClearDivisionBackup();
         _navigationManager.NavigateTo("divisionInfo/0");
     }
 
@@ -309,16 +309,6 @@ __builder2.AddContent(15, markup);
     {
         _stateMachine.SetState(StateMachine.State.Change);
 
-
-        if (Program.DivisionInfoPageOpened)
-            Program.AppData.RecoverDivision();
-
-        if (Program.EmployeeInfoPageOpened)
-        {
-            Program.AppData.RecoverEmployee();
-            Program.EmployeeInfoPageOpened = false;
-        }
-
         Program.AppData.SelectedDivision = division;
         Program.DivisionInfoPageOpened = true;
 
@@ -332,17 +322,6 @@ __builder2.AddContent(15, markup);
         _divisions = (await Program.AppData.GetDivisionsAsync()).ToDictionary(d => d.Id, d => d);
         var url = GetDivisionHrefById(division.Id);
         Program.LastPageUrl = url;
-
-        if (Program.DivisionInfoPageOpened)
-        {
-            Program.AppData.RecoverDivision();
-            Program.DivisionInfoPageOpened = false;
-        }
-        if (Program.EmployeeInfoPageOpened)
-        {
-            Program.AppData.RecoverEmployee();
-            Program.EmployeeInfoPageOpened = false;
-        }
 
         Program.AppData.SelectedDivision = division;
         Program.CurrentDivisionId = division.Id;

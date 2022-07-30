@@ -2,11 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
-
 using TestTask.Server.DAL;
 using TestTask.Shared;
 
-namespace TestTask.Server.Utils
+namespace TestTask.Server.Storage
 {
     /// <summary>
     /// Сервис по работе с хранилищем подразделений
@@ -25,6 +24,16 @@ namespace TestTask.Server.Utils
         {
             _unitOfWork = unitOfWork;
             _cache = cache;
+        }
+
+        /// <summary>
+        /// Заполнение хранилища списком подразделений
+        /// </summary>
+        public void FillCache()
+        {
+            var divisions = _unitOfWork.DivisionRepository.GetWithChildren();
+
+            _cache.DivisionStorage.Fill(divisions);
         }
 
         /// <summary>
@@ -105,12 +114,12 @@ namespace TestTask.Server.Utils
 
             foreach (var subDivision in subDivisions)
             {
-                if (division.SubDivisions.All(d => d.Id != subDivision.Id))
-                {
-                    subDivision.DivisionId = null;
-                    subDivision.ParentDivision = null;
-                    _cache.DivisionStorage.Replace(subDivision);
-                }
+                if (division.SubDivisions.Any(d => d.Id == subDivision.Id))
+                    continue;
+
+                subDivision.DivisionId = null;
+                subDivision.ParentDivision = null;
+                _cache.DivisionStorage.Replace(subDivision);
             }
 
             foreach (var subDivision in division.SubDivisions)
@@ -119,8 +128,6 @@ namespace TestTask.Server.Utils
                 subDivision.ParentDivision = division;
                 _cache.DivisionStorage.Replace(subDivision);
             }
-
-
         }
 
         /// <summary>
@@ -137,8 +144,7 @@ namespace TestTask.Server.Utils
         /// <param name="id">Идентификатор, по которому нуэно удалить подразделение</param>
         public void Delete(int id)
         {
-            var division = Get(id, true);
-            _unitOfWork.DivisionRepository.Delete(division);
+            _unitOfWork.DivisionRepository.Delete(id);
             _unitOfWork.Save();
 
             _cache.DivisionStorage.Remove(id);

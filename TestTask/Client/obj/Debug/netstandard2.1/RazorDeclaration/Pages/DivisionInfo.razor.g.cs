@@ -158,7 +158,7 @@ using TestTask.Client.Utils;
         _division = null;
         var divisionFromSession = GetDivisionFromSession();
         _subDivisionsToAdd = new List<Division>();
-        if (!Program.AppData.SelectedDivision.CheckInitialize() && divisionFromSession != null)
+        if (!Program.AppData.SelectedDivision.CheckCopied() && divisionFromSession != null)
         {
             _division = divisionFromSession;
         }
@@ -356,13 +356,9 @@ using TestTask.Client.Utils;
 
     private void GoBack()
     {
-        _division.Title = _divisionBackup.Title;
-        _division.CreateDate = _divisionBackup.CreateDate;
-        _division.Description = _divisionBackup.Description;
-        _division.DivisionId = _divisionBackup.DivisionId;
-        _division.SubDivisions = _divisionBackup.SubDivisions;
         _stateMachine.SetState(StateMachine.State.Idle);
         _navigationManager.NavigateTo(Program.LastPageUrl);
+        _storageService.Clear();
     }
 
 

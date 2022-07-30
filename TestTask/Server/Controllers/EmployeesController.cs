@@ -9,6 +9,9 @@ using TestTask.Shared;
 
 namespace TestTask.Server.Controllers
 {
+    /// <summary>
+    /// Контроллер для работы с сотрудниками
+    /// </summary>
     [ApiController]
     [Route("[controller]")]
     public class EmployeesController : Controller

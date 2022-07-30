@@ -82,13 +82,6 @@ using Blazored.SessionStorage;
 #line default
 #line hidden
 #nullable disable
-#nullable restore
-#line 2 "C:\Users\pocht\Desktop\TestTask\TestTask\Client\Shared\MainLayout.razor"
-using TestTask.Shared;
-
-#line default
-#line hidden
-#nullable disable
     public partial class MainLayout : LayoutComponentBase
     {
         #pragma warning disable 1998
@@ -96,19 +89,6 @@ using TestTask.Shared;
         {
         }
         #pragma warning restore 1998
-#nullable restore
-#line 19 "C:\Users\pocht\Desktop\TestTask\TestTask\Client\Shared\MainLayout.razor"
- 
-    //protected override async Task OnInitializedAsync()
-    //{
-    //    await Program.AppData.InitializeBaseProperties();
-    //    var response = await _http.GetFromJsonAsync<IEnumerable<Division>>("divisions");
-    //    Program.AppData.Divisions = response;
-    //}
-
-#line default
-#line hidden
-#nullable disable
         [global::Microsoft.AspNetCore.Components.InjectAttribute] private HttpClient _http { get; set; }
         [global::Microsoft.AspNetCore.Components.InjectAttribute] private ISessionStorageService _storageService { get; set; }
     }

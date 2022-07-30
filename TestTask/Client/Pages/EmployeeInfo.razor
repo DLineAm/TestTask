@@ -32,7 +32,7 @@
         <InputSelect id="gender" @bind-Value="_employee.Gender">
             @foreach (var gender in Enum.GetValues(typeof(Gender)).Cast<Gender>())
             {
-                <option value="@gender">@GenderHelper.GetGenderTitle(gender)</option>
+                <option value="@gender">@gender.GetDisplayTitle()</option>
             }
         </InputSelect>
     </div>
@@ -93,7 +93,7 @@
 
         var divisionFromSession = _storageService.GetItem<Employee>("currentEmployee");
 
-        if (!Program.AppData.SelectedEmployee.CheckInitialize() && divisionFromSession != null)
+        if (!Program.AppData.SelectedEmployee.CheckCopied() && divisionFromSession != null)
         {
             _employee = divisionFromSession;
         }
@@ -209,16 +209,9 @@
 
     private void GoBack()
     {
-        _employee.FirstName = _employeeBackup.FirstName;
-        _employee.FirstName = _employeeBackup.FirstName;
-        _employee.LastName = _employeeBackup.LastName;
-        _employee.MiddleName = _employeeBackup.MiddleName;
-        _employee.Gender = _employeeBackup.Gender;
-        _employee.DateOfBirth = _employeeBackup.DateOfBirth;
-        _employee.HasDriverLicense = _employeeBackup.HasDriverLicense;
-        _employee.DivisionId = _employeeBackup.DivisionId;
         _stateMachine.SetState(StateMachine.State.Idle);
         _navigationManager.NavigateTo(Program.LastPageUrl);
+        _storageService.Clear();
     }
 
 }

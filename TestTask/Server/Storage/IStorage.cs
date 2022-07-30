@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using TestTask.Shared;
 
-namespace TestTask.Server.Utils
+namespace TestTask.Server.Storage
 {
     /// <summary>
     /// Интерфейс, представляющий хранилище с возможностью чтения и записи данных
@@ -10,7 +10,6 @@ namespace TestTask.Server.Utils
     /// <typeparam name="T"></typeparam>
     public interface IStorage<T> where T : IIdentity, new()
     {
-
         /// <summary>
         /// Получение списка записей
         /// </summary>

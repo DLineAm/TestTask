@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage;
 using TestTask.Server.DAL;
 using TestTask.Server.DAL.Context;
-using TestTask.Server.Utils;
+using TestTask.Server.Storage;
 
 namespace TestTask.Server
 {
@@ -19,27 +19,19 @@ namespace TestTask.Server
         {
             var host = CreateHostBuilder(args).Build();
             ConfigureDatabase(host);
-            FillCache(host);
+            InitializeCache(host);
             host.Run();
         }
 
-        private static void FillCache(IHost host)
+        private static void InitializeCache(IHost host)
         {
             using var scope = host.Services.CreateScope();
 
             var services = scope.ServiceProvider;
 
-            using var unitOfWork = services.GetRequiredService<UnitOfWork>();
+            var serviceCollection = services.GetRequiredService<DataServiceCollection>();
 
-            var cache = services.GetRequiredService<Cache>();
-
-            var divisions = unitOfWork.DivisionRepository.GetWithChildren();
-
-            cache.DivisionStorage.Fill(divisions);
-
-            var employees = unitOfWork.EmployeeRepository.GetWithChildren();
-
-            cache.EmployeeStorage.Fill(employees);
+            serviceCollection.FillCache();
         }
 
         private static void ConfigureDatabase(IHost host)
@@ -51,10 +43,11 @@ namespace TestTask.Server
             try
             {
                 var context = services.GetRequiredService<DatabaseContext>();
-                var isDatabaseExists = (context.Database.GetService<IDatabaseCreator>() as RelationalDatabaseCreator).Exists();
+                var isDatabaseExists = ((RelationalDatabaseCreator) context.Database.GetService<IDatabaseCreator>()).Exists();
                 context.Database.Migrate();
 
-                if (isDatabaseExists) return;
+                if (isDatabaseExists) 
+                    return;
 
                 var initializer = services.GetRequiredService<IDataInitializer>();
                 initializer.Initialize(context);

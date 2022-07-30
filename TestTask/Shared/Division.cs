@@ -10,13 +10,16 @@ namespace TestTask.Shared
     /// </summary>
     public class Division : IIdentity
     {
-        private readonly bool _isInitialized;
+        private readonly bool _isCopied;
 
         public Division()
         {
             
         }
 
+        /// <summary>
+        /// Конструктор, принимающий подразделение для копирования данных со свойств этого подазделения
+        /// </summary>
         public Division(Division? division)
         {
             if (division == null)
@@ -32,12 +35,16 @@ namespace TestTask.Shared
             ParentDivision = division.ParentDivision;
             SubDivisions = division.SubDivisions;
             Id = division.Id;
-            _isInitialized = true;
+            _isCopied = true;
         }
 
-        public bool CheckInitialize()
+        /// <summary>
+        /// Получает информацию о том, были ли скопированы данные со свойств другого подразделения
+        /// </summary>
+        /// <returns>True, если данные были скопированы. False, если нет</returns>
+        public bool CheckCopied()
         {
-            return _isInitialized;
+            return _isCopied;
         }
 
         /// <summary>
@@ -78,7 +85,6 @@ namespace TestTask.Shared
         /// Дети подразделения
         /// </summary>
         public ICollection<Division> SubDivisions { get; set; } = new List<Division>();
-
 
         /// <summary>
         /// Проверяет, является ли подразделение division родительским

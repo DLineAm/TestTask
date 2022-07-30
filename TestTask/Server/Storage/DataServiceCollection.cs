@@ -1,4 +1,4 @@
-﻿namespace TestTask.Server.Utils
+﻿namespace TestTask.Server.Storage
 {
     /// <summary>
     /// Класс, хранящий сервисы по работе с хранилищем
@@ -13,6 +13,15 @@
         {
             Divisions = divisions;
             Employees = employees;
+        }
+
+        /// <summary>
+        /// Заполнение хранилища данными
+        /// </summary>
+        public void FillCache()
+        {
+            Divisions.FillCache();
+            Employees.FillCache();
         }
 
         /// <summary>

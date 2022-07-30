@@ -158,7 +158,7 @@ using TestTask.Client.Utils;
         _division = null;
         var divisionFromSession = GetDivisionFromSession();
         _subDivisionsToAdd = new List<Division>();
-        if (Program.AppData.SelectedDivision == null && divisionFromSession != null)
+        if (!Program.AppData.SelectedDivision.CheckCopied() && divisionFromSession != null)
         {
             _division = divisionFromSession;
         }
@@ -167,7 +167,7 @@ using TestTask.Client.Utils;
             _division = _stateMachine.CurrentState is StateMachine.State.Add
                 ? new Division { DivisionId = Program.AppData.SelectedDivisionFromList?.Id ?? 0 }
                 : Program.AppData.SelectedDivision;
-            _storageService.SetItem("currentDivision", _division);
+            SaveDivision();
         }
 
         _divisionBackup = new Division(_division);
@@ -320,8 +320,6 @@ using TestTask.Client.Utils;
             return;
         }
 
-        Program.AppData.ClearDivisionBackup();
-
         await Program.AppData.InitializeBaseProperties();
         _eventAggregator.InvokeDivisionCollectionChanged();
 
@@ -358,13 +356,9 @@ using TestTask.Client.Utils;
 
     private void GoBack()
     {
-        _division.Title = _divisionBackup.Title;
-        _division.CreateDate = _divisionBackup.CreateDate;
-        _division.Description = _divisionBackup.Description;
-        _division.DivisionId = _divisionBackup.DivisionId;
-        _division.SubDivisions = _divisionBackup.SubDivisions;
         _stateMachine.SetState(StateMachine.State.Idle);
         _navigationManager.NavigateTo(Program.LastPageUrl);
+        _storageService.Clear();
     }
 
 

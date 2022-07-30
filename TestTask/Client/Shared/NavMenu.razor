@@ -67,6 +67,7 @@ else
 
     private async Task GetDivisions()
     {
+        _divisions = new Dictionary<int, Division>();
         _divisions = (await Program.AppData.GetDivisionsAsync()).ToDictionary(d => d.Id, d => d);
         StateHasChanged();
     }

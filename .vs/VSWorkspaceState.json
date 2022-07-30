@@ -3,7 +3,8 @@
     "",
     "\\TestTask",
     "\\TestTask\\Server",
-    "\\TestTask\\Server\\DAL"
+    "\\TestTask\\Server\\DAL",
+    "\\TestTask\\Server\\Services"
   ],
   "SelectedNode": "\\TestTask.sln",
   "PreviewInSolutionExplorer": false

@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 
 using TestTask.Server.DAL;
-using TestTask.Server.Utils;
+using TestTask.Server.Storage;
 using TestTask.Shared;
 
 namespace TestTask.Server.Services
@@ -76,12 +76,16 @@ namespace TestTask.Server.Services
                     continue;
                 }
 
+                var parentDivision = dbDivision.ParentDivision;
+
+                parentDivision?.SubDivisions.Remove(dbDivision);
+
                 dbDivision.DivisionId = id;
+                dbDivision.ParentDivision = division;
 
                 _serviceCollection.Divisions.SaveAndUpdate(dbDivision);
             }
 
-            _serviceCollection.Divisions.SaveAndUpdate(division);
             return id;
         }
 
@@ -91,23 +95,24 @@ namespace TestTask.Server.Services
         /// <param name="id">Идентификатор подразделения, которое нужно удалить</param>
         public void Delete(int id)
         {
+            //Todo: тут 2 раза получаем напрямую из бд
             var division = _serviceCollection.Divisions.Get(id, true);
 
-            var subDivisions = _serviceCollection.Divisions.GetAll(d => d.DivisionId == id, true);
+            var subDivisions = _serviceCollection.Divisions.GetAll(d => d.DivisionId == id);
             if (subDivisions != null)
             {
                 foreach (var subDivision in subDivisions)
                 {
                     subDivision.DivisionId = null;
                     subDivision.ParentDivision = null;
+                    _serviceCollection.Divisions.SaveAndUpdate(subDivision);
                 }
             }
 
-            var employeesForDelete = _unitOfWork.EmployeeRepository.Get(x => x.DivisionId == id);
+            var employeesForDelete = _serviceCollection.Employees.GetByDivisionId(id);
             if (employeesForDelete.Any())
             {
-                _unitOfWork.EmployeeRepository.DeleteBulk(employeesForDelete);
-                _unitOfWork.Save();
+                employeesForDelete.ToList().ForEach(e => _serviceCollection.Employees.Delete(e.Id));
             }
 
             division.DivisionId = null;
@@ -153,11 +158,11 @@ namespace TestTask.Server.Services
             var subDivisionsFromDb = _serviceCollection.Divisions.GetAll(d => d.DivisionId == division.Id, true);
             foreach (var subDivisionFromDb in subDivisionsFromDb)
             {
-                if (subDivisionIds.All(id => id != subDivisionFromDb.Id))
-                {
-                    subDivisionFromDb.DivisionId = null;
-                    _serviceCollection.Divisions.SaveAndUpdate(subDivisionFromDb);
-                }
+                if (subDivisionIds.Any(id => id == subDivisionFromDb.Id)) 
+                    continue;
+
+                subDivisionFromDb.DivisionId = null;
+                _serviceCollection.Divisions.SaveAndUpdate(subDivisionFromDb);
             }
 
             _serviceCollection.Divisions.Save();

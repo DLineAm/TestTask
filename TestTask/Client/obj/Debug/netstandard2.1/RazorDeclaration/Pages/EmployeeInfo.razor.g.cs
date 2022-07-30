@@ -156,7 +156,7 @@ using Newtonsoft.Json;
 
         var divisionFromSession = _storageService.GetItem<Employee>("currentEmployee");
 
-        if (!Program.AppData.SelectedEmployee.CheckInitialize() && divisionFromSession != null)
+        if (!Program.AppData.SelectedEmployee.CheckCopied() && divisionFromSession != null)
         {
             _employee = divisionFromSession;
         }
@@ -272,16 +272,9 @@ using Newtonsoft.Json;
 
     private void GoBack()
     {
-        _employee.FirstName = _employeeBackup.FirstName;
-        _employee.FirstName = _employeeBackup.FirstName;
-        _employee.LastName = _employeeBackup.LastName;
-        _employee.MiddleName = _employeeBackup.MiddleName;
-        _employee.Gender = _employeeBackup.Gender;
-        _employee.DateOfBirth = _employeeBackup.DateOfBirth;
-        _employee.HasDriverLicense = _employeeBackup.HasDriverLicense;
-        _employee.DivisionId = _employeeBackup.DivisionId;
         _stateMachine.SetState(StateMachine.State.Idle);
         _navigationManager.NavigateTo(Program.LastPageUrl);
+        _storageService.Clear();
     }
 
 

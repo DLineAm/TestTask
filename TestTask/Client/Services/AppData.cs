@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Json;
@@ -19,8 +18,6 @@ namespace TestTask.Client.Services
         private Employee _selectedEmployee;
         private List<Employee> _employees;
         private Division _selectedDivision;
-        private Division _divisionOrigin;
-        private Employee _employeeOrigin;
 
         public AppData(HttpClient http)
         {

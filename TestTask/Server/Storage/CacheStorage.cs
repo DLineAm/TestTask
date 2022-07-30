@@ -1,9 +1,10 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using TestTask.Shared;
 
-namespace TestTask.Server.Utils
+namespace TestTask.Server.Storage
 {
     /// <summary>
     /// Промежуточное хранилище с возможностью чтения и записи данных
@@ -11,7 +12,7 @@ namespace TestTask.Server.Utils
     /// <typeparam name="TEntity"></typeparam>
     public class CacheStorage<TEntity> : IStorage<TEntity> where TEntity : IIdentity, new()
     {
-        private readonly Dictionary<int, TEntity> _storage = new Dictionary<int, TEntity>();
+        private ConcurrentDictionary<int, TEntity> _storage = new ConcurrentDictionary<int, TEntity>();
 
         /// <summary>
         /// Получение списка записей
@@ -20,10 +21,9 @@ namespace TestTask.Server.Utils
         public IEnumerable<TEntity> GetAll(Func<TEntity, bool> filter = null)
         {
             var list = _storage.Select(e => e.Value);
+
             if (filter != null)
-            {
                 list = list.Where(filter);
-            }
 
             return list;
         }
@@ -57,10 +57,8 @@ namespace TestTask.Server.Utils
         {
             _storage.Clear();
 
-            foreach (var entity in entities)
-            {
-                _storage[entity.Id] = entity;
-            }
+            var keyValues = entities.Select(x => new KeyValuePair<int, TEntity>(x.Id, x));
+            _storage = new ConcurrentDictionary<int, TEntity>(keyValues);
         }
 
         /// <summary>
@@ -78,7 +76,7 @@ namespace TestTask.Server.Utils
         /// <param name="id">Идентификатор записи, которую нужно удалить</param>
         public void Remove(int id)
         {
-            if (!_storage.Remove(id))
+            if (!_storage.TryRemove(id, out _))
                 throw new ArgumentException($"{typeof(TEntity).Name} not found by Id={id}");
         }
 
@@ -88,7 +86,7 @@ namespace TestTask.Server.Utils
         /// <param name="entity">Запись, которой нужно заменить существующую в промежуточном хранилище запись с тем же Id</param>
         public void Replace(TEntity entity)
         {
-            if (!_storage.Remove(entity.Id))
+            if (!_storage.TryRemove(entity.Id, out _))
                 throw new ArgumentException($"{typeof(TEntity).Name} not found by Id={entity.Id}");
 
             _storage[entity.Id] = entity;
@@ -98,9 +96,6 @@ namespace TestTask.Server.Utils
         /// Определяет, есть ли в промежуточном хранилище какие-либо записи
         /// </summary>
         /// <returns>True, если в промежуточном хранилище имеются какие-либо записи. False, если нет</returns>
-        public bool Any()
-        {
-            return _storage.Any();
-        }
+        public bool Any() => _storage.Any();
     }
 }
