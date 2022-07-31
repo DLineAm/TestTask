@@ -15,18 +15,15 @@ namespace TestTask.Server.Services
     /// </summary>
     public class DivisionService : IDivisionService
     {
-        private readonly UnitOfWork _unitOfWork;
         private readonly ILogger<DivisionService> _logger;
         private readonly DataServiceCollection _serviceCollection;
 
         /// <summary>
         /// Конструктор сервиса сотрудников
         /// </summary>
-        /// <param name="unitOfWork">Класс, хранящий все репозитории с целью гарантии использования одного контекста</param>
         /// <param name="logger">Логгер</param>
-        public DivisionService(UnitOfWork unitOfWork, ILogger<DivisionService> logger, DataServiceCollection serviceCollection)
+        public DivisionService(ILogger<DivisionService> logger, DataServiceCollection serviceCollection)
         {
-            _unitOfWork = unitOfWork;
             _logger = logger;
             _serviceCollection = serviceCollection;
         }
@@ -34,7 +31,6 @@ namespace TestTask.Server.Services
         /// <summary>
         /// Получение списка подразделений
         /// </summary>
-        /// <returns></returns>
         public IEnumerable<Division> Get()
         {
             return _serviceCollection.Divisions.GetAll();
@@ -118,14 +114,6 @@ namespace TestTask.Server.Services
             division.DivisionId = null;
             _serviceCollection.Divisions.SaveAndUpdate(division);
             _serviceCollection.Divisions.Delete(division.Id);
-
-
-            if (subDivisions == null) return;
-
-            foreach (var subDivision in subDivisions)
-            {
-                _serviceCollection.Divisions.SaveAndUpdate(subDivision);
-            }
         }
 
         /// <summary>
@@ -165,6 +153,7 @@ namespace TestTask.Server.Services
                 _serviceCollection.Divisions.SaveAndUpdate(subDivisionFromDb);
             }
 
+            division.SubDivisions = (ICollection<Division>)subDivisionsFromDb;
             _serviceCollection.Divisions.Save();
         }
     }

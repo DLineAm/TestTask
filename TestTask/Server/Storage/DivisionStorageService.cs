@@ -124,7 +124,7 @@ namespace TestTask.Server.Storage
 
             foreach (var subDivision in division.SubDivisions)
             {
-                subDivision.Id = division.Id;
+                subDivision.DivisionId = division.Id;
                 subDivision.ParentDivision = division;
                 _cache.DivisionStorage.Replace(subDivision);
             }

@@ -14,7 +14,6 @@ namespace TestTask.Server.DAL.Context
         /// <summary>
         /// Заполняет базу данных тестовыми данными
         /// </summary>
-        /// <param name="context"></param>
         public void Initialize(DatabaseContext context)
         {
             var divisions = InitializeDivisions(context);
@@ -25,8 +24,6 @@ namespace TestTask.Server.DAL.Context
         /// <summary>
         /// Заполняет таблицу подразделений тестовыми даными
         /// </summary>
-        /// <param name="context"></param>
-        /// <returns></returns>
         private IEnumerable<Division> InitializeDivisions(DatabaseContext context)
         {
             if (context.Divisions.Any())
@@ -75,10 +72,6 @@ namespace TestTask.Server.DAL.Context
         /// <summary>
         /// Создает запись и сохраняет ее в бд
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="entity"></param>
-        /// <param name="context"></param>
-        /// <returns></returns>
         private T CreateEntity<T>(T entity, DatabaseContext context) where T : class
         {
             var savedEntity = context.Set<T>().Add(entity);
@@ -90,8 +83,6 @@ namespace TestTask.Server.DAL.Context
         /// <summary>
         /// Заполняет таблицу сотрудников тестовыми данными
         /// </summary>
-        /// <param name="context"></param>
-        /// <param name="divisions"></param>
         private void InitializeEmployees(DatabaseContext context, IEnumerable<Division> divisions)
         {
             if (context.Employees.Any())

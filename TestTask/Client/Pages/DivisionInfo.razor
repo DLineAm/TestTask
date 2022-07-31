@@ -260,7 +260,7 @@
 
         _division.ParentDivision = null;
 
-        if (_subDivisionsToAdd.Any(d => d.Id == _division.DivisionId))
+        if ( _division.DivisionId != null && _subDivisionsToAdd.Any(d => d.Id == _division.DivisionId))
             _division = _divisionsToAdd.FirstOrDefault(d => d.Id > _division.DivisionId);
 
         var response = _stateMachine.CurrentState is StateMachine.State.Change

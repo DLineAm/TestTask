@@ -121,15 +121,6 @@ namespace TestTask.Server.DAL
         }
 
         /// <summary>
-        /// Удаление нескольких записей из бд
-        /// </summary>
-        /// <param name="entitiesToDelete">Записи, которые нужно удалить</param>
-        public void DeleteBulk(IEnumerable<TEntity> entitiesToDelete)
-        {
-            _dbSet.RemoveRange(entitiesToDelete);
-        }
-
-        /// <summary>
         /// Изменение состояния записи из бд в измененное
         /// </summary>
         /// <param name="entityToUpdate">Запись, состояние которой нужно изменить</param>
