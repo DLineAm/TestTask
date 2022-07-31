@@ -38,11 +38,6 @@ namespace TestTask.Server.Storage
         void SaveAndUpdate(Division division);
 
         /// <summary>
-        /// Сохранение подразделения
-        /// </summary>
-        void Save();
-
-        /// <summary>
         /// Удаление подразделения
         /// </summary>
         /// <param name="id">Идентификатор подразделения, которое нужно удалить</param>

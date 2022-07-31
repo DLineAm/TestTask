@@ -131,14 +131,6 @@ namespace TestTask.Server.Storage
         }
 
         /// <summary>
-        /// Созранение подразделения из хранилища записью entity
-        /// </summary>
-        public void Save()
-        {
-            _unitOfWork.Save();
-        }
-
-        /// <summary>
         /// Удаление подразделения
         /// </summary>
         /// <param name="id">Идентификатор, по которому нуэно удалить подразделение</param>

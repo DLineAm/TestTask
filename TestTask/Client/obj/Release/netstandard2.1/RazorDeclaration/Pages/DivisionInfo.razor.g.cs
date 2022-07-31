@@ -157,7 +157,7 @@ using TestTask.Client.Utils;
     {
         _division = null;
         var divisionFromSession = GetDivisionFromSession();
-        _subDivisionsToAdd = new List<Division>();
+        //_subDivisionsToAdd = new List<Division>();
         if (!Program.AppData.SelectedDivision.CheckCopied() && divisionFromSession != null)
         {
             _division = divisionFromSession;
@@ -194,10 +194,6 @@ using TestTask.Client.Utils;
     private async Task GetDivisions()
     {
         var divisionsList = (await Program.AppData.GetDivisionsAsync()).Where(d => d.Id != _division.Id).ToList();
-        divisionsList.ForEach(d =>
-        {
-            d.ParentDivision = null;
-        });
         divisionsList.Insert(0, new Division { Title = "Нет", DivisionId = -1 });
         _divisionsToAdd = divisionsList.Where(d => d.DivisionId != null && d.DivisionId != 0).ToList();
         _divisions = divisionsList.ToList();
@@ -242,17 +238,6 @@ using TestTask.Client.Utils;
         SaveDivision();
     }
 
-    private bool IsAnySubDivision(IEnumerable<Division> divisions)
-    {
-        foreach (var division in divisions)
-        {
-            return division.HasParent(_division) 
-                   || IsAnySubDivision(division.SubDivisions);
-        }
-
-        return false;
-    }
-
     private async Task ApplyButton_OnClick()
     {
         _errorText = string.Empty;
@@ -267,14 +252,15 @@ using TestTask.Client.Utils;
 
         if (childrenDivision != null 
             && (_divisionBackup.DivisionId is 0 || _divisionBackup.DivisionId is null) 
-            && IsAnySubDivision(_subDivisionsToAdd))
+            && childrenDivision.HasParent(_division))
         {
             _errorText = @"Попытка изменить поле корневого подразделения ""Родительское подразделение"" на одно из вложенных подразделений";
             return;
         }
 
-        _division.SubDivisions = _subDivisionsToAdd;
+        _subDivisionsToAdd = _subDivisionsToAdd.Where(d => d != null).ToList();
 
+        _division.SubDivisions = _subDivisionsToAdd;
 
         var divisions = new List<Division> { _division};
         if (_division.DivisionId != 0)
@@ -307,8 +293,10 @@ using TestTask.Client.Utils;
 
         _division.ParentDivision = null;
 
+        Debug.WriteLine(_subDivisionsToAdd.Count);
+
         if ( _division.DivisionId != null && _subDivisionsToAdd.Any(d => d.Id == _division.DivisionId))
-            _division = _divisionsToAdd.FirstOrDefault(d => d.Id > _division.DivisionId);
+            _division.DivisionId = _divisionsToAdd.FirstOrDefault(d => d.Id > _division.DivisionId)?.Id;
 
         var response = _stateMachine.CurrentState is StateMachine.State.Change
             ? await PutDivisionAsync()

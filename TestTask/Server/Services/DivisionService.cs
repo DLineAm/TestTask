@@ -148,11 +148,16 @@ namespace TestTask.Server.Services
                     continue;
 
                 subDivisionFromDb.DivisionId = null;
+                subDivisionFromDb.ParentDivision = null;
+
+                var subDivisions = _serviceCollection.Divisions.GetAll(d => d.DivisionId == subDivisionFromDb.Id);
+                subDivisionFromDb.SubDivisions = subDivisions.ToList();
+
                 _serviceCollection.Divisions.SaveAndUpdate(subDivisionFromDb);
             }
 
-            division.SubDivisions = (ICollection<Division>)subDivisionsFromDb;
-            _serviceCollection.Divisions.Save();
+            division.SubDivisions = subDivisionsFromDb.Where(d => d.DivisionId != null).ToList();
+            _serviceCollection.Divisions.SaveAndUpdate(division);
         }
     }
 }

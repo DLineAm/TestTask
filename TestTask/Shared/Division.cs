@@ -91,9 +91,9 @@ namespace TestTask.Shared
         /// </summary>
         /// <param name="division"></param>
         /// <returns>True, если подразделение division является родительким. False, если нет</returns>
-        public bool HasParent(Division division)
+        public bool HasParent(Division? division)
         {
-            return division.Id == DivisionId || ParentDivision?.HasParent(division) != null;
+            return division != null && (division.Id == DivisionId || ParentDivision?.HasParent(division) != null);
         }
     }
 }
