@@ -4,7 +4,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-using TestTask.Server.DAL;
 using TestTask.Server.Storage;
 using TestTask.Shared;
 
@@ -91,7 +90,6 @@ namespace TestTask.Server.Services
         /// <param name="id">Идентификатор подразделения, которое нужно удалить</param>
         public void Delete(int id)
         {
-            //Todo: тут 2 раза получаем напрямую из бд
             var division = _serviceCollection.Divisions.Get(id, true);
 
             var subDivisions = _serviceCollection.Divisions.GetAll(d => d.DivisionId == id);
