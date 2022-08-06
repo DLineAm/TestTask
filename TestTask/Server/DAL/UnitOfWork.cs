@@ -1,4 +1,5 @@
 ﻿using System;
+
 using TestTask.Server.DAL.Context;
 using TestTask.Shared;
 
@@ -17,6 +18,11 @@ namespace TestTask.Server.DAL
         public UnitOfWork(DatabaseContext context)
         {
             _context = context;
+        }
+
+        public Repository<T> GetRepository<T>() where T : class, IIdentity, new()
+        {
+            return this.GetGenericProperty<T, Repository<T>>();
         }
 
         /// <summary>

@@ -14,15 +14,13 @@ namespace TestTask.Server.Storage
         /// Получение списка подразделений
         /// </summary>
         /// <param name="filter">Возможный фильтр</param>
-        /// <param name="forceFromDb">Принудительно искать подразделения в бд</param>
-        IEnumerable<Division> GetAll(Expression<Func<Division, bool>> filter = null, bool forceFromDb = false);
+        IEnumerable<Division> GetAll(Expression<Func<Division, bool>> filter = null);
 
         /// <summary>
         /// Получение подразделения
         /// </summary>
         /// <param name="id">Идентификатор подразделения</param>
-        /// <param name="forceFromDb">Принудительно искать подразделение в бд</param>
-        Division Get(int id, bool forceFromDb = false);
+        Division Get(int id);
 
         /// <summary>
         /// Добавление подразделения в хранилище

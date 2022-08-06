@@ -29,12 +29,6 @@ namespace TestTask.Server.Storage
         T Get(Func<T, bool> expression);
 
         /// <summary>
-        /// Заполнение хранилища с помощью списка записей
-        /// </summary>
-        /// <param name="entities">Список записей, требуемый для заполнения хранилища</param>
-        void Fill(IEnumerable<T> entities);
-
-        /// <summary>
         /// Добавление записи в хранилище
         /// </summary>
         /// <param name="entity">Запись, которую нужно добавить в хранилище</param>

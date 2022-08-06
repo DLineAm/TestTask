@@ -29,5 +29,7 @@ namespace TestTask.Shared
         {
             return value.GetType().GetMember(value.ToString()).First().GetCustomAttribute<TAttribute>();
         }
+
+       
     }
 }

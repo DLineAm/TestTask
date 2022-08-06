@@ -4,7 +4,10 @@
     "\\TestTask",
     "\\TestTask\\Server",
     "\\TestTask\\Server\\DAL",
-    "\\TestTask\\Server\\Services"
+    "\\TestTask\\Server\\DAL\\Context",
+    "\\TestTask\\Server\\DAL\\Context\\Configurations",
+    "\\TestTask\\Server\\Services",
+    "\\TestTask\\Server\\Storage"
   ],
   "SelectedNode": "\\TestTask.sln",
   "PreviewInSolutionExplorer": false

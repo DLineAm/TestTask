@@ -105,7 +105,7 @@ using Blazored.SessionStorage;
         }
         #pragma warning restore 1998
 #nullable restore
-#line 56 "C:\Users\pocht\Desktop\TestTask\TestTask\Client\Pages\Employees.razor"
+#line 57 "C:\Users\pocht\Desktop\TestTask\TestTask\Client\Pages\Employees.razor"
        
     [Parameter]
     public int Id { get; set; }
@@ -130,13 +130,19 @@ using Blazored.SessionStorage;
     {
         _existEmployees = new List<Employee>();
 
+
+        if (Id == 0)
+            Id = await _storageService.GetItemAsync<int>("divisionId");
+        else
+            await _storageService.SetItemAsync("divisionId", Id);
+
         _currentDivision = Program.AppData.SelectedDivision 
-                           ?? (Program.AppData.SelectedDivision = (await Program.AppData.GetDivisionsAsync()).FirstOrDefault(d => d.Id == Id));
+                           ??= (await Program.AppData.GetDivisionsAsync()).FirstOrDefault(d => d.Id == Id);
         Program.AppData.SelectedDivisionFromList = _currentDivision;
         _divisions = await Program.AppData.GetDivisionsAsync();
         _title = _currentDivision?.Title;
         _employees = new List<Employee>();
-        _employees = Program.AppData.Employees.Where(e => e.DivisionId != null && e.DivisionId == _currentDivision.Id).ToList();
+        _employees = (await _httpClient.GetFromJsonAsync<IEnumerable<Employee>>($"employees?divisionId={Id}")).ToList();
         if (_currentDivision?.SubDivisions.Count > 0)
         {
             foreach (var subDivision in _currentDivision.SubDivisions)
@@ -160,16 +166,13 @@ using Blazored.SessionStorage;
     {
         _modalOpen = false;
         if (_stateMachine.CurrentState != StateMachine.State.Delete)
-        {
             return;
-        }
-        var employeeToDelete = Program.AppData.SelectedEmployee;
+
+            var employeeToDelete = Program.AppData.SelectedEmployee;
         Program.AppData.SelectedEmployee = null;
 
         if (!success)
-        {
             return;
-        }
 
         var response = await _http.DeleteAsync($"employees?id={employeeToDelete.Id}");
 
@@ -236,7 +239,7 @@ using Blazored.SessionStorage;
             __builder2.OpenElement(3, "span");
             __builder2.AddAttribute(4, "style", "font-size: 20px; font-weight: 700");
 #nullable restore
-#line 175 "C:\Users\pocht\Desktop\TestTask\TestTask\Client\Pages\Employees.razor"
+#line 179 "C:\Users\pocht\Desktop\TestTask\TestTask\Client\Pages\Employees.razor"
 __builder2.AddContent(5, employee.FullName);
 
 #line default
@@ -244,7 +247,7 @@ __builder2.AddContent(5, employee.FullName);
 #nullable disable
             __builder2.AddContent(6, " (");
 #nullable restore
-#line 175 "C:\Users\pocht\Desktop\TestTask\TestTask\Client\Pages\Employees.razor"
+#line 179 "C:\Users\pocht\Desktop\TestTask\TestTask\Client\Pages\Employees.razor"
 __builder2.AddContent(7, _divisions.FirstOrDefault(d => d.Id == employee.DivisionId)?.Title);
 
 #line default
@@ -262,7 +265,7 @@ __builder2.AddContent(7, _divisions.FirstOrDefault(d => d.Id == employee.Divisio
             __builder2.AddMarkupContent(11, "\r\n");
         }
 #nullable restore
-#line 181 "C:\Users\pocht\Desktop\TestTask\TestTask\Client\Pages\Employees.razor"
+#line 185 "C:\Users\pocht\Desktop\TestTask\TestTask\Client\Pages\Employees.razor"
     ;
         }
 
@@ -290,6 +293,7 @@ __builder2.AddContent(7, _divisions.FirstOrDefault(d => d.Id == employee.Divisio
 #line default
 #line hidden
 #nullable disable
+        [global::Microsoft.AspNetCore.Components.InjectAttribute] private HttpClient _httpClient { get; set; }
         [global::Microsoft.AspNetCore.Components.InjectAttribute] private ISessionStorageService _storageService { get; set; }
         [global::Microsoft.AspNetCore.Components.InjectAttribute] private StateMachine _stateMachine { get; set; }
         [global::Microsoft.AspNetCore.Components.InjectAttribute] private NavigationManager _navigationManager { get; set; }

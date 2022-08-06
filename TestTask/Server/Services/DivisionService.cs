@@ -90,7 +90,7 @@ namespace TestTask.Server.Services
         /// <param name="id">Идентификатор подразделения, которое нужно удалить</param>
         public void Delete(int id)
         {
-            var division = _serviceCollection.Divisions.Get(id, true);
+            var division = _serviceCollection.Divisions.Get(id);
 
             var subDivisions = _serviceCollection.Divisions.GetAll(d => d.DivisionId == id);
             if (subDivisions != null)
@@ -103,10 +103,10 @@ namespace TestTask.Server.Services
                 }
             }
 
-            var employeesForDelete = _serviceCollection.Employees.GetByDivisionId(id);
+            var employeesForDelete = _serviceCollection.Employees.GetByDivisionId(id).ToList();
             if (employeesForDelete.Any())
             {
-                employeesForDelete.ToList().ForEach(e => _serviceCollection.Employees.Delete(e.Id));
+                employeesForDelete.ForEach(e => _serviceCollection.Employees.Delete(e.Id));
             }
 
             division.DivisionId = null;
@@ -141,7 +141,7 @@ namespace TestTask.Server.Services
                 _serviceCollection.Divisions.SaveAndUpdate(subDivision);
             }
 
-            var subDivisionsFromDb = _serviceCollection.Divisions.GetAll(d => d.DivisionId == division.Id, true);
+            var subDivisionsFromDb = _serviceCollection.Divisions.GetAll(d => d.DivisionId == division.Id).ToList();
             foreach (var subDivisionFromDb in subDivisionsFromDb)
             {
                 if (subDivisionIds.Any(id => id == subDivisionFromDb.Id)) 

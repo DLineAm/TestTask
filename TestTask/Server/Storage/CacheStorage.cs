@@ -12,7 +12,7 @@ namespace TestTask.Server.Storage
     /// <typeparam name="TEntity"></typeparam>
     public class CacheStorage<TEntity> : IStorage<TEntity> where TEntity : IIdentity, new()
     {
-        private ConcurrentDictionary<int, TEntity> _storage = new ConcurrentDictionary<int, TEntity>();
+        private readonly ConcurrentDictionary<int, TEntity> _storage = new ConcurrentDictionary<int, TEntity>();
 
         /// <summary>
         /// Получение списка записей
@@ -47,18 +47,6 @@ namespace TestTask.Server.Storage
         public TEntity Get(Func<TEntity, bool> expression)
         {
             return _storage.Select(e => e.Value).FirstOrDefault(expression);
-        }
-
-        /// <summary>
-        /// Заполнение промежуточного хранилища с помощью списка записей
-        /// </summary>
-        /// <param name="entities">Список записей, требуемый для заполнения промежуточного хранилища</param>
-        public void Fill(IEnumerable<TEntity> entities)
-        {
-            _storage.Clear();
-
-            var keyValues = entities.Select(x => new KeyValuePair<int, TEntity>(x.Id, x));
-            _storage = new ConcurrentDictionary<int, TEntity>(keyValues);
         }
 
         /// <summary>

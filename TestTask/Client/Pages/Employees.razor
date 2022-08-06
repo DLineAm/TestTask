@@ -6,6 +6,7 @@
 @inject NavigationManager _navigationManager
 @inject StateMachine _stateMachine
 @inject ISessionStorageService _storageService
+@inject HttpClient _httpClient
 <h1 class="info__title">Сотрудники</h1>
 <h1 class="info__title">@_title</h1>
 <button @onclick="EmployeeAddButton_OnClick" class="main--btn inverted">Добавить</button>
@@ -77,13 +78,19 @@ else
     {
         _existEmployees = new List<Employee>();
 
+
+        if (Id == 0)
+            Id = await _storageService.GetItemAsync<int>("divisionId");
+        else
+            await _storageService.SetItemAsync("divisionId", Id);
+
         _currentDivision = Program.AppData.SelectedDivision 
-                           ?? (Program.AppData.SelectedDivision = (await Program.AppData.GetDivisionsAsync()).FirstOrDefault(d => d.Id == Id));
+                           ??= (await Program.AppData.GetDivisionsAsync()).FirstOrDefault(d => d.Id == Id);
         Program.AppData.SelectedDivisionFromList = _currentDivision;
         _divisions = await Program.AppData.GetDivisionsAsync();
         _title = _currentDivision?.Title;
         _employees = new List<Employee>();
-        _employees = Program.AppData.Employees.Where(e => e.DivisionId != null && e.DivisionId == _currentDivision.Id).ToList();
+        _employees = (await _httpClient.GetFromJsonAsync<IEnumerable<Employee>>($"employees?divisionId={Id}")).ToList();
         if (_currentDivision?.SubDivisions.Count > 0)
         {
             foreach (var subDivision in _currentDivision.SubDivisions)
@@ -107,16 +114,13 @@ else
     {
         _modalOpen = false;
         if (_stateMachine.CurrentState != StateMachine.State.Delete)
-        {
             return;
-        }
-        var employeeToDelete = Program.AppData.SelectedEmployee;
+
+            var employeeToDelete = Program.AppData.SelectedEmployee;
         Program.AppData.SelectedEmployee = null;
 
         if (!success)
-        {
             return;
-        }
 
         var response = await _http.DeleteAsync($"employees?id={employeeToDelete.Id}");
 

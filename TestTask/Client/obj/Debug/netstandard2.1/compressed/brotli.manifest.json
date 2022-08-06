@@ -1,7 +1,7 @@
 {
   "FilesToCompress": [
     {
-      "InputSource": "obj\\Debug\\netstandard2.1\\integrity\\_faxBRWiy6DF-gq7UG6y0_28QY2u-p4J6_vjz2IYGEE=.hash",
+      "InputSource": "obj\\Debug\\netstandard2.1\\integrity\\TdvOLN23LUSPzcwJYGIEgCGu_jw8oPynYxjOn3vuATY=.hash",
       "Source": "C:\\Users\\pocht\\Desktop\\TestTask\\TestTask\\Client\\obj\\Debug\\netstandard2.1\\blazor\\unlinked\\TestTask.Client.dll",
       "Target": "obj\\Debug\\netstandard2.1\\compressed\\_framework\/_bin\/TestTask.Client.dll.br"
     },
@@ -196,7 +196,7 @@
       "Target": "obj\\Debug\\netstandard2.1\\compressed\\_framework\/_bin\/Microsoft.Extensions.Logging.Abstractions.dll.br"
     },
     {
-      "InputSource": "obj\\Debug\\netstandard2.1\\integrity\\3R9S0c8eST4mNId0eGw78ISCIv9U6RaxVvM9o4o_lIM=.hash",
+      "InputSource": "obj\\Debug\\netstandard2.1\\integrity\\JoihkVRxYXJ1s7UwTOXglNA5HweTq_Bz1SbGxAiwv2A=.hash",
       "Source": "C:\\Users\\pocht\\Desktop\\TestTask\\TestTask\\Client\\obj\\Debug\\netstandard2.1\\blazor\\unlinked\\TestTask.Shared.dll",
       "Target": "obj\\Debug\\netstandard2.1\\compressed\\_framework\/_bin\/TestTask.Shared.dll.br"
     },
@@ -276,12 +276,12 @@
       "Target": "obj\\Debug\\netstandard2.1\\compressed\\_framework\/_bin\/Blazored.SessionStorage.dll.br"
     },
     {
-      "InputSource": "obj\\Debug\\netstandard2.1\\integrity\\ttcNrvU7JRxBzyPfwkLWX6af6PfeKdIfmOOMBncNgko=.hash",
+      "InputSource": "obj\\Debug\\netstandard2.1\\integrity\\tE93xTEXImDEW8cCcVTuOF0lqdAyCLrkwdegK4chBEk=.hash",
       "Source": "C:\\Users\\pocht\\Desktop\\TestTask\\TestTask\\Client\\obj\\Debug\\netstandard2.1\\blazor\\unlinked\\TestTask.Client.pdb",
       "Target": "obj\\Debug\\netstandard2.1\\compressed\\_framework\/_bin\/TestTask.Client.pdb.br"
     },
     {
-      "InputSource": "obj\\Debug\\netstandard2.1\\integrity\\gjuNpzGYQSkNlTjKp5co4zRDhr5bkdsBlBnqav4T9ls=.hash",
+      "InputSource": "obj\\Debug\\netstandard2.1\\integrity\\yeERdoHlMrIOWV9hWgh6Nlr_Tv8LfcAPAku_1rDJmyU=.hash",
       "Source": "C:\\Users\\pocht\\Desktop\\TestTask\\TestTask\\Client\\obj\\Debug\\netstandard2.1\\blazor\\unlinked\\TestTask.Shared.pdb",
       "Target": "obj\\Debug\\netstandard2.1\\compressed\\_framework\/_bin\/TestTask.Shared.pdb.br"
     },
@@ -306,7 +306,7 @@
       "Target": "obj\\Debug\\netstandard2.1\\compressed\\_framework\/blazor.webassembly.js.br"
     },
     {
-      "InputSource": "obj\\Debug\\netstandard2.1\\integrity\\Q0B8XDbv-8cu3rqP3fl3SPAGUIAqew_2KZ3Emdi8yRw=.hash",
+      "InputSource": "obj\\Debug\\netstandard2.1\\integrity\\hECTZDH_290TOkAXfopv99pd-5BQAbKBeW1CPC8hEok=.hash",
       "Source": "C:\\Users\\pocht\\Desktop\\TestTask\\TestTask\\Client\\obj\\Debug\\netstandard2.1\\blazor\\blazor.boot.json",
       "Target": "obj\\Debug\\netstandard2.1\\compressed\\_framework\/blazor.boot.json.br"
     }
