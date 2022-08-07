@@ -196,6 +196,7 @@ using Blazored.SessionStorage;
             return;
         }
 
+        employeeFromList = _employees.Find(e => e.Id == employeeFromList.Id);
         _employees.Remove(employeeFromList);
     }
 
@@ -239,7 +240,7 @@ using Blazored.SessionStorage;
             __builder2.OpenElement(3, "span");
             __builder2.AddAttribute(4, "style", "font-size: 20px; font-weight: 700");
 #nullable restore
-#line 179 "C:\Users\pocht\Desktop\TestTask\TestTask\Client\Pages\Employees.razor"
+#line 180 "C:\Users\pocht\Desktop\TestTask\TestTask\Client\Pages\Employees.razor"
 __builder2.AddContent(5, employee.FullName);
 
 #line default
@@ -247,7 +248,7 @@ __builder2.AddContent(5, employee.FullName);
 #nullable disable
             __builder2.AddContent(6, " (");
 #nullable restore
-#line 179 "C:\Users\pocht\Desktop\TestTask\TestTask\Client\Pages\Employees.razor"
+#line 180 "C:\Users\pocht\Desktop\TestTask\TestTask\Client\Pages\Employees.razor"
 __builder2.AddContent(7, _divisions.FirstOrDefault(d => d.Id == employee.DivisionId)?.Title);
 
 #line default
@@ -265,7 +266,7 @@ __builder2.AddContent(7, _divisions.FirstOrDefault(d => d.Id == employee.Divisio
             __builder2.AddMarkupContent(11, "\r\n");
         }
 #nullable restore
-#line 185 "C:\Users\pocht\Desktop\TestTask\TestTask\Client\Pages\Employees.razor"
+#line 186 "C:\Users\pocht\Desktop\TestTask\TestTask\Client\Pages\Employees.razor"
     ;
         }
 

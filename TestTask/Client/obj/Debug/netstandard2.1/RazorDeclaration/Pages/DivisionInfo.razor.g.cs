@@ -291,7 +291,7 @@ using TestTask.Client.Utils;
         if (_division.DivisionId == 0)
             _division.DivisionId = null;
 
-        _division.ParentDivision = null;
+        //_division.ParentDivision = null;
 
         Debug.WriteLine(_subDivisionsToAdd.Count);
 
