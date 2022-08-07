@@ -8,7 +8,6 @@
         /// <summary>
         /// Конструктор, принимающий сервисы по работе с хранилищем в качестве параметров
         /// </summary>
-        /// <param name="divisions"></param>
         public DataServiceCollection(IDivisionStorageService divisions, IEmployeeStorageService employees)
         {
             Divisions = divisions;

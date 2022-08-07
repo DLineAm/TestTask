@@ -21,6 +21,7 @@ namespace TestTask.Server.Services
         /// Конструктор сервиса сотрудников
         /// </summary>
         /// <param name="logger">Логгер</param>
+        /// <param name="serviceCollection">Хранилище сервисов</param>
         public DivisionService(ILogger<DivisionService> logger, DataServiceCollection serviceCollection)
         {
             _logger = logger;
@@ -92,7 +93,7 @@ namespace TestTask.Server.Services
         {
             var division = _serviceCollection.Divisions.Get(id);
 
-            var subDivisions = _serviceCollection.Divisions.GetAll(d => d.DivisionId == id);
+            var subDivisions = _serviceCollection.Divisions.GetAll(d => d.DivisionId == id)?.ToList();
             if (subDivisions != null)
             {
                 foreach (var subDivision in subDivisions)
@@ -104,10 +105,9 @@ namespace TestTask.Server.Services
             }
 
             var employeesForDelete = _serviceCollection.Employees.GetByDivisionId(id).ToList();
+
             if (employeesForDelete.Any())
-            {
                 employeesForDelete.ForEach(e => _serviceCollection.Employees.Delete(e.Id));
-            }
 
             division.DivisionId = null;
             _serviceCollection.Divisions.SaveAndUpdate(division);
