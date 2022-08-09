@@ -25,11 +25,5 @@ namespace TestTask.Server.Storage
         /// Хранилище списка работников
         /// </summary>
         public IStorage<Employee> EmployeeStorage { get; }
-
-        public IStorage<T> GetStorage<T>() where T : IIdentity, new()
-        {
-            return this.GetGenericProperty<T, IStorage<T>>();
-        }
-
     }
 }

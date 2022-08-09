@@ -51,6 +51,8 @@ namespace TestTask.Server
             services.AddSingleton<Cache>();
             services.AddScoped<IDivisionStorageService, DivisionStorageService>();
             services.AddScoped<IEmployeeStorageService, EmployeeStorageService>();
+            services.AddScoped<Repository<Employee>>();
+            services.AddScoped<Repository<Division>>();
             services.AddScoped<DataServiceCollection>();
         }
 

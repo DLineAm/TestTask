@@ -13,9 +13,7 @@ namespace TestTask.Server.Storage
         /// <summary>
         /// Конструктор сервиса по работе с хранилищем сотрудников
         /// </summary>
-        /// <param name="unitOfWork">Класс, хранящий все репозитории с целью гарантии использования одного контекста</param>
-        /// <param name="cache">Класс, имеющий хранилища списков сотрудников</param>
-        public EmployeeStorageService(UnitOfWork unitOfWork, Cache cache) : base(unitOfWork, cache) { }
+        public EmployeeStorageService(Repository<Employee> repository, IStorage<Employee> storage, UnitOfWork unitOfWork) : base(repository, storage, unitOfWork) { }
 
         /// <summary>
         /// Получение списка сотрудников по идентификатору подразделения

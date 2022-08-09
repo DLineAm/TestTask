@@ -11,18 +11,16 @@ namespace TestTask.Server.Storage
     /// </summary>
     public class DivisionStorageService : StorageService<Division>, IDivisionStorageService
     {
-        private readonly UnitOfWork _unitOfWork;
-        private readonly Cache _cache;
+        private readonly Repository<Division> _repository;
+        private readonly IStorage<Division> _storage;
 
         /// <summary>
         /// Конструктор сервиса по работе с хранилищем подразделений
         /// </summary>
-        /// <param name="unitOfWork">Класс, хранящий все репозитории с целью гарантии использования одного контекста</param>
-        /// <param name="cache">Класс, имеющий хранилища списков подразделений</param>
-        public DivisionStorageService(UnitOfWork unitOfWork, Cache cache) : base(unitOfWork, cache)
+        public DivisionStorageService(Repository<Division> repository, IStorage<Division> storage, UnitOfWork unitOfWork) : base(repository, storage, unitOfWork)
         {
-            _unitOfWork = unitOfWork;
-            _cache = cache;
+            _repository = repository;
+            _storage = storage;
         }
 
         /// <summary>
@@ -33,9 +31,9 @@ namespace TestTask.Server.Storage
         {
             try
             {
-                return _cache.DivisionStorage.Any()
-                    ? _cache.DivisionStorage.Get(id)
-                    : _unitOfWork.DivisionRepository.Get(id);
+                return _storage.Any()
+                    ? _storage.Get(id)
+                    : _repository.Get(id);
             }
             catch (ArgumentException)
             {
@@ -53,12 +51,12 @@ namespace TestTask.Server.Storage
 
             if (division.DivisionId != null)
             {
-                var parentDivision = _cache.DivisionStorage.Get((int)division.DivisionId);
+                var parentDivision = _storage.Get((int)division.DivisionId);
                 parentDivision.SubDivisions.Add(division);
-                _cache.DivisionStorage.Replace(parentDivision);
+                _storage.Replace(parentDivision);
             }
 
-            var subDivisions = _cache.DivisionStorage.GetAll(d => d.DivisionId == division.Id);
+            var subDivisions = _storage.GetAll(d => d.DivisionId == division.Id);
 
             foreach (var subDivision in subDivisions)
             {
@@ -67,15 +65,34 @@ namespace TestTask.Server.Storage
 
                 subDivision.DivisionId = null;
                 subDivision.ParentDivision = null;
-                _cache.DivisionStorage.Replace(subDivision);
+                _storage.Replace(subDivision);
             }
 
             foreach (var subDivision in division.SubDivisions)
             {
                 subDivision.DivisionId = division.Id;
                 subDivision.ParentDivision = division;
-                _cache.DivisionStorage.Replace(subDivision);
+                _storage.Replace(subDivision);
             }
+        }
+
+        public override void Delete(int id)
+        {
+            var division = Get(id);
+            division.DivisionId = null;
+            division.ParentDivision = null;
+            SaveAndUpdate(division);
+
+            var subDivisions = GetAll(d => d.DivisionId == division.Id);
+
+            foreach (var subDivision in subDivisions)
+            {
+                subDivision.DivisionId = null;
+                subDivision.ParentDivision = null;
+                SaveAndUpdate(subDivision);
+            }
+
+            base.Delete(id);
         }
     }
 }

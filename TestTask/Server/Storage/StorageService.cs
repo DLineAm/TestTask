@@ -13,18 +13,18 @@ namespace TestTask.Server.Storage
     /// <typeparam name="T">Тип модели, используемый в хранилище</typeparam>
     public class StorageService<T> where T : class, IIdentity, new()
     {
+        private readonly Repository<T> _repository;
+        private readonly IStorage<T> _storage;
         private readonly UnitOfWork _unitOfWork;
-        private readonly Cache _cache;
 
         /// <summary>
         /// Конструктор сервиса по работе с хранилищем
         /// </summary>
-        /// <param name="unitOfWork">Класс, хранящий все репозитории с целью гарантии использования одного контекста</param>
-        /// <param name="cache">Класс, имеющий хранилища списков сотрудников</param>
-        public StorageService(UnitOfWork unitOfWork, Cache cache)
+        public StorageService(Repository<T> repository, IStorage<T> storage, UnitOfWork unitOfWork)
         {
+            _repository = repository;
+            _storage = storage;
             _unitOfWork = unitOfWork;
-            _cache = cache;
         }
         
         /// <summary>
@@ -33,10 +33,8 @@ namespace TestTask.Server.Storage
         /// <param name="filter">Возможный фильтр</param>
         public IEnumerable<T> GetAll(Expression<Func<T, bool>> filter = null)
         {
-            var storage = _cache.GetStorage<T>();
-
-            return storage.Any() 
-                ? storage.GetAll(filter?.Compile()) 
+            return _storage.Any() 
+                ? _storage.GetAll(filter?.Compile()) 
                 : GetFromDbAndFillCache();
         }
 
@@ -47,11 +45,11 @@ namespace TestTask.Server.Storage
         /// <returns>Идентификатор добавленной записи</returns>
         public int Add(T entity)
         {
-            var entry = _unitOfWork.GetRepository<T>().Add(entity).Entity;
+            var entry = _repository.Add(entity).Entity;
 
             _unitOfWork.Save();
 
-            _cache.GetStorage<T>().Add(entity);
+            _storage.Add(entity);
 
             return entry.Id;
         }
@@ -60,12 +58,12 @@ namespace TestTask.Server.Storage
         /// Удаление записи
         /// </summary>
         /// <param name="id">Идентификатор, по которому нужно удалить запись</param>
-        public void Delete(int id)
+        public virtual void Delete(int id)
         {
-            _unitOfWork.GetRepository<T>().Delete(id);
+            _repository.Delete(id);
             _unitOfWork.Save();
 
-            _cache.GetStorage<T>().Remove(id);
+            _storage.Remove(id);
         }
 
         /// <summary>
@@ -74,14 +72,12 @@ namespace TestTask.Server.Storage
         /// <param name="entity">Обновленная запись, которую нужно сохранить и заменить в хранилище</param>
         public virtual void SaveAndUpdate(T entity)
         {
-            _unitOfWork.GetRepository<T>().Update(entity);
+            _repository.Update(entity);
             _unitOfWork.Save();
 
-            var storage = _cache.GetStorage<T>();
+            if (!_storage.Any()) return;
 
-            if (!storage.Any()) return;
-
-            storage.Replace(entity);
+            _storage.Replace(entity);
         }
 
         /// <summary>
@@ -94,11 +90,11 @@ namespace TestTask.Server.Storage
 
         private IEnumerable<T> GetFromDbAndFillCache()
         {
-            var entities = _unitOfWork.GetRepository<T>().GetWithChildren().ToList();
+            var entities = _repository.GetWithChildren().ToList();
 
             foreach (var entity in entities)
             {
-                _cache.GetStorage<T>().Add(entity);
+                _storage.Add(entity);
             }
 
             return entities;

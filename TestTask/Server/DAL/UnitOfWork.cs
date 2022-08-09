@@ -20,11 +20,6 @@ namespace TestTask.Server.DAL
             _context = context;
         }
 
-        public Repository<T> GetRepository<T>() where T : class, IIdentity, new()
-        {
-            return this.GetGenericProperty<T, Repository<T>>();
-        }
-
         /// <summary>
         /// Репозиторий подразделений
         /// </summary>
