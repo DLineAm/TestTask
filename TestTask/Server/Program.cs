@@ -51,6 +51,7 @@ namespace TestTask.Server
 
                 var initializer = services.GetRequiredService<IDataInitializer>();
                 initializer.Initialize(context);
+
             }
             catch (Exception e)
             {
